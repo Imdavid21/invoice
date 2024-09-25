@@ -24,7 +24,8 @@
       accountName: '',
       bank: '',
       ifsc: '',
-      swiftCode: ''
+      swiftCode: '',
+      note: ''
     },
     currency: 'USD'
   };
@@ -68,6 +69,15 @@
     } else {
       alert('Please select a valid image (.png, .jpg, or .webp)');
     }
+  }
+
+  function generateInitialsLogo(name) {
+    const initials = name
+      .split(' ')
+      .map((word) => word[0])
+      .join('')
+      .toUpperCase();
+    return initials;
   }
 
   function save() {
@@ -127,7 +137,8 @@
         accountName: '',
         bank: '',
         ifsc: '',
-        swiftCode: ''
+        swiftCode: '',
+        note: ''
       },
       currency: 'USD'
     };
@@ -189,6 +200,19 @@
     href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap"
     rel="stylesheet"
   />
+  <style>
+    @media print {
+      @page {
+        margin: 1cm;
+      }
+      body {
+        -webkit-print-color-adjust: exact;
+      }
+      header, footer {
+        display: none;
+      }
+    }
+  </style>
 </svelte:head>
 
 <svelte:body on:click={() => save()} />
@@ -208,11 +232,11 @@
       <span class="secondary-text">Invoice # :</span>
       <input
         type="text"
-        size="4"
+        size="10"
         placeholder="Enter Invoice Number"
-        maxlength="10"
+        maxlength="20"
         bind:value={appState.invoice.number}
-        class="p-2 focus:outline-none w-24 text-center"
+        class="p-2 focus:outline-none w-32 text-center"
       />
     </p>
   </div>
@@ -253,20 +277,11 @@
             />
           </div>
         {:else}
-          <button
-            class="p-2 flex flex-row gap-2 rounded-lg cursor-pointer hover:bg-black hover:text-white transition-colors duration-150"
-            on:click={() => document.getElementById('imageInput').click()}
-          >
-            ＋
-            <p class="text-sm">Add Logo</p>
-            <input
-              id="imageInput"
-              type="file"
-              accept=".png,.jpg,.jpeg,.webp"
-              on:change={handleImageChange}
-              class="hidden"
-            />
-          </button>
+          <div class="flex items-center justify-center bg-gray-200 rounded h-24 w-24">
+            <span class="text-3xl font-bold">
+              {generateInitialsLogo(appState.company.name || 'Company')}
+            </span>
+          </div>
         {/if}
       </div>
       <input
@@ -309,7 +324,10 @@
     </div>
   </div>
 
-  <hr class="border-custom" />
+  <!-- Add space and a horizontal line -->
+  <div class="my-4">
+    <hr class="border-custom" />
+  </div>
 
   <!-- From & To  ------------------------------------------------------>
   <div class="flex flex-col sm:flex-row justify-between gap-4">
@@ -330,7 +348,7 @@
           <input
             type="email"
             bind:value={appState.invoice.fromContact.mail}
-            class="p-2 focus:outline-none w-full"
+            class="p-2 focus:outline-none w-full break-words"
             placeholder="Enter Email Address"
           />
         </p>
@@ -339,18 +357,19 @@
           <input
             type="text"
             bind:value={appState.invoice.fromContact.phone}
-            class="p-2 focus:outline-none w-full"
+            class="p-2 focus:outline-none w-full break-words"
             placeholder="Enter Phone Number"
           />
         </p>
         <div class="flex items-center sm:col-span-2">
           <span class="w-24 secondary-text">Tax Details:</span>
-          <input
-            type="text"
+          <textarea
             bind:value={appState.invoice.fromTaxDetails}
             class="p-2 focus:outline-none w-full"
             placeholder="Enter Tax Name and ID"
-          />
+            rows="2"
+            style="resize: none;"
+          ></textarea>
         </div>
       </div>
     </div>
@@ -371,7 +390,7 @@
           <input
             type="email"
             bind:value={appState.invoice.toContact.mail}
-            class="p-2 focus:outline-none w-full"
+            class="p-2 focus:outline-none w-full break-words"
             placeholder="Enter Email Address"
           />
         </p>
@@ -380,21 +399,27 @@
           <input
             type="text"
             bind:value={appState.invoice.toContact.phone}
-            class="p-2 focus:outline-none w-full"
+            class="p-2 focus:outline-none w-full break-words"
             placeholder="Enter Phone Number"
           />
         </p>
         <div class="flex items-center sm:col-span-2">
           <span class="w-24 secondary-text">Tax Details:</span>
-          <input
-            type="text"
+          <textarea
             bind:value={appState.invoice.toTaxDetails}
             class="p-2 focus:outline-none w-full"
             placeholder="Enter Tax Name and ID"
-          />
+            rows="2"
+            style="resize: none;"
+          ></textarea>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Add space and a horizontal line -->
+  <div class="my-4">
+    <hr class="border-custom" />
   </div>
 
   <!-- Table ----------------------------------------------------------->
@@ -557,6 +582,16 @@
           placeholder="Enter SWIFT Code"
         />
       </div>
+      <div class="flex flex-col sm:col-span-2">
+        <label class="text-sm font-semibold">Note</label>
+        <textarea
+          bind:value={appState.payment.note}
+          class="p-2 focus:outline-none w-full"
+          placeholder="Enter any payment notes"
+          rows="3"
+          style="resize: none;"
+        ></textarea>
+      </div>
     </div>
   </div>
 
@@ -564,7 +599,7 @@
   <div class="mt-6 flex justify-center print:hidden">
     <button
       on:click={() => window.print()}
-      class="px-4 py-3 rounded-lg bg-black text-white font-semibold flex items-center gap-2 hover:bg-gray-700 transition-colors duration-150"
+      class="px-4 py-3 rounded bg-black text-white font-semibold flex items-center gap-2 hover:bg-gray-700 transition-colors duration-150"
     >
       ⬇
       <span>Download Invoice</span>
@@ -679,5 +714,17 @@
   .hover\:text-white:hover {
     color: #fff;
   }
-</style>
 
+  /* Hide default print headers and footers */
+  @media print {
+    @page {
+      margin: 1cm;
+    }
+    body {
+      -webkit-print-color-adjust: exact;
+    }
+    header, footer {
+      display: none;
+    }
+  }
+</style>
