@@ -17,7 +17,7 @@
       toTaxId: '',
       toContact: { mail: '', phone: '' }
     },
-    items: [{ desc: '', price: '', quantity: '' }],
+    items: [],
     taxPercent: '',
     discountPercent: '',
     note: '',
@@ -167,14 +167,6 @@
   let isTaxEnabled = true;
 </script>
 
-<svelte:head>
-  <title>Billie - No Strings Attached Invoice Generator</title>
-  <meta
-    name="description"
-    content="Create and download invoices instantly, with zero signups or tracking."
-  />
-</svelte:head>
-
 <svelte:body on:click={() => save()} />
 
 <div
@@ -238,7 +230,7 @@
 
     <div class="relative flex flex-col items-start sm:items-end gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
       <h2 class="font-bold text-2xl text-[#1E6F5C] text-left sm:text-right print:text-left">
-        INVOICE :
+        Invoice :
         <input
           type="text"
           size="4"
@@ -279,10 +271,9 @@
   <hr class="border-[#E2E2E2]" />
 
   <!-- From & To  ------------------------------------------------------>
-
   <div class="flex flex-col sm:flex-row justify-between gap-4">
     <div class="flex flex-col gap-2 w-full">
-      <h4 class="mb-2 font-bold">Sender Info</h4>
+      <h2 class="mb-2 font-bold">Sender Info</h2>
       <textarea
         style="resize: none; padding: 8px 12px;"
         placeholder="Enter sender's name and address"
@@ -332,7 +323,7 @@
       </div>
     </div>
     <div class="flex flex-col gap-2 w-full">
-      <h4 class="mb-2 font-bold">Recipient Info</h4>
+      <h2 class="mb-2 font-bold">Recipient Info</h2>
       <textarea
         style="resize: none; padding: 8px 12px;"
         placeholder="Enter recipient's name and address"
@@ -384,7 +375,6 @@
   </div>
 
   <!-- New Item Form --------------------------------------------------->
-
   <form class="flex flex-col sm:flex-row justify-between gap-2">
     <div class="flex items-center">
       <button
@@ -430,9 +420,8 @@
   </form>
 
   <!-- Table ----------------------------------------------------------->
-
   <div class="flex flex-col mt-4 bg-[#F0F4F8] p-2 rounded-lg">
-    <h4 class="mb-2 font-bold">Item Descriptions</h4>
+    <h2 class="mb-2 font-bold">Item Descriptions</h2>
     <div class="flex flex-row bg-[#FAFAFA] border border-[#E2E2E2]">
       <p class="font-bold p-3 border-r border-[#E2E2E2] grow">Item name</p>
       <p class="font-bold p-3 border-r border-[#E2E2E2] w-32 hidden sm:block">Unit Price</p>
@@ -448,43 +437,82 @@
           >
             <Trash />
           </button>
-          <p contenteditable="true" class="p-3 border-r border-[#E2E2E2] grow break-words">{item.desc}</p>
+          <input
+            class="p-3 border-r border-[#E2E2E2] grow break-words"
+            type="text"
+            bind:value={item.desc}
+            on:input={() => save()}
+          />
         </div>
         <div class="flex flex-row sm:flex-row w-full">
-          <input class="p-3 border-r border-[#E2E2E2] w-full sm:w-32" type="text" bind:value={item.price} />
-          <input class="p-3 border-r border-[#E2E2E2] w-full sm:w-24" type="text" bind:value={item.quantity} />
-          <p class="p-3 w-full sm:w-32 text-right">{getCurrencySymbol(appState.currency)}{(item.price * item.quantity).toFixed(2)}</p>
+          <input
+            class="p-3 border-r border-[#E2E2E2] w-full sm:w-32"
+            type="number"
+            min="0"
+            step="0.01"
+            bind:value={item.price}
+            on:input={() => save()}
+          />
+          <input
+            class="p-3 border-r border-[#E2E2E2] w-full sm:w-24"
+            type="number"
+            min="0"
+            step="1"
+            bind:value={item.quantity}
+            on:input={() => save()}
+          />
+          <p class="p-3 w-full sm:w-32 text-right">
+            {getCurrencySymbol(appState.currency)}{(item.price * item.quantity).toFixed(2)}
+          </p>
         </div>
       </div>
     {/each}
 
     <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2] items-center">
       <p class="p-3 grow text-right font-bold">Discount %</p>
-      <button class="toggle-switch ml-2 mr-1 {isDiscountEnabled ? 'active' : ''}" on:click={() => (isDiscountEnabled = !isDiscountEnabled)}></button>
+      <button
+        class="toggle-switch ml-2 mr-1 {isDiscountEnabled ? 'active' : ''}"
+        on:click={() => (isDiscountEnabled = !isDiscountEnabled)}
+      ></button>
       <input
-        class="p-3 w-32 text-right"
-        type="text"
+        class="p-3 w-32 text-right {isDiscountEnabled ? 'enabled' : 'disabled'}"
+        type="number"
         bind:value={appState.discountPercent}
         disabled={!isDiscountEnabled}
         step="0.01"
         max="100"
         min="0"
+        on:input={() => save()}
       />
     </div>
     <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2] items-center">
       <p class="p-3 grow text-right font-bold">Tax %</p>
-      <button class="toggle-switch ml-2 mr-1 {isTaxEnabled ? 'active' : ''}" on:click={() => (isTaxEnabled = !isTaxEnabled)}></button>
-      <input class="p-3 w-32 text-right" type="text" bind:value={appState.taxPercent} disabled={!isTaxEnabled} step="0.01" max="100" min="0" />
+      <button
+        class="toggle-switch ml-2 mr-1 {isTaxEnabled ? 'active' : ''}"
+        on:click={() => (isTaxEnabled = !isTaxEnabled)}
+      ></button>
+      <input
+        class="p-3 w-32 text-right {isTaxEnabled ? 'enabled' : 'disabled'}"
+        type="number"
+        bind:value={appState.taxPercent}
+        disabled={!isTaxEnabled}
+        step="0.01"
+        max="100"
+        min="0"
+        on:input={() => save()}
+      />
     </div>
     <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2]">
       <p class="p-3 grow text-right font-bold">Total Due</p>
-      <p class="p-3 w-32 text-right">{getCurrencySymbol(appState.currency)}{totalDue}</p>
+      <p class="p-3 w-32 text-right">
+        {getCurrencySymbol(appState.currency)}{totalDue}
+      </p>
     </div>
   </div>
 
   <!-- Payment Info Section Redesigned --------------------------------->
   <div class="mt-4">
-    <h4 class="mb-2 font-bold">Payment Info</h4>
+    <h2 class="mb-2 font-bold">Payment Info</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div class="flex flex-col">
         <label class="text-sm font-semibold">Account No</label>
@@ -535,7 +563,6 @@
   </div>
 
   <!-- Download Button -------------------------------------------------->
-
   <div class="mt-6 flex justify-center print:hidden">
     <button
       on:click={() => window.print()}
@@ -579,8 +606,40 @@
     background-color: #333333;
   }
 
+  .enabled {
+    background-color: #ffffff;
+  }
+
+  .disabled {
+    background-color: #f0f0f0;
+  }
+
   /* Ensure text wraps inside boxes */
-  textarea, p, input {
+  textarea,
+  p,
+  input {
     word-wrap: break-word;
+  }
+
+  /* Print styles */
+  @media print {
+    .toggle-switch {
+      display: none;
+    }
+    button {
+      display: none;
+    }
+    input,
+    textarea {
+      border: none;
+    }
+    .print:hidden {
+      display: none;
+    }
+  }
+
+  /* Highlight Item Descriptions */
+  .item-descriptions {
+    background-color: #f0f8ff;
   }
 </style>
