@@ -7,23 +7,23 @@
 	export let subtitle = 'Enter subtitle here';
 </script>
 
-<div class="print:hidden bg-[#d4f1ef] pt-10 pb-20 mb-4">
+<div class="print:hidden bg-[#FAFAFA] pt-8 pb-8 mb-2 border-b border-[#E2E2E2]">
 	<div class="max-w-screen-md mx-auto flex flex-col items-center gap-4">
-		<h1 class="text-center font-bold text-4xl text-[#15273c]">
+		<h1 class="text-center font-bold text-4xl text-[#1E6F5C]">
 			{title}
 		</h1>
-		<p class="text-center opacity-80">
+		<p class="text-center text-[#333333] opacity-80">
 			{subtitle}
 		</p>
 		<div class="flex flex-row">
-			<FeatureItem label="No Signup.">
-				<LogIn color="#15273c" />
+			<FeatureItem label="No Signups.">
+				<LogIn color="#1E6F5C" />
 			</FeatureItem>
 			<FeatureItem label="No Ads.">
-				<UserRoundSearch color="#15273c" />
+				<UserRoundSearch color="#1E6F5C" />
 			</FeatureItem>
 			<FeatureItem label="Only what you need.">
-				<Code color="#15273c" />
+				<Code color="#1E6F5C" />
 			</FeatureItem>
 		</div>
 	</div>
