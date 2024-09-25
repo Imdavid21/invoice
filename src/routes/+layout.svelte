@@ -8,7 +8,7 @@
 </script>
 
 <Header
-	title="No Strings Attached Invoice Generator !"
+	title="Zero Commitments. No Strings Attached."
 	subtitle="Create and download invoices instantly, with zero signups or tracking."
 />
 <slot />
