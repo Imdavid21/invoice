@@ -1,5 +1,5 @@
 <script>
-  import { LucidePlus, Trash2, ImageUp, RotateCcw, Printer } from 'lucide-svelte';
+  import { Plus, Trash, ImagePlus, RotateCw, Download } from 'lucide-svelte'; // Updated modern icons
   import { onMount } from 'svelte';
 
   let appState = {
@@ -186,10 +186,10 @@
                   appState.company.logo = null;
                 }}
               >
-                <Trash2 />
+                <Trash />
               </button>
               <button class="p-2 hover:bg-[#E2E2E2] rounded" on:click={() => document.getElementById('imageInput').click()}>
-                <ImageUp />
+                <ImagePlus />
                 <input
                   id="imageInput"
                   type="file"
@@ -210,7 +210,7 @@
             class="p-2 flex flex-row gap-2 rounded-lg border border-[#E2E2E2] cursor-pointer hover:bg-[#F5F5F5]"
             on:click={() => document.getElementById('imageInput').click()}
           >
-            <ImageUp />
+            <ImagePlus />
             <p class="text-sm text-[#333]">Click to select an image for logo</p>
             <input
               id="imageInput"
@@ -241,7 +241,7 @@
         on:click={() => reset()}
         class="p-2 rounded-lg hover:bg-[#E2E2E2] transition-all duration-100 ease-in-out"
       >
-        <RotateCcw strokeWidth={1.5} />
+        <RotateCw strokeWidth={1.5} />
       </button>
       <div class="flex flex-col gap-1">
         <p>
@@ -293,7 +293,7 @@
       ></textarea>
       <div class="mt-2">
         <p>
-          {appState.invoice.fromTaxIdName || 'Tax ID Name'} :
+          Tax Name:
           <input
             type="text"
             bind:value={appState.invoice.fromTaxIdName}
@@ -302,7 +302,7 @@
           />
         </p>
         <p>
-          {appState.invoice.fromTaxId || 'Tax ID'} :
+          Tax ID:
           <input
             type="text"
             bind:value={appState.invoice.fromTaxId}
@@ -311,7 +311,7 @@
           />
         </p>
         <p>
-          Email :
+          Email:
           <input
             type="email"
             bind:value={appState.invoice.fromContact.mail}
@@ -320,7 +320,7 @@
           />
         </p>
         <p>
-          Phone :
+          Phone:
           <input
             type="text"
             bind:value={appState.invoice.fromContact.phone}
@@ -343,7 +343,7 @@
       ></textarea>
       <div class="mt-2">
         <p>
-          {appState.invoice.toTaxIdName || 'Tax ID Name'} :
+          Tax Name:
           <input
             type="text"
             bind:value={appState.invoice.toTaxIdName}
@@ -352,7 +352,7 @@
           />
         </p>
         <p>
-          {appState.invoice.toTaxId || 'Tax ID'} :
+          Tax ID:
           <input
             type="text"
             bind:value={appState.invoice.toTaxId}
@@ -361,7 +361,7 @@
           />
         </p>
         <p>
-          Email :
+          Email:
           <input
             type="email"
             bind:value={appState.invoice.toContact.mail}
@@ -370,7 +370,7 @@
           />
         </p>
         <p>
-          Phone :
+          Phone:
           <input
             type="text"
             bind:value={appState.invoice.toContact.phone}
@@ -390,7 +390,7 @@
       on:click={() => addItem()}
       class="p-2 rounded-full bg-[#E2E2E2] hover:bg-[#CFCFCF] transition-all duration-100 ease-in-out"
     >
-      <LucidePlus stroke="#557571" />
+      <Plus stroke="#557571" />
     </button>
 
     <input
@@ -438,7 +438,7 @@
           on:click={() => deleteItem(index)}
           class="p-2 hover:bg-[#E2E2E2] transition-all duration-100 ease-in-out rounded"
         >
-          <Trash2 color="#C96868" />
+          <Trash color="#C96868" />
         </button>
 
         <p contenteditable="true" class="p-2 border-r border-[#E2E2E2] grow">{item.desc}</p>
@@ -563,9 +563,10 @@
   <div class="mt-6 flex justify-center">
     <button
       on:click={() => window.print()}
-      class="px-6 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-green-500 text-white font-bold shadow-sm hover:shadow-md transform hover:scale-105 transition-transform"
+      class="px-4 py-2 rounded-lg bg-[#E2E2E2] text-[#333] font-semibold flex items-center gap-2 hover:bg-[#CFCFCF] transition-transform"
     >
-      Download Invoice
+      <Download class="w-5 h-5" />
+      <span>Download Invoice</span>
     </button>
   </div>
 </div>
