@@ -8,15 +8,15 @@
       created: '',
       due: '',
       from: '',
-      fromTaxIdName: 'Tax ID',
+      fromTaxIdName: '',
       fromTaxId: '',
       fromContact: { mail: '', phone: '' },
       to: '',
-      toTaxIdName: 'Tax ID',
+      toTaxIdName: '',
       toTaxId: '',
       toContact: { mail: '', phone: '' }
     },
-    items: [],
+    items: [{ desc: '', price: '', quantity: '' }],
     taxPercent: '',
     discountPercent: '',
     note: '',
@@ -31,9 +31,21 @@
   };
 
   let currencyOptions = [
-    { code: 'USD', symbol: '$', name: 'US Dollar' },
-    { code: 'EUR', symbol: '€', name: 'Euro' },
-    // Add more currencies as needed
+    { code: 'USD', symbol: '$', name: 'US Dollar', flag: '🇺🇸' },
+    { code: 'EUR', symbol: '€', name: 'Euro', flag: '🇪🇺' },
+    { code: 'GBP', symbol: '£', name: 'British Pound', flag: '🇬🇧' },
+    { code: 'JPY', symbol: '¥', name: 'Japanese Yen', flag: '🇯🇵' },
+    { code: 'AUD', symbol: 'A$', name: 'Australian Dollar', flag: '🇦🇺' },
+    { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar', flag: '🇨🇦' },
+    { code: 'CHF', symbol: 'CHF', name: 'Swiss Franc', flag: '🇨🇭' },
+    { code: 'CNY', symbol: '¥', name: 'Chinese Yuan', flag: '🇨🇳' },
+    { code: 'INR', symbol: '₹', name: 'Indian Rupee', flag: '🇮🇳' },
+    { code: 'RUB', symbol: '₽', name: 'Russian Ruble', flag: '🇷🇺' },
+    { code: 'BRL', symbol: 'R$', name: 'Brazilian Real', flag: '🇧🇷' },
+    { code: 'ZAR', symbol: 'R', name: 'South African Rand', flag: '🇿🇦' },
+    { code: 'MXN', symbol: '$', name: 'Mexican Peso', flag: '🇲🇽' },
+    { code: 'NZD', symbol: 'NZ$', name: 'New Zealand Dollar', flag: '🇳🇿' },
+    { code: 'SGD', symbol: 'S$', name: 'Singapore Dollar', flag: '🇸🇬' }
   ];
 
   function getCurrencySymbol(code) {
@@ -44,7 +56,10 @@
   function handleImageChange(event) {
     const file = event.target.files[0];
 
-    if (file && ['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+    if (
+      file &&
+      (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/webp')
+    ) {
       const reader = new FileReader();
       reader.onload = () => {
         appState.company.logo = reader.result;
@@ -61,11 +76,11 @@
   }
 
   function addItem() {
-    if (itemDesc.trim() !== '' && itemPrice > 0 && itemQty > 0) {
+    if (itemDesc != '' && itemPrice > 0 && itemQty > 0) {
       appState.items = [
         ...appState.items,
         {
-          desc: itemDesc.trim(),
+          desc: itemDesc,
           price: parseFloat(itemPrice).toFixed(2),
           quantity: parseFloat(itemQty).toFixed(2)
         }
@@ -77,8 +92,6 @@
 
       save();
       document.getElementById('descBox').focus();
-    } else {
-      alert('Please enter valid item details.');
     }
   }
 
@@ -89,21 +102,25 @@
 
   function reset() {
     appState = {
-      company: { name: '', logo: '' },
+      company: { name: 'Wayne Enterprises', logo: '' },
       invoice: {
         number: '#0001',
         created: '',
         due: '',
         from: '',
-        fromTaxIdName: 'Tax ID',
+        fromTaxIdName: 'Enter Tax Name',
         fromTaxId: '',
         fromContact: { mail: '', phone: '' },
         to: '',
-        toTaxIdName: 'Tax ID',
+        toTaxIdName: 'Enter Tax Name',
         toTaxId: '',
         toContact: { mail: '', phone: '' }
       },
-      items: [],
+      items: [
+        { desc: 'SEO Consultation', price: '5000', quantity: '1' },
+        { desc: 'Social Media Strategy', price: '2000', quantity: '3' },
+        { desc: 'Content Creation', price: '10000', quantity: '1' }
+      ],
       taxPercent: '',
       discountPercent: '',
       note: '',
@@ -144,122 +161,257 @@
   $: taxAmount = ((taxableAmount * (+appState.taxPercent || 0)) / 100).toFixed(2);
   $: totalDue = (parseFloat(taxableAmount) + parseFloat(taxAmount)).toFixed(2);
 
-  $: isDiscountEnabled = appState.discountPercent !== '';
-  $: isTaxEnabled = appState.taxPercent !== '';
+  // Toggles
+  let isDiscountEnabled = true;
+  let isTaxEnabled = true;
 </script>
+
+<svelte:head>
+  <title>Billie - No Strings Attached Invoice Generator</title>
+  <meta
+    name="description"
+    content="Create and download invoices instantly, with zero signups or tracking."
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap"
+    rel="stylesheet"
+  />
+</svelte:head>
 
 <svelte:body on:click={() => save()} />
 
-<div class="invoice-container">
-  <!-- Header -->
-  <header class="invoice-header">
-    <div class="company-info">
-      {#if appState.company.logo}
-        <div class="logo-container">
-          <img src={appState.company.logo} alt="Company Logo" class="company-logo" />
-          <button class="icon-button" on:click={() => { appState.company.logo = ''; save(); }}>
-            ✕
+<div
+  class="max-w-screen-md mx-auto px-4 sm:px-6 py-8 flex flex-col space-y-6 invoice-container print:shadow-none print:bg-white print:border-none"
+>
+  <!-- Company & Invoice Details --------------------------------------->
+  <div class="flex flex-col sm:flex-row justify-between items-start print:flex">
+    <div class="flex flex-col gap-4 w-full sm:w-auto">
+      <div class="">
+        {#if appState.company.logo}
+          <div class="flex flex-row items-center space-x-4">
+            <div class="flex flex-col">
+              <button
+                class="p-2 hover:bg-[#E2E2E2] rounded"
+                on:click={() => {
+                  appState.company.logo = null;
+                }}
+              >
+                ✕
+              </button>
+              <button
+                class="p-2 hover:bg-[#E2E2E2] rounded"
+                on:click={() => document.getElementById('imageInput').click()}
+              >
+                ＋
+                <input
+                  id="imageInput"
+                  type="file"
+                  accept=".png,.jpg,.jpeg,.webp"
+                  on:change={handleImageChange}
+                  class="hidden"
+                />
+              </button>
+            </div>
+            <img
+              src={appState.company.logo}
+              alt="Company Logo"
+              class="max-h-18 max-w-40 object-cover m-0"
+            />
+          </div>
+        {:else}
+          <button
+            class="p-2 flex flex-row gap-2 rounded-lg cursor-pointer hover:bg-[#F5F5F5]"
+            on:click={() => document.getElementById('imageInput').click()}
+          >
+            ＋
+            <p class="text-sm text-[#333]">Click to select an image for logo</p>
+            <input
+              id="imageInput"
+              type="file"
+              accept=".png,.jpg,.jpeg,.webp"
+              on:change={handleImageChange}
+              class="hidden"
+            />
           </button>
-        </div>
-      {:else}
-        <label class="logo-upload">
-          <input type="file" accept=".png,.jpg,.jpeg,.webp" on:change={handleImageChange} />
-          <span>＋</span>
-          <span>Upload Logo</span>
-        </label>
-      {/if}
+        {/if}
+      </div>
       <input
         type="text"
         bind:value={appState.company.name}
+        class="font-bold text-xl p-2 focus:outline-none w-full"
         placeholder="Company Name"
-        class="company-name"
       />
     </div>
-    <div class="invoice-details">
-      <h1>Invoice</h1>
-      <div class="details-grid">
-        <div class="input-group">
-          <label>Invoice Number</label>
-          <input type="text" bind:value={appState.invoice.number} placeholder="#0001" />
-        </div>
-        <div class="input-group">
-          <label>Invoice Date</label>
-          <input type="date" bind:value={appState.invoice.created} />
-        </div>
-        <div class="input-group">
-          <label>Due Date</label>
-          <input type="date" bind:value={appState.invoice.due} />
-        </div>
-        <div class="input-group">
-          <label>Currency</label>
-          <select bind:value={appState.currency}>
-            {#each currencyOptions as option}
-              <option value={option.code}>{option.code} - {option.name}</option>
-            {/each}
-          </select>
-        </div>
-      </div>
-    </div>
-  </header>
 
-  <!-- Addresses -->
-  <section class="addresses">
-    <div class="address-block">
-      <h2>From</h2>
+    <div class="relative flex flex-col items-start sm:items-end gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
+      <h2 class="font-bold text-2xl text-black text-left sm:text-right print:text-left">
+        INVOICE :
+        <input
+          type="text"
+          size="4"
+          placeholder="#0001"
+          maxlength="5"
+          bind:value={appState.invoice.number}
+          class="p-2 focus:outline-none w-20"
+        />
+      </h2>
+      <div class="flex flex-col gap-1">
+        <p class="flex items-center">
+          <span class="mr-2 secondary-text">Created :</span>
+          <input
+            bind:value={appState.invoice.created}
+            type="date"
+            class="p-2 focus:outline-none"
+          />
+        </p>
+        <p class="flex items-center">
+          <span class="mr-2 secondary-text">Due :</span>
+          <input
+            bind:value={appState.invoice.due}
+            type="date"
+            class="p-2 focus:outline-none"
+          />
+        </p>
+      </div>
+      <select
+        bind:value={appState.currency}
+        class="p-2 focus:outline-none w-full"
+      >
+        {#each currencyOptions as option}
+          <option value={option.code}>
+            {option.flag} {option.code} - {option.name}
+          </option>
+        {/each}
+      </select>
+    </div>
+  </div>
+
+  <hr class="border-custom" />
+
+  <!-- From & To  ------------------------------------------------------>
+  <div class="flex flex-col sm:flex-row justify-between gap-4">
+    <div class="flex flex-col gap-2 w-full">
+      <h4 class="mb-2 font-bold">Sender Info</h4>
       <textarea
+        style="resize: none; padding: 8px 0;"
+        placeholder="Enter sender's name and address"
+        cols="30"
+        rows="3"
+        maxlength="150"
         bind:value={appState.invoice.from}
-        placeholder="Your Address"
-        rows="4"
+        class="p-2 focus:outline-none w-full break-words"
       ></textarea>
-      <div class="contact-info">
-        <div class="input-group">
-          <label>{appState.invoice.fromTaxIdName}</label>
-          <input type="text" bind:value={appState.invoice.fromTaxId} />
-        </div>
-        <div class="input-group">
-          <label>Email</label>
-          <input type="email" bind:value={appState.invoice.fromContact.mail} />
-        </div>
-        <div class="input-group">
-          <label>Phone</label>
-          <input type="tel" bind:value={appState.invoice.fromContact.phone} />
-        </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <p class="flex items-center">
+          <span class="w-24 secondary-text">Tax Name:</span>
+          <input
+            type="text"
+            bind:value={appState.invoice.fromTaxIdName}
+            class="p-2 focus:outline-none w-full"
+            placeholder="Enter Tax Name"
+          />
+        </p>
+        <p class="flex items-center">
+          <span class="w-24 secondary-text">Tax ID:</span>
+          <input
+            type="text"
+            bind:value={appState.invoice.fromTaxId}
+            class="p-2 focus:outline-none w-full"
+            placeholder="Enter Tax ID"
+          />
+        </p>
+        <p class="flex items-center">
+          <span class="w-24 secondary-text">Email:</span>
+          <input
+            type="email"
+            bind:value={appState.invoice.fromContact.mail}
+            class="p-2 focus:outline-none w-full"
+            placeholder="Enter Email"
+          />
+        </p>
+        <p class="flex items-center">
+          <span class="w-24 secondary-text">Phone:</span>
+          <input
+            type="text"
+            bind:value={appState.invoice.fromContact.phone}
+            class="p-2 focus:outline-none w-full"
+            placeholder="Enter Phone"
+          />
+        </p>
       </div>
     </div>
-    <div class="address-block">
-      <h2>To</h2>
+    <div class="flex flex-col gap-2 w-full">
+      <h4 class="mb-2 font-bold">Recipient Info</h4>
       <textarea
+        style="resize: none; padding: 8px 0;"
+        placeholder="Enter recipient's name and address"
+        cols="30"
+        rows="3"
+        maxlength="150"
         bind:value={appState.invoice.to}
-        placeholder="Client's Address"
-        rows="4"
+        class="p-2 focus:outline-none w-full break-words"
       ></textarea>
-      <div class="contact-info">
-        <div class="input-group">
-          <label>{appState.invoice.toTaxIdName}</label>
-          <input type="text" bind:value={appState.invoice.toTaxId} />
-        </div>
-        <div class="input-group">
-          <label>Email</label>
-          <input type="email" bind:value={appState.invoice.toContact.mail} />
-        </div>
-        <div class="input-group">
-          <label>Phone</label>
-          <input type="tel" bind:value={appState.invoice.toContact.phone} />
-        </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <p class="flex items-center">
+          <span class="w-24 secondary-text">Tax Name:</span>
+          <input
+            type="text"
+            bind:value={appState.invoice.toTaxIdName}
+            class="p-2 focus:outline-none w-full"
+            placeholder="Enter Tax Name"
+          />
+        </p>
+        <p class="flex items-center">
+          <span class="w-24 secondary-text">Tax ID:</span>
+          <input
+            type="text"
+            bind:value={appState.invoice.toTaxId}
+            class="p-2 focus:outline-none w-full"
+            placeholder="Enter Tax ID"
+          />
+        </p>
+        <p class="flex items-center">
+          <span class="w-24 secondary-text">Email:</span>
+          <input
+            type="email"
+            bind:value={appState.invoice.toContact.mail}
+            class="p-2 focus:outline-none w-full"
+            placeholder="Enter Email"
+          />
+        </p>
+        <p class="flex items-center">
+          <span class="w-24 secondary-text">Phone:</span>
+          <input
+            type="text"
+            bind:value={appState.invoice.toContact.phone}
+            class="p-2 focus:outline-none w-full"
+            placeholder="Enter Phone"
+          />
+        </p>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- Items -->
-  <section class="items-section">
-    <h2>Invoice Items</h2>
-    <form class="item-form" on:submit|preventDefault={addItem}>
+  <!-- New Item Form --------------------------------------------------->
+  <form class="flex flex-col sm:flex-row justify-between gap-2">
+    <div class="flex items-center">
+      <button
+        disabled={itemDesc == ''}
+        on:click={() => addItem()}
+        class="p-2 rounded-full bg-transparent hover:bg-black text-black hover:text-white transition-all duration-100 ease-in-out print:hidden"
+      >
+        ＋
+      </button>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-2 w-full">
       <input
         id="descBox"
         type="text"
         bind:value={itemDesc}
-        placeholder="Description"
-        required
+        placeholder="Item name"
+        class="p-2 focus:outline-none grow w-full"
+        on:keypress={(e) => e.key == 'Enter' && addItem()}
       />
       <input
         type="number"
@@ -267,7 +419,8 @@
         placeholder="Unit Price"
         min="0"
         step="0.01"
-        required
+        class="p-2 focus:outline-none w-full sm:w-32"
+        on:keypress={(e) => e.key == 'Enter' && addItem()}
       />
       <input
         type="number"
@@ -275,543 +428,219 @@
         placeholder="Quantity"
         min="1"
         step="1"
-        required
+        class="p-2 focus:outline-none w-full sm:w-32"
+        on:keypress={(e) => e.key == 'Enter' && addItem()}
       />
-      <button type="submit" class="add-button">
-        ＋
-      </button>
-    </form>
+      <p class="p-2 w-full sm:w-32 text-right">
+        {getCurrencySymbol(appState.currency)}{(itemPrice * itemQty).toFixed(2)}
+      </p>
+    </div>
+  </form>
 
-    <div class="items-table">
-      <div class="table-header">
-        <div>Description</div>
-        <div>Unit Price</div>
-        <div>Quantity</div>
-        <div>Total</div>
-        <div></div>
-      </div>
-      {#each appState.items as item, index}
-        <div class="table-row">
-          <div>
-            <input
-              type="text"
-              bind:value={item.desc}
-              on:input={() => save()}
-              required
-            />
-          </div>
-          <div>
-            <input
-              type="number"
-              bind:value={item.price}
-              on:input={() => save()}
-              min="0"
-              step="0.01"
-              required
-            />
-          </div>
-          <div>
-            <input
-              type="number"
-              bind:value={item.quantity}
-              on:input={() => save()}
-              min="1"
-              step="1"
-              required
-            />
-          </div>
-          <div>{(item.price * item.quantity).toFixed(2)}</div>
-          <div>
-            <button class="icon-button" on:click={() => deleteItem(index)}>
-              ✕
-            </button>
-          </div>
+  <!-- Table ----------------------------------------------------------->
+  <div class="flex flex-col mt-4">
+    <h4 class="mb-2 font-bold">Item Descriptions</h4>
+    <div class="flex flex-row border-b border-custom">
+      <p class="font-bold p-3 grow">Item name</p>
+      <p class="font-bold p-3 w-32 hidden sm:block">Unit Price</p>
+      <p class="font-bold p-3 w-24 hidden sm:block">Qty</p>
+      <p class="font-bold p-3 w-32 text-right hidden sm:block">Total</p>
+    </div>
+    {#each appState.items as item, index}
+      <div class="flex flex-col sm:flex-row even:bg-[#F8F8F8] border-b border-custom">
+        <div class="flex flex-row items-center">
+          <button
+            on:click={() => deleteItem(index)}
+            class="p-3 hover:bg-black hover:text-white transition-all duration-100 ease-in-out rounded print:hidden"
+          >
+            ✕
+          </button>
+          <p contenteditable="true" class="p-3 grow break-words">{item.desc}</p>
         </div>
-      {/each}
-    </div>
-  </section>
+        <div class="flex flex-row sm:flex-row w-full">
+          <input class="p-3 w-full sm:w-32" type="text" bind:value={item.price} />
+          <input class="p-3 w-full sm:w-24" type="text" bind:value={item.quantity} />
+          <p class="p-3 w-full sm:w-32 text-right">{getCurrencySymbol(appState.currency)}{(item.price * item.quantity).toFixed(2)}</p>
+        </div>
+      </div>
+    {/each}
 
-  <!-- Totals -->
-  <section class="totals-section">
-    <div class="totals-row">
-      <span>Subtotal</span>
-      <span>{getCurrencySymbol(appState.currency)}{subTotal}</span>
+    <div class="flex flex-row even:bg-[#F8F8F8] border-t border-custom items-center">
+      <p class="p-3 grow text-right font-bold">Discount %</p>
+      <button class="toggle-switch ml-2 mr-1 {isDiscountEnabled ? 'active' : ''}" on:click={() => (isDiscountEnabled = !isDiscountEnabled)}></button>
+      <input
+        class="p-3 w-32 text-right"
+        type="text"
+        bind:value={appState.discountPercent}
+        disabled={!isDiscountEnabled}
+        step="0.01"
+        max="100"
+        min="0"
+      />
     </div>
-    <div class="totals-row">
-      <span>
-        Discount (%)
-        <label class="switch">
-          <input type="checkbox" bind:checked={isDiscountEnabled} />
-          <span class="slider"></span>
-        </label>
-      </span>
-      <span>
+    <div class="flex flex-row even:bg-[#F8F8F8] border-t border-custom items-center">
+      <p class="p-3 grow text-right font-bold">Tax %</p>
+      <button class="toggle-switch ml-2 mr-1 {isTaxEnabled ? 'active' : ''}" on:click={() => (isTaxEnabled = !isTaxEnabled)}></button>
+      <input class="p-3 w-32 text-right" type="text" bind:value={appState.taxPercent} disabled={!isTaxEnabled} step="0.01" max="100" min="0" />
+    </div>
+    <div class="flex flex-row even:bg-[#F8F8F8] border-t border-custom">
+      <p class="p-3 grow text-right font-bold">Total Due</p>
+      <p class="p-3 w-32 text-right">{getCurrencySymbol(appState.currency)}{totalDue}</p>
+    </div>
+  </div>
+
+  <!-- Payment Info Section Redesigned --------------------------------->
+  <div class="mt-4">
+    <h4 class="mb-2 font-bold">Payment Info</h4>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold">Account No</label>
         <input
-          type="number"
-          bind:value={appState.discountPercent}
-          on:input={() => save()}
-          min="0"
-          max="100"
-          step="0.01"
-          disabled={!isDiscountEnabled}
+          type="text"
+          maxlength="20"
+          bind:value={appState.payment.accountNumber}
+          class="p-2 focus:outline-none"
         />
-      </span>
-    </div>
-    <div class="totals-row">
-      <span>Taxable Amount</span>
-      <span>{getCurrencySymbol(appState.currency)}{taxableAmount}</span>
-    </div>
-    <div class="totals-row">
-      <span>
-        Tax (%)
-        <label class="switch">
-          <input type="checkbox" bind:checked={isTaxEnabled} />
-          <span class="slider"></span>
-        </label>
-      </span>
-      <span>
+      </div>
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold">Account Name</label>
         <input
-          type="number"
-          bind:value={appState.taxPercent}
-          on:input={() => save()}
-          min="0"
-          max="100"
-          step="0.01"
-          disabled={!isTaxEnabled}
+          type="text"
+          maxlength="28"
+          bind:value={appState.payment.accountName}
+          class="p-2 focus:outline-none"
         />
-      </span>
+      </div>
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold">Bank Name</label>
+        <input
+          type="text"
+          maxlength="28"
+          bind:value={appState.payment.bank}
+          class="p-2 focus:outline-none"
+        />
+      </div>
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold">IFSC</label>
+        <input
+          type="text"
+          maxlength="11"
+          bind:value={appState.payment.ifsc}
+          class="p-2 focus:outline-none"
+        />
+      </div>
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold">SWIFT Code</label>
+        <input
+          type="text"
+          maxlength="11"
+          bind:value={appState.payment.swiftCode}
+          class="p-2 focus:outline-none"
+        />
+      </div>
     </div>
-    <div class="totals-row total-due">
-      <span>Total Due</span>
-      <span>{getCurrencySymbol(appState.currency)}{totalDue}</span>
-    </div>
-  </section>
+  </div>
 
-  <!-- Payment Info -->
-  <section class="payment-info">
-    <h2>Payment Information</h2>
-    <div class="payment-fields">
-      <div class="input-group">
-        <label>Account Number</label>
-        <input type="text" bind:value={appState.payment.accountNumber} maxlength="20" />
-      </div>
-      <div class="input-group">
-        <label>Account Name</label>
-        <input type="text" bind:value={appState.payment.accountName} maxlength="28" />
-      </div>
-      <div class="input-group">
-        <label>Bank Name</label>
-        <input type="text" bind:value={appState.payment.bank} maxlength="28" />
-      </div>
-      <div class="input-group">
-        <label>IFSC</label>
-        <input type="text" bind:value={appState.payment.ifsc} maxlength="11" />
-      </div>
-      <div class="input-group">
-        <label>SWIFT Code</label>
-        <input type="text" bind:value={appState.payment.swiftCode} maxlength="11" />
-      </div>
-    </div>
-  </section>
-
-  <!-- Download Button -->
-  <footer class="invoice-footer">
-    <button class="download-button" on:click={() => window.print()}>
+  <!-- Download Button -------------------------------------------------->
+  <div class="mt-6 flex justify-center print:hidden">
+    <button
+      on:click={() => window.print()}
+      class="px-4 py-3 rounded-lg bg-transparent text-black font-semibold flex items-center gap-2 hover:bg-black hover:text-white transition-transform duration-150"
+    >
       ⬇
       <span>Download Invoice</span>
     </button>
-  </footer>
+  </div>
 </div>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
-
-  /* Global Styles */
-  body {
-    margin: 0;
-    font-family: 'DotGothic16', sans-serif;
+  /* Global styles */
+  :global(body) {
+    font-family: 'DotGothic16', monospace;
     background-color: #f5f5f5;
     color: #000;
   }
 
   .invoice-container {
-    max-width: 800px;
-    margin: 40px auto;
-    background: rgba(255, 255, 255, 0.85);
-    border-radius: 16px;
-    padding: 40px;
+    background-color: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(10px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 1rem;
   }
 
-  h1, h2 {
-    margin-bottom: 16px;
-    font-weight: 400;
-    text-transform: uppercase;
-  }
-
-  h1 {
-    font-size: 2.5rem;
-  }
-
-  h2 {
-    font-size: 1.5rem;
-  }
-
-  label {
-    display: block;
-    font-size: 0.875rem;
-    color: #555;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-  }
-
-  input, textarea, select {
-    width: 100%;
-    padding: 12px;
+  input,
+  textarea,
+  select {
     border: none;
     border-bottom: 1px solid #aaa;
     background: transparent;
-    font-size: 1rem;
     color: #000;
-    transition: border-color 0.2s;
-  }
-
-  input:focus, textarea:focus, select:focus {
-    outline: none;
-    border-color: #000;
-  }
-
-  .icon-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #000;
-    font-size: 1.5rem;
-    transition: transform 0.2s;
-  }
-
-  .icon-button:hover {
-    transform: scale(1.1);
-  }
-
-  /* Header */
-  .invoice-header {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    margin-bottom: 40px;
-  }
-
-  .company-info {
-    flex: 1 1 40%;
-  }
-
-  .company-name {
-    font-size: 2rem;
-    font-weight: 400;
-    border: none;
-    border-bottom: 1px solid #000;
-    margin-bottom: 24px;
+    font-family: inherit;
     padding: 8px 0;
-    background: transparent;
-    text-transform: uppercase;
   }
 
-  .company-logo {
-    max-height: 100px;
-    margin-bottom: 24px;
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-bottom: 1px solid #000;
   }
 
-  .logo-container {
-    position: relative;
-  }
-
-  .logo-container .icon-button {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    background: #fff;
-    border-radius: 50%;
-    padding: 4px;
-  }
-
-  .logo-upload {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
+  button {
     color: #000;
-    margin-bottom: 24px;
-    font-size: 1.5rem;
-  }
-
-  .logo-upload input {
-    display: none;
-  }
-
-  .invoice-details {
-    flex: 1 1 50%;
-    text-align: right;
-  }
-
-  .details-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-
-  /* Addresses */
-  .addresses {
-    display: flex;
-    flex-wrap: wrap;
-    margin-bottom: 40px;
-  }
-
-  .address-block {
-    flex: 1 1 45%;
-    margin-right: 5%;
-  }
-
-  .address-block:last-child {
-    margin-right: 0;
-  }
-
-  .contact-info {
-    margin-top: 16px;
-  }
-
-  .contact-info .input-group {
-    margin-bottom: 16px;
-  }
-
-  /* Items */
-  .items-section {
-    margin-bottom: 40px;
-  }
-
-  .item-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-
-  .item-form input {
-    flex: 1 1 30%;
-    background: transparent;
-    border-bottom: 1px solid #aaa;
-  }
-
-  .add-button {
-    background: transparent;
-    color: #000;
-    border: 1px solid #000;
-    padding: 12px 16px;
-    border-radius: 50%;
+    background-color: transparent;
+    border: none;
     cursor: pointer;
-    font-size: 1.5rem;
-    line-height: 1;
-    transition: background 0.2s, color 0.2s;
+    font-family: inherit;
   }
 
-  .add-button:hover {
-    background: #000;
+  button:hover {
+    background-color: #000;
     color: #fff;
   }
 
-  .items-table {
-    width: 100%;
-    border-collapse: collapse;
+  .secondary-text {
+    color: #555;
   }
 
-  .table-header, .table-row {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr 40px;
-    gap: 16px;
-    align-items: center;
+  .border-custom {
+    border-color: rgba(0, 0, 0, 0.1);
   }
 
-  .table-header {
-    border-bottom: 1px solid #000;
-    padding-bottom: 8px;
-    margin-bottom: 16px;
-    color: #000;
-    font-weight: 400;
-    text-transform: uppercase;
-  }
-
-  .table-row {
-    margin-bottom: 16px;
-  }
-
-  .table-row input {
-    background: transparent;
-    border-bottom: 1px solid #aaa;
-  }
-
-  /* Totals */
-  .totals-section {
-    margin-bottom: 40px;
-    max-width: 400px;
-    margin-left: auto;
-  }
-
-  .totals-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-    font-size: 1rem;
-  }
-
-  .totals-row input {
-    width: 100px;
-    text-align: right;
-    background: transparent;
-    border-bottom: 1px solid #aaa;
-  }
-
-  .total-due {
-    font-weight: 400;
-    font-size: 1.25rem;
-    border-top: 1px solid #000;
-    padding-top: 16px;
-  }
-
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 40px;
-    height: 24px;
-    margin-left: 8px;
-  }
-
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-
-  .switch .slider {
-    position: absolute;
-    cursor: pointer;
+  .toggle-switch {
+    width: 36px;
+    height: 18px;
     background-color: #aaa;
-    border-radius: 24px;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    transition: background-color 0.2s;
+    border-radius: 20px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s;
   }
 
-  .switch .slider:before {
-    position: absolute;
+  .toggle-switch:before {
     content: '';
-    height: 20px;
-    width: 20px;
-    left: 2px;
-    bottom: 2px;
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 16px;
+    height: 16px;
     background-color: #fff;
     border-radius: 50%;
-    transition: transform 0.2s;
+    transition: all 0.3s;
   }
 
-  .switch input:checked + .slider {
+  .toggle-switch.active {
     background-color: #000;
   }
 
-  .switch input:checked + .slider:before {
-    transform: translateX(16px);
+  .toggle-switch.active:before {
+    transform: translateX(18px);
   }
 
-  /* Payment Info */
-  .payment-info {
-    margin-bottom: 40px;
-  }
-
-  .payment-fields {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
-  }
-
-  /* Footer */
-  .invoice-footer {
-    text-align: center;
-  }
-
-  .download-button {
-    background: transparent;
-    color: #000;
-    border: 1px solid #000;
-    padding: 12px 24px;
-    font-size: 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: background 0.2s, color 0.2s;
-    font-weight: 400;
-  }
-
-  .download-button:hover {
-    background: #000;
-    color: #fff;
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .details-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .addresses {
-      flex-direction: column;
-    }
-
-    .address-block {
-      margin-right: 0;
-    }
-
-    .item-form input {
-      flex: 1 1 100%;
-    }
-
-    .table-header, .table-row {
-      grid-template-columns: 1fr;
-    }
-
-    .table-header div, .table-row div {
-      margin-bottom: 8px;
-    }
-
-    .totals-section {
-      margin-left: 0;
-    }
-  }
-
-  /* Print Styles */
-  @media print {
-    .invoice-container {
-      box-shadow: none;
-      border: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    .add-button, .icon-button, .download-button, .switch {
-      display: none;
-    }
-
-    input, textarea, select {
-      border: none;
-    }
-
-    .table-row {
-      display: flex !important;
-      flex-wrap: nowrap !important;
-    }
+  textarea,
+  p,
+  input {
+    word-wrap: break-word;
   }
 </style>
