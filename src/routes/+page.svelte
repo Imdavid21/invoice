@@ -145,8 +145,8 @@
   $: taxAmount = ((taxableAmount * (+appState.taxPercent || 0)) / 100).toFixed(2);
   $: totalDue = (parseFloat(taxableAmount) + parseFloat(taxAmount)).toFixed(2);
 
-  let isDiscountEnabled = appState.discountPercent !== '';
-  let isTaxEnabled = appState.taxPercent !== '';
+  $: isDiscountEnabled = appState.discountPercent !== '';
+  $: isTaxEnabled = appState.taxPercent !== '';
 </script>
 
 <svelte:body on:click={() => save()} />
@@ -429,29 +429,30 @@
 </div>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap');
 
   /* Global Styles */
   body {
     margin: 0;
     font-family: 'Inter', sans-serif;
-    background-color: #f9fafb;
-    color: #111827;
+    background-color: #f0f0f0;
+    color: #000;
   }
 
   .invoice-container {
     max-width: 800px;
     margin: 40px auto;
-    background-color: rgba(255, 255, 255, 0.7); /* Frosted glass effect */
-    border-radius: 16px; /* Rounded edges */
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
     padding: 40px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px); /* Adds depth */
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
   h1, h2 {
     margin-bottom: 16px;
-    font-weight: 600;
+    font-weight: 500;
   }
 
   h1 {
@@ -465,38 +466,36 @@
   label {
     display: block;
     font-size: 0.875rem;
-    color: #6b7280;
+    color: #666;
     margin-bottom: 4px;
   }
 
   input, textarea, select {
     width: 100%;
     padding: 12px;
-    border: 1px solid rgba(209, 213, 219, 0.5); /* Subtle borders */
-    border-radius: 8px;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    background: transparent;
     font-size: 1rem;
-    color: #111827;
-    background-color: rgba(249, 250, 251, 0.7);
-    transition: border-color 0.2s, box-shadow 0.2s;
+    color: #000;
+    transition: border-color 0.2s;
   }
 
   input:focus, textarea:focus, select:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); /* Subtle focus effect */
+    border-color: #000;
   }
 
   .icon-button {
     background: none;
     border: none;
     cursor: pointer;
-    color: #6b7280;
-    transition: color 0.2s, transform 0.2s;
+    color: #666;
+    transition: color 0.2s;
   }
 
   .icon-button:hover {
-    color: #111827;
-    transform: scale(1.05); /* Subtle interaction feedback */
+    color: #000;
   }
 
   /* Header */
@@ -512,18 +511,17 @@
 
   .company-name {
     font-size: 1.5rem;
-    font-weight: 700;
+    font-weight: 500;
     border: none;
-    border-bottom: 1px solid #d1d5db;
+    border-bottom: 1px solid #ccc;
     margin-bottom: 24px;
     padding: 8px 0;
+    background: transparent;
   }
 
   .company-logo {
     max-height: 80px;
     margin-bottom: 24px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Depth for logo */
   }
 
   .logo-container {
@@ -540,7 +538,7 @@
     display: flex;
     align-items: center;
     cursor: pointer;
-    color: #6b7280;
+    color: #666;
     margin-bottom: 24px;
   }
 
@@ -549,7 +547,7 @@
   }
 
   .logo-upload:hover {
-    color: #111827;
+    color: #000;
   }
 
   .invoice-details {
@@ -574,9 +572,6 @@
     flex: 1 1 45%;
     margin-right: 5%;
     margin-bottom: 40px;
-    background: rgba(255, 255, 255, 0.6); /* Layered transparency */
-    border-radius: 8px;
-    padding: 20px;
   }
 
   .address-block:last-child {
@@ -605,23 +600,25 @@
 
   .item-form input {
     flex: 1 1 30%;
+    background: transparent;
+    border-bottom: 1px solid #ccc;
   }
 
   .add-button {
-    background: #3b82f6;
-    color: #ffffff;
-    border: none;
+    background: transparent;
+    color: #000;
+    border: 1px solid #000;
     padding: 12px 16px;
     border-radius: 8px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    transition: background 0.2s, transform 0.2s;
+    transition: background 0.2s, color 0.2s;
   }
 
   .add-button:hover {
-    background: #2563eb;
-    transform: scale(1.05); /* Interaction feedback */
+    background: #000;
+    color: #fff;
   }
 
   .items-table {
@@ -637,21 +634,19 @@
   }
 
   .table-header {
-    border-bottom: 2px solid #d1d5db;
+    border-bottom: 1px solid #ccc;
     padding-bottom: 8px;
     margin-bottom: 16px;
-    color: #6b7280;
+    color: #666;
   }
 
   .table-row {
     margin-bottom: 16px;
-    background: rgba(255, 255, 255, 0.7); /* Transparency in rows */
-    border-radius: 8px;
-    padding: 12px;
   }
 
   .table-row input {
-    background-color: rgba(249, 250, 251, 0.6);
+    background: transparent;
+    border-bottom: 1px solid #ccc;
   }
 
   /* Totals */
@@ -672,14 +667,13 @@
   .totals-row input {
     width: 100px;
     text-align: right;
-    background: rgba(249, 250, 251, 0.7); /* Frosted background */
-    border-radius: 4px;
+    background: transparent;
+    border-bottom: 1px solid #ccc;
   }
 
   .total-due {
-    font-weight: 700;
+    font-weight: 500;
     font-size: 1.25rem;
-    color: #3b82f6; /* Accent color for total */
   }
 
   .switch {
@@ -699,7 +693,7 @@
   .switch .slider {
     position: absolute;
     cursor: pointer;
-    background-color: #d1d5db;
+    background-color: #ccc;
     border-radius: 24px;
     top: 0;
     left: 0;
@@ -715,13 +709,13 @@
     width: 20px;
     left: 2px;
     bottom: 2px;
-    background-color: #ffffff;
+    background-color: #fff;
     border-radius: 50%;
     transition: transform 0.2s;
   }
 
   .switch input:checked + .slider {
-    background-color: #3b82f6;
+    background-color: #000;
   }
 
   .switch input:checked + .slider:before {
@@ -746,9 +740,9 @@
   }
 
   .download-button {
-    background: #3b82f6;
-    color: #ffffff;
-    border: none;
+    background: transparent;
+    color: #000;
+    border: 1px solid #000;
     padding: 12px 24px;
     font-size: 1rem;
     border-radius: 8px;
@@ -756,12 +750,12 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    transition: background 0.2s, transform 0.2s;
+    transition: background 0.2s, color 0.2s;
   }
 
   .download-button:hover {
-    background: #2563eb;
-    transform: scale(1.05); /* Interaction feedback */
+    background: #000;
+    color: #fff;
   }
 
   /* Responsive */
