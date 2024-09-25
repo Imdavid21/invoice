@@ -8,12 +8,10 @@
       created: '',
       due: '',
       from: '',
-      fromTaxIdName: '',
-      fromTaxId: '',
+      fromTaxDetails: '',
       fromContact: { mail: '', phone: '' },
       to: '',
-      toTaxIdName: '',
-      toTaxId: '',
+      toTaxDetails: '',
       toContact: { mail: '', phone: '' }
     },
     items: [{ desc: '', price: '', quantity: '' }],
@@ -108,12 +106,10 @@
         created: '',
         due: '',
         from: '',
-        fromTaxIdName: 'Enter Tax Name',
-        fromTaxId: '',
+        fromTaxDetails: '',
         fromContact: { mail: '', phone: '' },
         to: '',
-        toTaxIdName: 'Enter Tax Name',
-        toTaxId: '',
+        toTaxDetails: '',
         toContact: { mail: '', phone: '' }
       },
       items: [
@@ -156,9 +152,24 @@
     }, 0)
     .toFixed(2);
 
-  $: discountAmount = ((subTotal * (+appState.discountPercent || 0)) / 100).toFixed(2);
+  $: if (!isDiscountEnabled) {
+    appState.discountPercent = '';
+  }
+
+  $: discountAmount = isDiscountEnabled
+    ? ((subTotal * (+appState.discountPercent || 0)) / 100).toFixed(2)
+    : '0';
+
   $: taxableAmount = (subTotal - discountAmount).toFixed(2);
-  $: taxAmount = ((taxableAmount * (+appState.taxPercent || 0)) / 100).toFixed(2);
+
+  $: if (!isTaxEnabled) {
+    appState.taxPercent = '';
+  }
+
+  $: taxAmount = isTaxEnabled
+    ? ((taxableAmount * (+appState.taxPercent || 0)) / 100).toFixed(2)
+    : '0';
+
   $: totalDue = (parseFloat(taxableAmount) + parseFloat(taxAmount)).toFixed(2);
 
   // Toggles
@@ -184,14 +195,14 @@
   class="max-w-screen-md mx-auto px-4 sm:px-6 py-8 flex flex-col space-y-6 invoice-container print:shadow-none print:bg-white print:border-none"
 >
   <!-- Company & Invoice Details --------------------------------------->
-  <div class="flex flex-col sm:flex-row justify-between items-start print:flex">
-    <div class="flex flex-col gap-4 w-full sm:w-auto">
+  <div class="flex flex-col items-center print:flex print:items-center">
+    <div class="flex flex-col gap-4 w-full sm:w-auto items-center">
       <div class="">
         {#if appState.company.logo}
           <div class="flex flex-row items-center space-x-4">
             <div class="flex flex-col">
               <button
-                class="p-2 hover:bg-[#E2E2E2] rounded"
+                class="p-2 hover:bg-black hover:text-white rounded"
                 on:click={() => {
                   appState.company.logo = null;
                 }}
@@ -199,7 +210,7 @@
                 ✕
               </button>
               <button
-                class="p-2 hover:bg-[#E2E2E2] rounded"
+                class="p-2 hover:bg-black hover:text-white rounded"
                 on:click={() => document.getElementById('imageInput').click()}
               >
                 ＋
@@ -220,11 +231,11 @@
           </div>
         {:else}
           <button
-            class="p-2 flex flex-row gap-2 rounded-lg cursor-pointer hover:bg-[#F5F5F5]"
+            class="p-2 flex flex-row gap-2 rounded-lg cursor-pointer hover:bg-black hover:text-white transition-colors duration-150"
             on:click={() => document.getElementById('imageInput').click()}
           >
             ＋
-            <p class="text-sm text-[#333]">Click to select an image for logo</p>
+            <p class="text-sm">Click to select an image for logo</p>
             <input
               id="imageInput"
               type="file"
@@ -238,24 +249,26 @@
       <input
         type="text"
         bind:value={appState.company.name}
-        class="font-bold text-xl p-2 focus:outline-none w-full"
+        class="font-bold text-xl p-2 focus:outline-none w-full text-center"
         placeholder="Company Name"
       />
     </div>
-
-    <div class="relative flex flex-col items-start sm:items-end gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
-      <h2 class="font-bold text-2xl text-black text-left sm:text-right print:text-left">
-        INVOICE :
-        <input
-          type="text"
-          size="4"
-          placeholder="#0001"
-          maxlength="5"
-          bind:value={appState.invoice.number}
-          class="p-2 focus:outline-none w-20"
-        />
+    <div class="relative flex flex-col items-center gap-2 mt-4 w-full sm:w-auto">
+      <h2 class="font-bold text-2xl text-black text-center">
+        INVOICE
       </h2>
-      <div class="flex flex-col gap-1">
+      <div class="flex flex-col gap-1 items-center">
+        <p class="flex items-center">
+          <span class="mr-2 secondary-text">Invoice # :</span>
+          <input
+            type="text"
+            size="4"
+            placeholder="#0001"
+            maxlength="5"
+            bind:value={appState.invoice.number}
+            class="p-2 focus:outline-none w-20 text-center"
+          />
+        </p>
         <p class="flex items-center">
           <span class="mr-2 secondary-text">Created :</span>
           <input
@@ -303,21 +316,12 @@
       ></textarea>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <p class="flex items-center">
-          <span class="w-24 secondary-text">Tax Name:</span>
+          <span class="w-24 secondary-text">Tax Details:</span>
           <input
             type="text"
-            bind:value={appState.invoice.fromTaxIdName}
+            bind:value={appState.invoice.fromTaxDetails}
             class="p-2 focus:outline-none w-full"
-            placeholder="Enter Tax Name"
-          />
-        </p>
-        <p class="flex items-center">
-          <span class="w-24 secondary-text">Tax ID:</span>
-          <input
-            type="text"
-            bind:value={appState.invoice.fromTaxId}
-            class="p-2 focus:outline-none w-full"
-            placeholder="Enter Tax ID"
+            placeholder="Enter Tax ID and Name"
           />
         </p>
         <p class="flex items-center">
@@ -353,21 +357,12 @@
       ></textarea>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <p class="flex items-center">
-          <span class="w-24 secondary-text">Tax Name:</span>
+          <span class="w-24 secondary-text">Tax Details:</span>
           <input
             type="text"
-            bind:value={appState.invoice.toTaxIdName}
+            bind:value={appState.invoice.toTaxDetails}
             class="p-2 focus:outline-none w-full"
-            placeholder="Enter Tax Name"
-          />
-        </p>
-        <p class="flex items-center">
-          <span class="w-24 secondary-text">Tax ID:</span>
-          <input
-            type="text"
-            bind:value={appState.invoice.toTaxId}
-            class="p-2 focus:outline-none w-full"
-            placeholder="Enter Tax ID"
+            placeholder="Enter Tax ID and Name"
           />
         </p>
         <p class="flex items-center">
@@ -393,12 +388,12 @@
   </div>
 
   <!-- New Item Form --------------------------------------------------->
-  <form class="flex flex-col sm:flex-row justify-between gap-2">
+  <form class="flex flex-col sm:flex-row justify-between gap-2 print:hidden">
     <div class="flex items-center">
       <button
         disabled={itemDesc == ''}
         on:click={() => addItem()}
-        class="p-2 rounded-full bg-transparent hover:bg-black text-black hover:text-white transition-all duration-100 ease-in-out print:hidden"
+        class="p-2 rounded-full bg-transparent hover:bg-black text-black hover:text-white transition-all duration-100 ease-in-out"
       >
         ＋
       </button>
@@ -443,7 +438,7 @@
     <div class="flex flex-row border-b border-custom">
       <p class="font-bold p-3 grow">Item name</p>
       <p class="font-bold p-3 w-32 hidden sm:block">Unit Price</p>
-      <p class="font-bold p-3 w-24 hidden sm:block">Qty</p>
+      <p class="font-bold p-3 w-24 hidden sm:block">Quantity</p>
       <p class="font-bold p-3 w-32 text-right hidden sm:block">Total</p>
     </div>
     {#each appState.items as item, index}
@@ -545,7 +540,7 @@
   <div class="mt-6 flex justify-center print:hidden">
     <button
       on:click={() => window.print()}
-      class="px-4 py-3 rounded-lg bg-transparent text-black font-semibold flex items-center gap-2 hover:bg-black hover:text-white transition-transform duration-150"
+      class="px-4 py-3 rounded-lg bg-transparent text-black font-semibold flex items-center gap-2 hover:bg-gray-800 hover:text-white transition-colors duration-150"
     >
       ⬇
       <span>Download Invoice</span>
@@ -638,9 +633,26 @@
     transform: translateX(18px);
   }
 
+  .toggle-switch:hover {
+    background-color: inherit;
+  }
+
+  .toggle-switch:hover:before {
+    background-color: #fff;
+  }
+
   textarea,
   p,
   input {
     word-wrap: break-word;
+  }
+
+  /* Adjust hover effect for download button */
+  .hover\:bg-gray-800:hover {
+    background-color: #333;
+  }
+
+  .hover\:text-white:hover {
+    color: #fff;
   }
 </style>
