@@ -2,11 +2,6 @@
   import { Plus, Trash, ImagePlus, Download } from 'lucide-svelte';
   import { onMount } from 'svelte';
 
-  // Toggles for discount and tax functionality
-  let isDiscountEnabled = true;
-  let isTaxEnabled = true;
-
-  // Initial state of the application
   let appState = {
     company: { name: '', logo: '' },
     invoice: {
@@ -34,7 +29,6 @@
     currency: 'USD'
   };
 
-  // Currency options with flags
   let currencyOptions = [
     { code: 'USD', symbol: '$', name: 'US Dollar', flag: '🇺🇸' },
     { code: 'EUR', symbol: '€', name: 'Euro', flag: '🇪🇺' },
@@ -53,16 +47,17 @@
     { code: 'SGD', symbol: 'S$', name: 'Singapore Dollar', flag: '🇸🇬' }
   ];
 
-  // Utility function to get currency symbols
+  let isDiscountEnabled = true;
+  let isTaxEnabled = true;
+
   function getCurrencySymbol(code) {
     const currency = currencyOptions.find((c) => c.code === code);
     return currency ? currency.symbol : '';
   }
 
-  // Handle image change for logo upload
   function handleImageChange(event) {
     const file = event.target.files[0];
-    if (file && ['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+    if (file && (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/webp')) {
       const reader = new FileReader();
       reader.onload = () => {
         appState.company.logo = reader.result;
@@ -74,207 +69,106 @@
     }
   }
 
-  // Save data to local storage
   function save() {
     localStorage.setItem('invoiceData', JSON.stringify(appState));
   }
 
-  // Add item to the invoice
   function addItem() {
     if (itemDesc !== '' && itemPrice > 0 && itemQty > 0) {
       appState.items = [
         ...appState.items,
-        {
-          desc: itemDesc,
-          price: parseFloat(itemPrice).toFixed(2),
-          quantity: parseFloat(itemQty).toFixed(2)
-        }
+        { desc: itemDesc, price: parseFloat(itemPrice).toFixed(2), quantity: parseFloat(itemQty).toFixed(2) }
       ];
-
       itemDesc = '';
       itemPrice = 1;
       itemQty = 1;
-
       save();
       document.getElementById('descBox').focus();
     }
   }
 
-  // Delete an item from the invoice
   function deleteItem(index) {
     appState.items = appState.items.filter((_, i) => i !== index);
     save();
   }
 
-  // Reset application state
-  function reset() {
-    appState = {
-      company: { name: 'Wayne Enterprises', logo: '' },
-      invoice: {
-        number: '#0001',
-        created: '',
-        due: '',
-        from: '',
-        fromTaxId: '',
-        fromContact: { mail: '', phone: '' },
-        to: '',
-        toTaxId: '',
-        toContact: { mail: '', phone: '' }
-      },
-      items: [
-        { desc: 'Batmobile Repair', price: '15000', quantity: '1' },
-        { desc: 'Grappling Hooks', price: '500', quantity: '20' },
-        { desc: 'Portal Gun', price: '200000', quantity: '1' }
-      ],
-      taxPercent: '',
-      discountPercent: '',
-      note: '',
-      payment: {
-        accountNumber: '',
-        accountName: '',
-        bank: '',
-        ifsc: '',
-        swiftCode: ''
-      },
-      currency: 'USD'
-    };
-
-    save();
-  }
-
-  // On component mount, load saved data or reset
   onMount(() => {
     const savedData = localStorage.getItem('invoiceData');
     if (savedData) {
       appState = JSON.parse(savedData);
-    } else {
-      reset();
     }
   });
 
-  // Item details for adding to the invoice
   let itemDesc = '';
   let itemPrice = 1;
   let itemQty = 1;
 
-  // Calculate financial data
-  $: subTotal = appState.items.reduce((total, item) => {
-    return total + item.price * item.quantity;
-  }, 0).toFixed(2);
-
+  $: subTotal = appState.items.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
   $: discountAmount = ((subTotal * (+appState.discountPercent || 0)) / 100).toFixed(2);
   $: taxableAmount = (subTotal - discountAmount).toFixed(2);
   $: taxAmount = ((taxableAmount * (+appState.taxPercent || 0)) / 100).toFixed(2);
-  $: totalDue = Math.min(parseFloat(taxableAmount) + parseFloat(taxAmount), 10000000000).toFixed(2); // Limit to 10 billion
-
+  $: totalDue = (parseFloat(taxableAmount) + parseFloat(taxAmount)).toFixed(2);
 </script>
 
 <svelte:head>
   <title>Billie - No Strings Attached Invoice Generator</title>
-  <meta
-    name="description"
-    content="Create and download invoices instantly, with zero signups or tracking."
-  />
+  <meta name="description" content="Create and download invoices instantly, with zero signups or tracking." />
 </svelte:head>
 
 <svelte:body on:click={() => save()} />
 
-<div
-  class="max-w-screen-md mx-auto px-6 py-8 flex flex-col space-y-6 font-montserrat bg-[#FAFAFA] border border-[#E2E2E2] rounded-xl shadow-sm print:shadow-none print:bg-white print:border-none"
->
+<div class="max-w-screen-md mx-auto px-6 py-8 flex flex-col space-y-6 font-montserrat bg-[#FAFAFA] border border-[#E2E2E2] rounded-xl shadow-sm print:shadow-none print:bg-white print:border-none">
   <!-- Company & Invoice Details -->
-  <div class="flex flex-row justify-between items-start print:flex">
+  <div class="flex justify-between items-start">
     <div class="flex flex-col gap-4">
       <div>
         {#if appState.company.logo}
-          <div class="flex flex-row items-center space-x-4">
+          <div class="flex items-center space-x-4">
             <div class="flex flex-col border border-[#E2E2E2] rounded-xl">
-              <button
-                class="p-2 hover:bg-[#E2E2E2] rounded"
-                on:click={() => {
-                  appState.company.logo = null;
-                }}
-              >
+              <button class="p-2 hover:bg-[#E2E2E2] rounded" on:click={() => { appState.company.logo = null; }}>
                 <Trash />
               </button>
               <button class="p-2 hover:bg-[#E2E2E2] rounded" on:click={() => document.getElementById('imageInput').click()}>
                 <ImagePlus />
-                <input
-                  id="imageInput"
-                  type="file"
-                  accept=".png,.jpg,.jpeg,.webp"
-                  on:change={handleImageChange}
-                  class="hidden"
-                />
+                <input id="imageInput" type="file" accept=".png,.jpg,.jpeg,.webp" on:change={handleImageChange} class="hidden" />
               </button>
             </div>
-            <img
-              src={appState.company.logo}
-              alt="Company Logo"
-              class="max-h-18 max-w-40 object-cover m-0"
-            />
+            <img src={appState.company.logo} alt="Company Logo" class="max-h-18 max-w-40 object-cover m-0" />
           </div>
         {:else}
-          <button
-            class="p-2 flex flex-row gap-2 rounded-lg border border-[#E2E2E2] cursor-pointer hover:bg-[#F5F5F5]"
-            on:click={() => document.getElementById('imageInput').click()}
-          >
+          <button class="p-2 flex flex-row gap-2 rounded-lg border border-[#E2E2E2] cursor-pointer hover:bg-[#F5F5F5]" on:click={() => document.getElementById('imageInput').click()}>
             <ImagePlus />
             <p class="text-sm text-[#333]">Click to select an image for logo</p>
-            <input
-              id="imageInput"
-              type="file"
-              accept=".png,.jpg,.jpeg,.webp"
-              on:change={handleImageChange}
-              class="hidden"
-            />
+            <input id="imageInput" type="file" accept=".png,.jpg,.jpeg,.webp" on:change={handleImageChange} class="hidden" />
           </button>
         {/if}
       </div>
-      <input
-        class="font-bold text-xl border border-[#E2E2E2] p-3 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
-        type="text"
-        bind:value={appState.company.name}
-      />
+      <input class="font-bold text-xl border border-[#E2E2E2] p-3 rounded-lg focus:outline-none focus:border-[#5A5A5A]" type="text" bind:value={appState.company.name} />
     </div>
 
-    <div class="relative flex flex-col items-end gap-2 print:items-start print:w-full">
-      <h2 class="font-bold text-2xl text-[#1E6F5C] text-right print:text-left">
-        INVOICE :
-        <input
-          type="text"
-          size="4"
-          placeholder="#0001"
-          maxlength="5"
-          bind:value={appState.invoice.number}
-          class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
-        />
-      </h2>
-      <div class="flex flex-col gap-1">
-        <p>
-          Created :
-          <input
-            bind:value={appState.invoice.created}
-            type="date"
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
-          />
-        </p>
-        <p>
-          Due :
-          <input
-            bind:value={appState.invoice.due}
-            type="date"
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
-          />
-        </p>
+    <!-- Adjusted Section for Due, Created, and Currency -->
+    <div class="flex flex-col gap-2 items-end ml-auto print:w-full">
+      <div class="flex flex-row items-center gap-2">
+        <h2 class="font-bold text-2xl text-[#1E6F5C]">INVOICE : </h2>
+        <input type="text" size="5" placeholder="#0001" maxlength="5" bind:value={appState.invoice.number} class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]" />
       </div>
-      <select bind:value={appState.currency} class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]">
-        {#each currencyOptions as option}
-          <option value={option.code}>
-            {option.flag} {option.code} - {option.name}
-          </option>
-        {/each}
-      </select>
+      <div class="flex flex-col items-end gap-1">
+        <label class="flex items-center gap-1">
+          Created:
+          <input bind:value={appState.invoice.created} type="date" class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]" />
+        </label>
+        <label class="flex items-center gap-1">
+          Due:
+          <input bind:value={appState.invoice.due} type="date" class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]" />
+        </label>
+        <select bind:value={appState.currency} class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]">
+          {#each currencyOptions as option}
+            <option value={option.code}>
+              {option.flag} {option.code} - {option.name}
+            </option>
+          {/each}
+        </select>
+      </div>
     </div>
   </div>
 
@@ -294,15 +188,6 @@
         class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
       ></textarea>
       <div class="grid grid-cols-2 gap-2">
-        <p class="flex items-center">
-          <span class="w-24">Tax Name:</span>
-          <input
-            type="text"
-            bind:value={appState.invoice.fromTaxId}
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
-            placeholder="Enter Tax Name"
-          />
-        </p>
         <p class="flex items-center">
           <span class="w-24">Tax ID:</span>
           <input
@@ -344,15 +229,6 @@
         class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
       ></textarea>
       <div class="grid grid-cols-2 gap-2">
-        <p class="flex items-center">
-          <span class="w-24">Tax Name:</span>
-          <input
-            type="text"
-            bind:value={appState.invoice.toTaxId}
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
-            placeholder="Enter Tax Name"
-          />
-        </p>
         <p class="flex items-center">
           <span class="w-24">Tax ID:</span>
           <input
@@ -473,7 +349,7 @@
     </div>
   </div>
 
-  <!-- Payment Info Section Redesigned -->
+  <!-- Payment Info Section -->
   <div class="mt-4">
     <h4 class="mb-2 font-bold">Payment Info</h4>
     <div class="grid grid-cols-2 gap-4">
