@@ -16,13 +16,13 @@
 			{subtitle}
 		</p>
 		<div class="flex flex-row">
-			<FeatureItem label="No Signup">
+			<FeatureItem label="No Signup.">
 				<LogIn color="#15273c" />
 			</FeatureItem>
-			<FeatureItem label="No Telemetry">
+			<FeatureItem label="No Ads.">
 				<UserRoundSearch color="#15273c" />
 			</FeatureItem>
-			<FeatureItem label="Open Source">
+			<FeatureItem label="Only what you need.">
 				<Code color="#15273c" />
 			</FeatureItem>
 		</div>
