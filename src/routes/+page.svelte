@@ -374,57 +374,17 @@
     </div>
   </div>
 
-  <!-- New Item Form --------------------------------------------------->
-  <form class="flex flex-col sm:flex-row justify-between gap-2">
-    <div class="flex items-center">
-      <button
-        disabled={itemDesc == ''}
-        on:click={() => addItem()}
-        class="p-2 rounded-full bg-gray-300 hover:bg-gray-400 transition-all duration-100 ease-in-out print:hidden"
-      >
-        <Plus stroke="#557571" />
-      </button>
+  <!-- Item Table Section ----------------------------------------------------------->
+  <div class="mt-4">
+    <div class="grid grid-cols-4 gap-1 bg-[#1E3A8A] text-white font-bold p-2 rounded-t-lg">
+      <p class="col-span-2">Item</p>
+      <p class="text-center">Quantity</p>
+      <p class="text-center">Rate</p>
+      <p class="text-right">Amount</p>
     </div>
-
-    <div class="flex flex-col sm:flex-row gap-2 w-full">
-      <input
-        id="descBox"
-        type="text"
-        bind:value={itemDesc}
-        placeholder="Item name"
-        class="border-2 border-gray-400 rounded-lg p-3 focus:outline-none focus:border-gray-600 grow w-full overflow-wrap break-words"
-        on:keypress={(e) => e.key == 'Enter' && addItem()}
-      />
-      <input
-        type="number"
-        bind:value={itemPrice}
-        placeholder="Unit Price"
-        min="0"
-        step="0.01"
-        class="border-2 border-gray-400 rounded-lg p-3 focus:outline-none focus:border-gray-600 w-full sm:w-32"
-        on:keypress={(e) => e.key == 'Enter' && addItem()}
-      />
-      <input
-        type="number"
-        bind:value={itemQty}
-        placeholder="Quantity"
-        min="1"
-        step="1"
-        class="border-2 border-gray-400 rounded-lg p-3 focus:outline-none focus:border-gray-600 w-full sm:w-32"
-        on:keypress={(e) => e.key == 'Enter' && addItem()}
-      />
-      <p class="border-2 border-gray-400 p-3 w-full sm:w-32 text-right">
-        {getCurrencySymbol(appState.currency)}{(itemPrice * itemQty).toFixed(2)}
-      </p>
-    </div>
-  </form>
-
-  <!-- Item Table ----------------------------------------------------------->
-  <div class="flex flex-col mt-4 bg-white p-2 rounded-lg border-2 border-gray-400 item-descriptions">
-    <h2 class="mb-2 font-bold">Item Descriptions</h2>
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col bg-white border-2 border-gray-400 rounded-b-lg">
       {#each appState.items as item, index}
-        <div class="flex items-center gap-2 border-b border-gray-300 pb-2">
+        <div class="flex items-center gap-2 p-2 border-b border-gray-300">
           <input
             class="grow border-2 border-gray-300 rounded-md p-2 focus:outline-none focus:border-gray-500"
             type="text"
@@ -461,6 +421,9 @@
           </button>
         </div>
       {/each}
+      <button class="mt-2 ml-2 text-green-600 font-semibold hover:text-green-800" on:click={() => addItem()}>
+        + Line Item
+      </button>
     </div>
   </div>
 
