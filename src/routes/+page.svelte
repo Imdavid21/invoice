@@ -1,5 +1,4 @@
 <script>
-  import { Plus, Trash2, ImagePlus, Download } from 'lucide-svelte';
   import { onMount } from 'svelte';
 
   let appState = {
@@ -32,8 +31,8 @@
   };
 
   let currencyOptions = [
-    { code: 'USD', symbol: '$', name: 'US Dollar', flag: '🇺🇸' },
-    { code: 'EUR', symbol: '€', name: 'Euro', flag: '🇪🇺' },
+    { code: 'USD', symbol: '$', name: 'US Dollar' },
+    { code: 'EUR', symbol: '€', name: 'Euro' },
     // Add more currencies as needed
   ];
 
@@ -90,7 +89,7 @@
 
   function reset() {
     appState = {
-      company: { name: 'Your Company', logo: '' },
+      company: { name: '', logo: '' },
       invoice: {
         number: '#0001',
         created: '',
@@ -159,13 +158,13 @@
         <div class="logo-container">
           <img src={appState.company.logo} alt="Company Logo" class="company-logo" />
           <button class="icon-button" on:click={() => { appState.company.logo = ''; save(); }}>
-            <Trash2 />
+            ✕
           </button>
         </div>
       {:else}
         <label class="logo-upload">
           <input type="file" accept=".png,.jpg,.jpeg,.webp" on:change={handleImageChange} />
-          <ImagePlus />
+          <span>＋</span>
           <span>Upload Logo</span>
         </label>
       {/if}
@@ -195,15 +194,13 @@
           <label>Currency</label>
           <select bind:value={appState.currency}>
             {#each currencyOptions as option}
-              <option value={option.code}>{option.flag} {option.code} - {option.name}</option>
+              <option value={option.code}>{option.code} - {option.name}</option>
             {/each}
           </select>
         </div>
       </div>
     </div>
   </header>
-
-  <hr />
 
   <!-- Addresses -->
   <section class="addresses">
@@ -253,8 +250,6 @@
     </div>
   </section>
 
-  <hr />
-
   <!-- Items -->
   <section class="items-section">
     <h2>Invoice Items</h2>
@@ -283,7 +278,7 @@
         required
       />
       <button type="submit" class="add-button">
-        <Plus />
+        ＋
       </button>
     </form>
 
@@ -328,7 +323,7 @@
           <div>{(item.price * item.quantity).toFixed(2)}</div>
           <div>
             <button class="icon-button" on:click={() => deleteItem(index)}>
-              <Trash2 />
+              ✕
             </button>
           </div>
         </div>
@@ -422,59 +417,61 @@
   <!-- Download Button -->
   <footer class="invoice-footer">
     <button class="download-button" on:click={() => window.print()}>
-      <Download />
+      ⬇
       <span>Download Invoice</span>
     </button>
   </footer>
 </div>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
 
   /* Global Styles */
   body {
     margin: 0;
-    font-family: 'Inter', sans-serif;
-    background-color: #f0f0f0;
+    font-family: 'DotGothic16', sans-serif;
+    background-color: #f5f5f5;
     color: #000;
   }
 
   .invoice-container {
     max-width: 800px;
     margin: 40px auto;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 16px;
     padding: 40px;
-    backdrop-filter: blur(20px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
   }
 
   h1, h2 {
     margin-bottom: 16px;
-    font-weight: 500;
+    font-weight: 400;
+    text-transform: uppercase;
   }
 
   h1 {
-    font-size: 2rem;
+    font-size: 2.5rem;
   }
 
   h2 {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
   }
 
   label {
     display: block;
     font-size: 0.875rem;
-    color: #666;
+    color: #555;
     margin-bottom: 4px;
+    text-transform: uppercase;
   }
 
   input, textarea, select {
     width: 100%;
     padding: 12px;
     border: none;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #aaa;
     background: transparent;
     font-size: 1rem;
     color: #000;
@@ -490,12 +487,13 @@
     background: none;
     border: none;
     cursor: pointer;
-    color: #666;
-    transition: color 0.2s;
+    color: #000;
+    font-size: 1.5rem;
+    transition: transform 0.2s;
   }
 
   .icon-button:hover {
-    color: #000;
+    transform: scale(1.1);
   }
 
   /* Header */
@@ -503,6 +501,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    margin-bottom: 40px;
   }
 
   .company-info {
@@ -510,17 +509,18 @@
   }
 
   .company-name {
-    font-size: 1.5rem;
-    font-weight: 500;
+    font-size: 2rem;
+    font-weight: 400;
     border: none;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #000;
     margin-bottom: 24px;
     padding: 8px 0;
     background: transparent;
+    text-transform: uppercase;
   }
 
   .company-logo {
-    max-height: 80px;
+    max-height: 100px;
     margin-bottom: 24px;
   }
 
@@ -530,24 +530,24 @@
 
   .logo-container .icon-button {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: -10px;
+    right: -10px;
+    background: #fff;
+    border-radius: 50%;
+    padding: 4px;
   }
 
   .logo-upload {
     display: flex;
     align-items: center;
     cursor: pointer;
-    color: #666;
+    color: #000;
     margin-bottom: 24px;
+    font-size: 1.5rem;
   }
 
   .logo-upload input {
     display: none;
-  }
-
-  .logo-upload:hover {
-    color: #000;
   }
 
   .invoice-details {
@@ -565,13 +565,12 @@
   .addresses {
     display: flex;
     flex-wrap: wrap;
-    margin-top: 40px;
+    margin-bottom: 40px;
   }
 
   .address-block {
     flex: 1 1 45%;
     margin-right: 5%;
-    margin-bottom: 40px;
   }
 
   .address-block:last-child {
@@ -588,7 +587,7 @@
 
   /* Items */
   .items-section {
-    margin-top: 40px;
+    margin-bottom: 40px;
   }
 
   .item-form {
@@ -601,7 +600,7 @@
   .item-form input {
     flex: 1 1 30%;
     background: transparent;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #aaa;
   }
 
   .add-button {
@@ -609,10 +608,10 @@
     color: #000;
     border: 1px solid #000;
     padding: 12px 16px;
-    border-radius: 8px;
+    border-radius: 50%;
     cursor: pointer;
-    display: flex;
-    align-items: center;
+    font-size: 1.5rem;
+    line-height: 1;
     transition: background 0.2s, color 0.2s;
   }
 
@@ -634,10 +633,12 @@
   }
 
   .table-header {
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #000;
     padding-bottom: 8px;
     margin-bottom: 16px;
-    color: #666;
+    color: #000;
+    font-weight: 400;
+    text-transform: uppercase;
   }
 
   .table-row {
@@ -646,12 +647,12 @@
 
   .table-row input {
     background: transparent;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #aaa;
   }
 
   /* Totals */
   .totals-section {
-    margin-top: 40px;
+    margin-bottom: 40px;
     max-width: 400px;
     margin-left: auto;
   }
@@ -668,12 +669,14 @@
     width: 100px;
     text-align: right;
     background: transparent;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #aaa;
   }
 
   .total-due {
-    font-weight: 500;
+    font-weight: 400;
     font-size: 1.25rem;
+    border-top: 1px solid #000;
+    padding-top: 16px;
   }
 
   .switch {
@@ -693,7 +696,7 @@
   .switch .slider {
     position: absolute;
     cursor: pointer;
-    background-color: #ccc;
+    background-color: #aaa;
     border-radius: 24px;
     top: 0;
     left: 0;
@@ -724,7 +727,7 @@
 
   /* Payment Info */
   .payment-info {
-    margin-top: 40px;
+    margin-bottom: 40px;
   }
 
   .payment-fields {
@@ -736,7 +739,6 @@
   /* Footer */
   .invoice-footer {
     text-align: center;
-    margin-top: 40px;
   }
 
   .download-button {
@@ -751,6 +753,7 @@
     align-items: center;
     gap: 8px;
     transition: background 0.2s, color 0.2s;
+    font-weight: 400;
   }
 
   .download-button:hover {
