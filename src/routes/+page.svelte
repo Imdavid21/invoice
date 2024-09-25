@@ -442,10 +442,11 @@
   .invoice-container {
     max-width: 800px;
     margin: 40px auto;
-    background-color: #ffffff;
-    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.7); /* Frosted glass effect */
+    border-radius: 16px; /* Rounded edges */
     padding: 40px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px); /* Adds depth */
   }
 
   h1, h2 {
@@ -471,18 +472,18 @@
   input, textarea, select {
     width: 100%;
     padding: 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
+    border: 1px solid rgba(209, 213, 219, 0.5); /* Subtle borders */
+    border-radius: 8px;
     font-size: 1rem;
     color: #111827;
-    background-color: #f9fafb;
-    transition: border-color 0.2s;
+    background-color: rgba(249, 250, 251, 0.7);
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
 
   input:focus, textarea:focus, select:focus {
     outline: none;
     border-color: #3b82f6;
-    background-color: #ffffff;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); /* Subtle focus effect */
   }
 
   .icon-button {
@@ -490,11 +491,12 @@
     border: none;
     cursor: pointer;
     color: #6b7280;
-    transition: color 0.2s;
+    transition: color 0.2s, transform 0.2s;
   }
 
   .icon-button:hover {
     color: #111827;
+    transform: scale(1.05); /* Subtle interaction feedback */
   }
 
   /* Header */
@@ -520,6 +522,8 @@
   .company-logo {
     max-height: 80px;
     margin-bottom: 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Depth for logo */
   }
 
   .logo-container {
@@ -570,6 +574,9 @@
     flex: 1 1 45%;
     margin-right: 5%;
     margin-bottom: 40px;
+    background: rgba(255, 255, 255, 0.6); /* Layered transparency */
+    border-radius: 8px;
+    padding: 20px;
   }
 
   .address-block:last-child {
@@ -605,15 +612,16 @@
     color: #ffffff;
     border: none;
     padding: 12px 16px;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.2s;
   }
 
   .add-button:hover {
     background: #2563eb;
+    transform: scale(1.05); /* Interaction feedback */
   }
 
   .items-table {
@@ -637,10 +645,13 @@
 
   .table-row {
     margin-bottom: 16px;
+    background: rgba(255, 255, 255, 0.7); /* Transparency in rows */
+    border-radius: 8px;
+    padding: 12px;
   }
 
   .table-row input {
-    background-color: #f9fafb;
+    background-color: rgba(249, 250, 251, 0.6);
   }
 
   /* Totals */
@@ -661,11 +672,14 @@
   .totals-row input {
     width: 100px;
     text-align: right;
+    background: rgba(249, 250, 251, 0.7); /* Frosted background */
+    border-radius: 4px;
   }
 
   .total-due {
     font-weight: 700;
     font-size: 1.25rem;
+    color: #3b82f6; /* Accent color for total */
   }
 
   .switch {
@@ -737,16 +751,17 @@
     border: none;
     padding: 12px 24px;
     font-size: 1rem;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.2s;
   }
 
   .download-button:hover {
     background: #2563eb;
+    transform: scale(1.05); /* Interaction feedback */
   }
 
   /* Responsive */
