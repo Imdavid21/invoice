@@ -1,5 +1,5 @@
 <script>
-  import { Plus, Trash, ImagePlus, RotateCw, Download } from 'lucide-svelte';
+  import { Plus, Trash, ImagePlus, Download } from 'lucide-svelte';
   import { onMount } from 'svelte';
 
   let appState = {
@@ -9,19 +9,15 @@
       created: '',
       due: '',
       from: '',
-      fromTaxIdName: 'Enter Tax Name',
+      fromTaxIdName: '',
       fromTaxId: '',
       fromContact: { mail: '', phone: '' },
       to: '',
-      toTaxIdName: 'Enter Tax Name',
+      toTaxIdName: '',
       toTaxId: '',
       toContact: { mail: '', phone: '' }
     },
-    items: [
-      { desc: 'Social Media Strategy for Blips and Chitz', price: '2000', quantity: '1' },
-      { desc: 'SEO Optimization for Squanchy\'s website', price: '1500', quantity: '1' },
-      { desc: 'Email Campaign - "Get Schwifty"', price: '800', quantity: '1' }
-    ],
+    items: [{ desc: '', price: '', quantity: '' }],
     taxPercent: '',
     discountPercent: '',
     note: '',
@@ -60,6 +56,7 @@
 
   function handleImageChange(event) {
     const file = event.target.files[0];
+
     if (
       file &&
       (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/webp')
@@ -121,9 +118,9 @@
         toContact: { mail: '', phone: '' }
       },
       items: [
-        { desc: 'Social Media Strategy for Blips and Chitz', price: '2000', quantity: '1' },
-        { desc: 'SEO Optimization for Squanchy\'s website', price: '1500', quantity: '1' },
-        { desc: 'Email Campaign - "Get Schwifty"', price: '800', quantity: '1' }
+        { desc: 'SEO Consultation', price: '5000', quantity: '1' },
+        { desc: 'Social Media Strategy', price: '2000', quantity: '3' },
+        { desc: 'Content Creation', price: '10000', quantity: '1' }
       ],
       taxPercent: '',
       discountPercent: '',
@@ -165,6 +162,7 @@
   $: taxAmount = ((taxableAmount * (+appState.taxPercent || 0)) / 100).toFixed(2);
   $: totalDue = (parseFloat(taxableAmount) + parseFloat(taxAmount)).toFixed(2);
 
+  // Toggles
   let isDiscountEnabled = true;
   let isTaxEnabled = true;
 </script>
@@ -182,7 +180,7 @@
 <div
   class="max-w-screen-md mx-auto px-6 py-8 flex flex-col space-y-6 font-montserrat bg-[#FAFAFA] border border-[#E2E2E2] rounded-xl shadow-sm print:shadow-none print:bg-white print:border-none"
 >
-  <!-- Company & Invoice Details -->
+  <!-- Company & Invoice Details --------------------------------------->
   <div class="flex flex-row justify-between items-start print:flex">
     <div class="flex flex-col gap-4">
       <div class="">
@@ -250,12 +248,6 @@
           class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
         />
       </h2>
-      <button
-        on:click={() => reset()}
-        class="p-2 rounded-lg hover:bg-[#E2E2E2] transition-all duration-100 ease-in-out"
-      >
-        <RotateCw strokeWidth={1.5} />
-      </button>
       <div class="flex flex-col gap-1">
         <p>
           Created :
@@ -286,11 +278,11 @@
 
   <hr class="border-[#E2E2E2]" />
 
-  <!-- From & To Sections -->
-  <h3 class="font-bold text-lg mt-4">Contact Info</h3>
+  <!-- From & To  ------------------------------------------------------>
+
   <div class="flex flex-row justify-between gap-4">
     <div class="flex flex-col gap-2">
-      <h4 class="mb-2 font-bold">From</h4>
+      <h4 class="mb-2 font-bold">Contact Info</h4>
       <textarea
         style="resize: none; padding: 8px 12px;"
         placeholder="Enter sender's name and address"
@@ -340,7 +332,7 @@
       </div>
     </div>
     <div class="flex flex-col gap-2">
-      <h4 class="mb-2 font-bold">To</h4>
+      <h4 class="mb-2 font-bold">Contact Info</h4>
       <textarea
         style="resize: none; padding: 8px 12px;"
         placeholder="Enter recipient's name and address"
@@ -391,8 +383,8 @@
     </div>
   </div>
 
-  <!-- Item Description Section -->
-  <h3 class="font-bold text-lg mt-4">Item Descriptions</h3>
+  <!-- New Item Form --------------------------------------------------->
+
   <form class="flex flex-row justify-between gap-2">
     <button
       disabled={itemDesc == ''}
@@ -433,8 +425,10 @@
     </p>
   </form>
 
-  <!-- Table Section -->
-  <div class="flex flex-col mt-4 bg-[#F3F4F6]">
+  <!-- Table ----------------------------------------------------------->
+
+  <div class="flex flex-col mt-4 bg-[#F0F4F8] p-2 rounded-lg">
+    <h4 class="mb-2 font-bold">Item Descriptions</h4>
     <div class="flex flex-row bg-[#FAFAFA] border border-[#E2E2E2]">
       <p class="font-bold p-3 border-r border-[#E2E2E2] grow">Item name</p>
       <p class="font-bold p-3 border-r border-[#E2E2E2] w-32">Unit Price</p>
@@ -481,57 +475,60 @@
     </div>
   </div>
 
-  <!-- Payment Info Section -->
-  <h3 class="font-bold text-lg mt-4">Payment Info</h3>
-  <div class="grid grid-cols-2 gap-4">
-    <div class="flex flex-col">
-      <label class="text-sm font-semibold">Account No</label>
-      <input
-        type="text"
-        maxlength="20"
-        bind:value={appState.payment.accountNumber}
-        class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
-      />
-    </div>
-    <div class="flex flex-col">
-      <label class="text-sm font-semibold">Account Name</label>
-      <input
-        type="text"
-        maxlength="28"
-        bind:value={appState.payment.accountName}
-        class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
-      />
-    </div>
-    <div class="flex flex-col">
-      <label class="text-sm font-semibold">Bank Name</label>
-      <input
-        type="text"
-        maxlength="28"
-        bind:value={appState.payment.bank}
-        class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
-      />
-    </div>
-    <div class="flex flex-col">
-      <label class="text-sm font-semibold">IFSC</label>
-      <input
-        type="text"
-        maxlength="11"
-        bind:value={appState.payment.ifsc}
-        class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
-      />
-    </div>
-    <div class="flex flex-col">
-      <label class="text-sm font-semibold">SWIFT Code</label>
-      <input
-        type="text"
-        maxlength="11"
-        bind:value={appState.payment.swiftCode}
-        class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
-      />
+  <!-- Payment Info Section Redesigned --------------------------------->
+  <div class="mt-4">
+    <h4 class="mb-2 font-bold">Payment Info</h4>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold">Account No</label>
+        <input
+          type="text"
+          maxlength="20"
+          bind:value={appState.payment.accountNumber}
+          class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+        />
+      </div>
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold">Account Name</label>
+        <input
+          type="text"
+          maxlength="28"
+          bind:value={appState.payment.accountName}
+          class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+        />
+      </div>
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold">Bank Name</label>
+        <input
+          type="text"
+          maxlength="28"
+          bind:value={appState.payment.bank}
+          class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+        />
+      </div>
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold">IFSC</label>
+        <input
+          type="text"
+          maxlength="11"
+          bind:value={appState.payment.ifsc}
+          class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+        />
+      </div>
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold">SWIFT Code</label>
+        <input
+          type="text"
+          maxlength="11"
+          bind:value={appState.payment.swiftCode}
+          class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+        />
+      </div>
     </div>
   </div>
 
-  <!-- Download Button -->
+  <!-- Download Button -------------------------------------------------->
+
   <div class="mt-6 flex justify-center print:hidden">
     <button
       on:click={() => window.print()}
