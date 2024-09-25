@@ -2,14 +2,12 @@
 	import { LogIn } from 'lucide-svelte';
 	import { UserRoundSearch } from 'lucide-svelte';
 	import { Code } from 'lucide-svelte';
-
 	import FeatureItem from '$lib/components/FeatureItem.svelte';
-
 	export let title = 'Enter Title Here';
 	export let subtitle = 'Enter subtitle here';
 </script>
 
-<div class="print:hidden bg-[#d4f1ef] pt-20 pb-40">
+<div class="print:hidden bg-[#d4f1ef] pt-10 pb-20 mb-4">
 	<div class="max-w-screen-md mx-auto flex flex-col items-center gap-4">
 		<h1 class="text-center font-bold text-4xl text-[#15273c]">
 			{title}
@@ -24,7 +22,6 @@
 			<FeatureItem label="No Telemetry">
 				<UserRoundSearch color="#15273c" />
 			</FeatureItem>
-
 			<FeatureItem label="Open Source">
 				<Code color="#15273c" />
 			</FeatureItem>
