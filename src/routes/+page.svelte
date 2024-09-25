@@ -186,10 +186,10 @@
 <div
   class="max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl mx-auto px-4 sm:px-6 py-8 flex flex-col space-y-6 font-montserrat bg-[#FAFAFA] border-2 border-gray-600 rounded-xl shadow-sm print:shadow-none print:bg-white print:border-none"
 >
-  <!-- Company & Invoice Details --------------------------------------->
+  <!-- Company & Invoice Details -->
   <div class="flex flex-col sm:flex-row justify-between items-start print:flex">
     <div class="flex flex-col gap-4 w-full sm:w-auto">
-      <div class="">
+      <div>
         {#if appState.company.logo}
           <div class="flex flex-row items-center space-x-4">
             <div class="flex flex-col border-2 border-gray-600 rounded-xl">
@@ -201,7 +201,10 @@
               >
                 <Trash />
               </button>
-              <button class="p-2 hover:bg-[#E2E2E2] rounded" on:click={() => document.getElementById('imageInput').click()}>
+              <button
+                class="p-2 hover:bg-[#E2E2E2] rounded"
+                on:click={() => document.getElementById('imageInput').click()}
+              >
                 <ImagePlus />
                 <input
                   id="imageInput"
@@ -272,7 +275,10 @@
           />
         </p>
       </div>
-      <select bind:value={appState.currency} class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full">
+      <select
+        bind:value={appState.currency}
+        class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+      >
         {#each currencyOptions as option}
           <option value={option.code}>
             {option.flag} {option.code} - {option.name}
@@ -284,43 +290,109 @@
 
   <hr class="border-gray-600 border-2" />
 
-  <!-- From & To  ------------------------------------------------------>
+  <!-- From & To -->
   <div class="flex flex-col sm:flex-row justify-between gap-4">
     <div class="flex flex-col gap-2 w-full">
       <h2 class="mb-2 font-bold">Sender Info</h2>
       <textarea
-        style="resize: none; padding: 8px 12px;"
         placeholder="Enter sender's name and address"
-        cols="30"
-        rows="3"
         maxlength="150"
         bind:value={appState.invoice.from}
-        class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full break-words"
+        class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
         on:input={(e) => autoExpand(e.target)}
+        rows="1"
       ></textarea>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <!-- Rest of the fields with adjusted borders -->
+        <p class="flex items-center">
+          <span class="w-24">Tax Name:</span>
+          <input
+            type="text"
+            bind:value={appState.invoice.fromTaxIdName}
+            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            placeholder="Enter Tax Name"
+          />
+        </p>
+        <p class="flex items-center">
+          <span class="w-24">Tax ID:</span>
+          <input
+            type="text"
+            bind:value={appState.invoice.fromTaxId}
+            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            placeholder="Enter Tax ID"
+          />
+        </p>
+        <p class="flex items-center">
+          <span class="w-24">Email:</span>
+          <input
+            type="email"
+            bind:value={appState.invoice.fromContact.mail}
+            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            placeholder="Enter Email"
+          />
+        </p>
+        <p class="flex items-center">
+          <span class="w-24">Phone:</span>
+          <input
+            type="text"
+            bind:value={appState.invoice.fromContact.phone}
+            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            placeholder="Enter Phone"
+          />
+        </p>
       </div>
     </div>
     <div class="flex flex-col gap-2 w-full">
       <h2 class="mb-2 font-bold">Recipient Info</h2>
       <textarea
-        style="resize: none; padding: 8px 12px;"
         placeholder="Enter recipient's name and address"
-        cols="30"
-        rows="3"
         maxlength="150"
         bind:value={appState.invoice.to}
-        class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full break-words"
+        class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
         on:input={(e) => autoExpand(e.target)}
+        rows="1"
       ></textarea>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <!-- Rest of the fields with adjusted borders -->
+        <p class="flex items-center">
+          <span class="w-24">Tax Name:</span>
+          <input
+            type="text"
+            bind:value={appState.invoice.toTaxIdName}
+            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            placeholder="Enter Tax Name"
+          />
+        </p>
+        <p class="flex items-center">
+          <span class="w-24">Tax ID:</span>
+          <input
+            type="text"
+            bind:value={appState.invoice.toTaxId}
+            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            placeholder="Enter Tax ID"
+          />
+        </p>
+        <p class="flex items-center">
+          <span class="w-24">Email:</span>
+          <input
+            type="email"
+            bind:value={appState.invoice.toContact.mail}
+            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            placeholder="Enter Email"
+          />
+        </p>
+        <p class="flex items-center">
+          <span class="w-24">Phone:</span>
+          <input
+            type="text"
+            bind:value={appState.invoice.toContact.phone}
+            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            placeholder="Enter Phone"
+          />
+        </p>
       </div>
     </div>
   </div>
 
-  <!-- New Item Form --------------------------------------------------->
+  <!-- New Item Form -->
   <form class="flex flex-col sm:flex-row justify-between gap-2">
     <div class="flex items-center">
       <button
@@ -366,7 +438,7 @@
     </div>
   </form>
 
-  <!-- Table ----------------------------------------------------------->
+  <!-- Item Descriptions -->
   <div class="flex flex-col mt-4 p-2 rounded-lg border-2 border-gray-600">
     <h2 class="mb-2 font-bold">Item Descriptions</h2>
     <div class="flex flex-row bg-gray-200 border-2 border-gray-600">
@@ -457,15 +529,59 @@
     </div>
   </div>
 
-  <!-- Payment Info Section Redesigned --------------------------------->
+  <!-- Payment Info -->
   <div class="mt-4">
     <h2 class="mb-2 font-bold">Payment Info</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <!-- Payment fields with adjusted borders -->
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold">Account No</label>
+        <input
+          type="text"
+          maxlength="20"
+          bind:value={appState.payment.accountNumber}
+          class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+        />
+      </div>
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold">Account Name</label>
+        <input
+          type="text"
+          maxlength="28"
+          bind:value={appState.payment.accountName}
+          class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+        />
+      </div>
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold">Bank Name</label>
+        <input
+          type="text"
+          maxlength="28"
+          bind:value={appState.payment.bank}
+          class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+        />
+      </div>
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold">IFSC</label>
+        <input
+          type="text"
+          maxlength="11"
+          bind:value={appState.payment.ifsc}
+          class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+        />
+      </div>
+      <div class="flex flex-col">
+        <label class="text-sm font-semibold">SWIFT Code</label>
+        <input
+          type="text"
+          maxlength="11"
+          bind:value={appState.payment.swiftCode}
+          class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+        />
+      </div>
     </div>
   </div>
 
-  <!-- Download Button -------------------------------------------------->
+  <!-- Download Button -->
   <div class="mt-6 flex justify-center print:hidden">
     <button
       on:click={() => window.print()}
@@ -517,7 +633,7 @@
     background-color: #f0f0f0;
   }
 
-  /* Ensure text wraps and boxes expand */
+  /* Ensure text areas auto-expand */
   textarea {
     overflow: hidden;
     resize: none;
@@ -526,5 +642,22 @@
   /* Adjust borders for better visibility */
   .border-2 {
     border-width: 2px;
+  }
+
+  /* Print styles */
+  @media print {
+    .toggle-switch {
+      display: none;
+    }
+    button {
+      display: none;
+    }
+    input,
+    textarea {
+      border: none;
+    }
+    .print\:hidden {
+      display: none;
+    }
   }
 </style>
