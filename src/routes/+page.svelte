@@ -128,7 +128,7 @@
       <h2 class="font-bold">{appState.company.name}</h2>
       <p>John Brandon</p>
       <p>{appState.invoice.from}</p>
-      <p>{appState.fromContact.mail} | {appState.fromContact.phone}</p>
+      <p>{appState.invoice.fromContact?.mail} | {appState.invoice.fromContact?.phone}</p>
       <p>SIRET: {appState.invoice.fromTaxId}</p>
       <p>TVA: {appState.invoice.fromTaxId}</p>
     </div>
@@ -149,7 +149,7 @@
       </div>
       <div>
         <p><strong>{appState.invoice.to}</strong></p>
-        <p>{appState.toContact.mail} | {appState.toContact.phone}</p>
+        <p>{appState.invoice.toContact?.mail} | {appState.invoice.toContact?.phone}</p>
         <p>SIRET: {appState.invoice.toTaxIdName}</p>
         <p>TVA: {appState.invoice.toTaxId}</p>
         <p>Facture: {appState.note}</p>
