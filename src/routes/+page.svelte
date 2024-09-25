@@ -26,7 +26,8 @@
       accountName: '',
       bank: '',
       ifsc: '',
-      swiftCode: ''
+      swiftCode: '',
+      customFields: []
     },
     currency: 'USD'
   };
@@ -125,12 +126,21 @@
         accountName: '',
         bank: '',
         ifsc: '',
-        swiftCode: ''
+        swiftCode: '',
+        customFields: []
       },
       currency: 'USD'
     };
 
     save();
+  }
+
+  function addCustomField() {
+    appState.payment.customFields.push({ label: '', value: '' });
+  }
+
+  function removeCustomField(index) {
+    appState.payment.customFields.splice(index, 1);
   }
 
   // Startup ------------------------------------------------------------
@@ -281,8 +291,8 @@
 
   <!-- From & To  ------------------------------------------------------>
 
-  <div class="flex flex-row justify-between">
-    <div class="flex flex-col gap-2">
+  <div class="flex flex-row gap-6">
+    <div class="flex-1">
       <h4 class="mb-2 font-bold">From</h4>
       <textarea
         style="resize: none; padding: 8px 12px;"
@@ -293,46 +303,46 @@
         bind:value={appState.invoice.from}
         class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
       ></textarea>
-      <div class="grid grid-cols-2 gap-2">
-        <p class="flex items-center">
-          <span class="w-24">Tax Name:</span>
+      <div class="grid grid-cols-2 gap-2 mt-2">
+        <p class="flex items-center gap-2">
+          <span>Tax Name:</span>
           <input
             type="text"
             bind:value={appState.invoice.fromTaxIdName}
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] flex-1"
             placeholder="Enter Tax Name"
           />
         </p>
-        <p class="flex items-center">
-          <span class="w-24">Tax ID:</span>
+        <p class="flex items-center gap-2">
+          <span>Tax ID:</span>
           <input
             type="text"
             bind:value={appState.invoice.fromTaxId}
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] flex-1"
             placeholder="Enter Tax ID"
           />
         </p>
-        <p class="flex items-center">
-          <span class="w-24">Email:</span>
+        <p class="flex items-center gap-2">
+          <span>Email:</span>
           <input
             type="email"
             bind:value={appState.invoice.fromContact.mail}
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] flex-1"
             placeholder="Enter Email"
           />
         </p>
-        <p class="flex items-center">
-          <span class="w-24">Phone:</span>
+        <p class="flex items-center gap-2">
+          <span>Phone:</span>
           <input
             type="text"
             bind:value={appState.invoice.fromContact.phone}
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] flex-1"
             placeholder="Enter Phone"
           />
         </p>
       </div>
     </div>
-    <div class="flex flex-col gap-2">
+    <div class="flex-1">
       <h4 class="mb-2 font-bold">To</h4>
       <textarea
         style="resize: none; padding: 8px 12px;"
@@ -343,40 +353,40 @@
         bind:value={appState.invoice.to}
         class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
       ></textarea>
-      <div class="grid grid-cols-2 gap-2">
-        <p class="flex items-center">
-          <span class="w-24">Tax Name:</span>
+      <div class="grid grid-cols-2 gap-2 mt-2">
+        <p class="flex items-center gap-2">
+          <span>Tax Name:</span>
           <input
             type="text"
             bind:value={appState.invoice.toTaxIdName}
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] flex-1"
             placeholder="Enter Tax Name"
           />
         </p>
-        <p class="flex items-center">
-          <span class="w-24">Tax ID:</span>
+        <p class="flex items-center gap-2">
+          <span>Tax ID:</span>
           <input
             type="text"
             bind:value={appState.invoice.toTaxId}
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] flex-1"
             placeholder="Enter Tax ID"
           />
         </p>
-        <p class="flex items-center">
-          <span class="w-24">Email:</span>
+        <p class="flex items-center gap-2">
+          <span>Email:</span>
           <input
             type="email"
             bind:value={appState.invoice.toContact.mail}
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] flex-1"
             placeholder="Enter Email"
           />
         </p>
-        <p class="flex items-center">
-          <span class="w-24">Phone:</span>
+        <p class="flex items-center gap-2">
+          <span>Phone:</span>
           <input
             type="text"
             bind:value={appState.invoice.toContact.phone}
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] flex-1"
             placeholder="Enter Phone"
           />
         </p>
@@ -454,12 +464,13 @@
     <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2] items-center">
       <button
         class="toggle-switch ml-2 mr-1"
-        on:click={() => (isDiscountEnabled = !isDiscountEnabled)}
+        on:click={() => isDiscountEnabled = !isDiscountEnabled}
+        class:active={isDiscountEnabled}
       ></button>
       <p class="p-3 grow text-right font-bold">Discount %</p>
       <input
         class="p-3 w-32 text-right"
-        type="text"
+        type="number"
         bind:value={appState.discountPercent}
         disabled={!isDiscountEnabled}
         step="0.01"
@@ -468,9 +479,21 @@
       />
     </div>
     <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2] items-center">
-      <button class="toggle-switch ml-2 mr-1" on:click={() => (isTaxEnabled = !isTaxEnabled)}></button>
+      <button 
+        class="toggle-switch ml-2 mr-1" 
+        on:click={() => isTaxEnabled = !isTaxEnabled} 
+        class:active={isTaxEnabled}
+      ></button>
       <p class="p-3 grow text-right font-bold">Tax %</p>
-      <input class="p-3 w-32 text-right" type="text" bind:value={appState.taxPercent} disabled={!isTaxEnabled} step="0.01" max="100" min="0" />
+      <input 
+        class="p-3 w-32 text-right" 
+        type="number" 
+        bind:value={appState.taxPercent} 
+        disabled={!isTaxEnabled} 
+        step="0.01" 
+        max="100" 
+        min="0" 
+      />
     </div>
     <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2]">
       <p class="p-3 grow text-right font-bold">Total Due</p>
@@ -478,12 +501,12 @@
     </div>
   </div>
 
-  <!-- Payment Info Section Redesigned --------------------------------->
+  <!-- Payment Info Section Redesigned with Custom Fields -------------->
   <div class="mt-4">
     <h4 class="mb-2 font-bold">Payment Info</h4>
     <div class="grid grid-cols-2 gap-4">
       <div class="flex flex-col">
-        <label class="text-sm font-semibold">Account</label>
+        <label class="text-sm font-semibold">Account No.</label>
         <input
           type="text"
           maxlength="20"
@@ -527,6 +550,32 @@
           class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
         />
       </div>
+    </div>
+
+    <div class="mt-4">
+      <h5 class="mb-2 font-bold">Custom Fields</h5>
+      {#each appState.payment.customFields as field, index}
+        <div class="flex items-center gap-2 mb-2">
+          <input
+            type="text"
+            bind:value={field.label}
+            placeholder="Label"
+            class="border border-[#E2E2E2] p-2 rounded-lg flex-1 focus:outline-none focus:border-[#5A5A5A]"
+          />
+          <input
+            type="text"
+            bind:value={field.value}
+            placeholder="Value"
+            class="border border-[#E2E2E2] p-2 rounded-lg flex-1 focus:outline-none focus:border-[#5A5A5A]"
+          />
+          <button on:click={() => removeCustomField(index)} class="text-red-500 hover:text-red-700">
+            <Trash />
+          </button>
+        </div>
+      {/each}
+      <button on:click={addCustomField} class="text-blue-500 hover:text-blue-700 mt-2">
+        Add Custom Field
+      </button>
     </div>
   </div>
 
