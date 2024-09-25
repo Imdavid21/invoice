@@ -182,7 +182,7 @@
 </script>
 
 <svelte:head>
-  <title>Billie - No Strings Attached Invoice Generator</title>
+  <title>{appState.invoice.title} - {appState.company.name}</title>
   <meta
     name="description"
     content="Create and download invoices instantly, with zero signups or tracking."
@@ -212,9 +212,9 @@
         type="text"
         size="10"
         placeholder="Enter Invoice Number"
-        maxlength="10"
+        maxlength="20"
         bind:value={appState.invoice.number}
-        class="p-2 focus:outline-none w-40 text-center"
+        class="p-2 focus:outline-none w-32 text-center"
       />
     </p>
   </div>
@@ -311,7 +311,7 @@
     </div>
   </div>
 
-  <hr class="border-custom my-4" />
+  <hr class="border-custom" />
 
   <!-- From & To  ------------------------------------------------------>
   <div class="flex flex-col sm:flex-row justify-between gap-4">
@@ -326,33 +326,33 @@
         bind:value={appState.invoice.from}
         class="p-2 focus:outline-none w-full break-words"
       ></textarea>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <p class="flex items-start">
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center">
           <span class="w-24 secondary-text">Email:</span>
-          <textarea
+          <input
+            type="email"
             bind:value={appState.invoice.fromContact.mail}
-            class="p-2 focus:outline-none w-full resize-none"
+            class="p-2 focus:outline-none w-full"
             placeholder="Enter Email Address"
-            rows="1"
-          ></textarea>
-        </p>
-        <p class="flex items-start">
+          />
+        </div>
+        <div class="flex items-center">
           <span class="w-24 secondary-text">Phone:</span>
-          <textarea
+          <input
+            type="text"
             bind:value={appState.invoice.fromContact.phone}
-            class="p-2 focus:outline-none w-full resize-none"
+            class="p-2 focus:outline-none w-full"
             placeholder="Enter Phone Number"
-            rows="1"
-          ></textarea>
-        </p>
-        <div class="flex items-start sm:col-span-2">
+          />
+        </div>
+        <div class="flex items-center">
           <span class="w-24 secondary-text">Tax Details:</span>
-          <textarea
+          <input
+            type="text"
             bind:value={appState.invoice.fromTaxDetails}
-            class="p-2 focus:outline-none w-full resize-none"
+            class="p-2 focus:outline-none w-full"
             placeholder="Enter Tax Name and ID"
-            rows="1"
-          ></textarea>
+          />
         </div>
       </div>
     </div>
@@ -367,39 +367,38 @@
         bind:value={appState.invoice.to}
         class="p-2 focus:outline-none w-full break-words"
       ></textarea>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <p class="flex items-start">
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center">
           <span class="w-24 secondary-text">Email:</span>
-          <textarea
+          <input
+            type="email"
             bind:value={appState.invoice.toContact.mail}
-            class="p-2 focus:outline-none w-full resize-none"
+            class="p-2 focus:outline-none w-full"
             placeholder="Enter Email Address"
-            rows="1"
-          ></textarea>
-        </p>
-        <p class="flex items-start">
+          />
+        </div>
+        <div class="flex items-center">
           <span class="w-24 secondary-text">Phone:</span>
-          <textarea
+          <input
+            type="text"
             bind:value={appState.invoice.toContact.phone}
-            class="p-2 focus:outline-none w-full resize-none"
+            class="p-2 focus:outline-none w-full"
             placeholder="Enter Phone Number"
-            rows="1"
-          ></textarea>
-        </p>
-        <div class="flex items-start sm:col-span-2">
+          />
+        </div>
+        <div class="flex items-center">
           <span class="w-24 secondary-text">Tax Details:</span>
-          <textarea
+          <input
+            type="text"
             bind:value={appState.invoice.toTaxDetails}
-            class="p-2 focus:outline-none w-full resize-none"
+            class="p-2 focus:outline-none w-full"
             placeholder="Enter Tax Name and ID"
-            rows="1"
-          ></textarea>
+          />
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Added space and line for readability -->
   <hr class="border-custom my-4" />
 
   <!-- Table ----------------------------------------------------------->
@@ -437,13 +436,9 @@
       </div>
     {/each}
 
-    <!-- Totals with consistent colors -->
-    <div class="flex flex-row even:bg-[#F8F8F8] border-t border-custom items-center">
+    <div class="flex flex-row border-t border-custom items-center" style="background-color: #F8F8F8;">
       <p class="p-3 grow text-right font-bold">Discount %</p>
-      <button
-        class="toggle-switch ml-2 mr-1 {isDiscountEnabled ? 'active' : ''}"
-        on:click={() => (isDiscountEnabled = !isDiscountEnabled)}
-      ></button>
+      <button class="toggle-switch ml-2 mr-1 {isDiscountEnabled ? 'active' : ''}" on:click={() => (isDiscountEnabled = !isDiscountEnabled)}></button>
       <input
         class="p-3 w-32 text-right"
         type="text"
@@ -454,23 +449,12 @@
         min="0"
       />
     </div>
-    <div class="flex flex-row even:bg-[#F8F8F8] border-t border-custom items-center">
+    <div class="flex flex-row border-t border-custom items-center" style="background-color: #F8F8F8;">
       <p class="p-3 grow text-right font-bold">Tax %</p>
-      <button
-        class="toggle-switch ml-2 mr-1 {isTaxEnabled ? 'active' : ''}"
-        on:click={() => (isTaxEnabled = !isTaxEnabled)}
-      ></button>
-      <input
-        class="p-3 w-32 text-right"
-        type="text"
-        bind:value={appState.taxPercent}
-        disabled={!isTaxEnabled}
-        step="0.01"
-        max="100"
-        min="0"
-      />
+      <button class="toggle-switch ml-2 mr-1 {isTaxEnabled ? 'active' : ''}" on:click={() => (isTaxEnabled = !isTaxEnabled)}></button>
+      <input class="p-3 w-32 text-right" type="text" bind:value={appState.taxPercent} disabled={!isTaxEnabled} step="0.01" max="100" min="0" />
     </div>
-    <div class="flex flex-row even:bg-[#F8F8F8] border-t border-custom">
+    <div class="flex flex-row border-t border-custom" style="background-color: #F8F8F8;">
       <p class="p-3 grow text-right font-bold">Total Due</p>
       <p class="p-3 w-32 text-right">
         {getCurrencySymbol(appState.currency)}{totalDue}
@@ -484,7 +468,7 @@
       <button
         disabled={itemDesc == ''}
         on:click={() => addItem()}
-        class="p-2 rounded-full bg-black text-white transition-all duration-100 ease-in-out"
+        class="p-2 rounded-full bg-black text-white"
       >
         ＋
       </button>
@@ -577,15 +561,13 @@
           placeholder="Enter SWIFT Code"
         />
       </div>
-      <!-- Added Note Field -->
       <div class="flex flex-col sm:col-span-2">
         <label class="text-sm font-semibold">Note</label>
         <textarea
           bind:value={appState.payment.note}
           class="p-2 focus:outline-none w-full"
-          placeholder="Enter any payment notes or instructions"
+          placeholder="Enter any additional notes or payment instructions"
           rows="3"
-          style="resize: vertical;"
         ></textarea>
       </div>
     </div>
@@ -702,25 +684,16 @@
     word-wrap: break-word;
   }
 
-  /* Ensuring equal colors for Tax, Discount, and Total Due */
-  .flex-row > p.font-bold {
-    color: #000;
-  }
-
-  /* Remove date and title from print */
   @media print {
     @page {
-      margin: 20mm;
+      margin: 0;
     }
     body {
-      -webkit-print-color-adjust: exact;
+      margin: 0;
     }
-    body::before {
-      content: none;
-    }
-    title,
-    meta {
-      display: none;
+    /* Hide unwanted elements */
+    .print:hidden {
+      display: none !important;
     }
   }
 </style>
