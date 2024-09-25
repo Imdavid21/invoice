@@ -214,7 +214,7 @@
       />
     </h2>
     <div class="mt-2">
-      <div class="flex flex-col sm:flex-row justify-center items-center gap-2">
+      <div class="flex flex-row justify-center items-center gap-2">
         <label class="text-lg font-semibold">
           {appState.invoice.serialLabel}:
         </label>
@@ -226,12 +226,11 @@
         />
       </div>
     </div>
-    <!-- Removed the extra <hr> line here -->
     <div class="mt-4"></div> <!-- Added some space instead -->
   </div>
 
   <!-- Company & Invoice Details -->
-  <div class="flex flex-col sm:flex-row justify-between items-start print:flex">
+  <div class="flex flex-row justify-between items-start print:flex">
     <div class="flex flex-col gap-4 w-full sm:w-auto">
       <div class="">
         {#if appState.company.logo}
@@ -693,9 +692,9 @@
   }
 
   .toggle-switch {
-    width: 40px; /* Increased width for better visibility */
-    height: 20px; /* Increased height */
-    background-color: #aaa; /* Light gray background */
+    width: 40px;
+    height: 20px;
+    background-color: #aaa;
     border-radius: 20px;
     position: relative;
     cursor: pointer;
@@ -705,7 +704,7 @@
   .toggle-switch:before {
     content: '';
     position: absolute;
-    top: 2px; /* Adjusted for increased toggle height */
+    top: 2px;
     left: 2px;
     width: 16px;
     height: 16px;
@@ -715,15 +714,15 @@
   }
 
   .toggle-switch.active {
-    background-color: #4ade80; /* Vibrant green for active state */
+    background-color: #4ade80;
   }
 
   .toggle-switch.active:before {
-    transform: translateX(20px); /* Adjusted for increased toggle width */
+    transform: translateX(20px);
   }
 
   .toggle-switch:hover {
-    background-color: #777; /* Increased visibility on hover */
+    background-color: #777;
   }
 
   .toggle-switch:hover:before {
@@ -736,19 +735,17 @@
     word-wrap: break-word;
   }
 
-  /* Specific styling for Download Button */
   .invoice-container button.bg-black {
-    background-color: #000; /* Black background */
-    color: #fff; /* White text */
+    background-color: #000;
+    color: #fff;
     border-radius: 0.5rem;
     transition: background-color 0.3s;
   }
 
   .invoice-container button.bg-black:hover {
-    background-color: #333; /* Slightly lighter black on hover */
+    background-color: #333;
   }
 
-  /* Adjust "Add Logo" and "＋" buttons */
   .invoice-container button.p-2.rounded-lg.cursor-pointer {
     background-color: transparent;
     color: #000;
@@ -760,16 +757,31 @@
     color: #fff;
   }
 
-  /* Ensure "Add Logo" and "＋" buttons have consistent styles */
-  .invoice-container button.p-2.rounded-full.bg-black.text-white {
-    background-color: transparent;
-    color: #000;
-    border: 1px solid #000;
-  }
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .text-center {
+      font-size: 1.5rem; /* Smaller font size on mobile */
+    }
 
-  .invoice-container button.p-2.rounded-full.bg-black.text-white:hover {
-    background-color: #000;
-    color: #fff;
+    .flex-row {
+      flex-direction: column; /* Stack elements vertically on mobile */
+    }
+
+    .p-3 {
+      padding: 8px; /* Reduce padding for better spacing */
+    }
+
+    .mt-6 {
+      margin-top: 2rem; /* Adjust margin for mobile screens */
+    }
+
+    .mb-6 {
+      margin-bottom: 1.5rem; /* Adjust margin for mobile screens */
+    }
+
+    .rounded-lg {
+      border-radius: 0.25rem; /* Smaller border radius on mobile */
+    }
   }
 
   /* Print Styles */
@@ -780,16 +792,13 @@
     body {
       margin: 0;
     }
-    /* Hide unwanted elements */
-    .print:hidden {
+    .print\:hidden {
       display: none !important;
     }
-    /* Hide buttons and interactive elements */
     button,
     input[type="file"] {
       display: none !important;
     }
-    /* Ensure logo is displayed */
     .invoice-container img {
       display: block;
     }
