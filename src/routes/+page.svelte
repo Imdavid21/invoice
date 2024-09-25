@@ -244,7 +244,6 @@
 </div>
 
 <style>
-  /* General styling for all devices */
   .container {
     display: flex;
     flex-direction: column;
@@ -310,7 +309,7 @@
     .item-description input {
       width: 100%;
     }
-    
+
     .item-description {
       padding: 5px;
     }
