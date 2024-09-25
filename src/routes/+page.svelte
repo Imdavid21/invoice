@@ -4,7 +4,7 @@
   let appState = {
     company: { name: '', logo: '' },
     invoice: {
-      title: 'INVOICE',
+      title: 'Invoice',
       number: '#0001',
       created: '',
       due: '',
@@ -81,8 +81,8 @@
         ...appState.items,
         {
           desc: itemDesc,
-          price: parseFloat(itemPrice).toFixed(2),
-          quantity: parseFloat(itemQty).toFixed(2)
+          price: parseFloat(itemPrice),
+          quantity: parseFloat(itemQty)
         }
       ];
 
@@ -104,7 +104,7 @@
     appState = {
       company: { name: 'Wayne Enterprises', logo: '' },
       invoice: {
-        title: 'INVOICE',
+        title: 'Invoice',
         number: '#0001',
         created: '',
         due: '',
@@ -150,31 +150,34 @@
   let itemPrice = 1;
   let itemQty = 1;
 
+  function formatNumber(num) {
+    return num % 1 === 0 ? num.toString() : num.toFixed(2);
+  }
+
   $: subTotal = appState.items
     .reduce((total, item) => {
-      return total + item.price * item.quantity;
-    }, 0)
-    .toFixed(2);
+      return total + parseFloat(item.price) * parseFloat(item.quantity);
+    }, 0);
 
   $: if (!isDiscountEnabled) {
     appState.discountPercent = '0';
   }
 
   $: discountAmount = isDiscountEnabled
-    ? ((subTotal * (+appState.discountPercent || 0)) / 100).toFixed(2)
-    : '0';
+    ? ((subTotal * (+appState.discountPercent || 0)) / 100)
+    : 0;
 
-  $: taxableAmount = (subTotal - discountAmount).toFixed(2);
+  $: taxableAmount = subTotal - discountAmount;
 
   $: if (!isTaxEnabled) {
     appState.taxPercent = '0';
   }
 
   $: taxAmount = isTaxEnabled
-    ? ((taxableAmount * (+appState.taxPercent || 0)) / 100).toFixed(2)
-    : '0';
+    ? ((taxableAmount * (+appState.taxPercent || 0)) / 100)
+    : 0;
 
-  $: totalDue = (parseFloat(taxableAmount) + parseFloat(taxAmount)).toFixed(2);
+  $: totalDue = taxableAmount + taxAmount;
 
   // Toggles
   let isDiscountEnabled = true;
@@ -198,20 +201,20 @@
 <div
   class="max-w-screen-md mx-auto px-4 sm:px-6 py-8 flex flex-col space-y-6 invoice-container print:shadow-none print:bg-white print:border-none"
 >
-  <!-- INVOICE Title and Number at Top Center --------------------------->
+  <!-- INVOICE Title and Number at Top Center -->
   <div class="text-center mb-6">
-    <input
-      type="text"
-      bind:value={appState.invoice.title}
-      class="font-bold text-2xl text-center p-2 focus:outline-none w-full"
-      placeholder="Enter Invoice Title"
-    />
-    <p>
-      <span class="secondary-text">Invoice # :</span>
+    <p class="font-bold text-2xl">
+      <input
+        type="text"
+        bind:value={appState.invoice.title}
+        class="text-center p-2 focus:outline-none w-auto"
+        placeholder="Invoice"
+      />
+      :
       <input
         type="text"
         size="10"
-        placeholder="Enter Invoice Number"
+        placeholder="#0001"
         maxlength="20"
         bind:value={appState.invoice.number}
         class="p-2 focus:outline-none w-32 text-center"
@@ -219,13 +222,13 @@
     </p>
   </div>
 
-  <!-- Company & Invoice Details --------------------------------------->
+  <!-- Company & Invoice Details -->
   <div class="flex flex-col sm:flex-row justify-between items-start print:flex">
     <div class="flex flex-col gap-4 w-full sm:w-auto">
       <div class="">
         {#if appState.company.logo}
           <div class="flex flex-row items-center space-x-4">
-            <div class="flex flex-col">
+            <div class="flex flex-col print:hidden">
               <button
                 class="p-2 hover:bg-black hover:text-white rounded"
                 on:click={() => {
@@ -254,9 +257,10 @@
               class="max-h-18 max-w-40 object-cover m-0"
             />
           </div>
-        {:else}
+        {/if}
+        {#if !appState.company.logo}
           <button
-            class="p-2 flex flex-row gap-2 rounded-lg cursor-pointer hover:bg-black hover:text-white transition-colors duration-150"
+            class="p-2 flex flex-row gap-2 rounded-lg cursor-pointer hover:bg-black hover:text-white transition-colors duration-150 print:hidden"
             on:click={() => document.getElementById('imageInput').click()}
           >
             ＋
@@ -313,8 +317,9 @@
 
   <hr class="border-custom" />
 
-  <!-- From & To  ------------------------------------------------------>
+  <!-- From & To -->
   <div class="flex flex-col sm:flex-row justify-between gap-4">
+    <!-- Sender Info -->
     <div class="flex flex-col gap-2 w-full">
       <h4 class="mb-2 font-bold">Sender Info</h4>
       <textarea
@@ -356,6 +361,7 @@
         </div>
       </div>
     </div>
+    <!-- Recipient Info -->
     <div class="flex flex-col gap-2 w-full">
       <h4 class="mb-2 font-bold">Recipient Info</h4>
       <textarea
@@ -401,7 +407,7 @@
 
   <hr class="border-custom my-4" />
 
-  <!-- Table ----------------------------------------------------------->
+  <!-- Item Descriptions -->
   <div class="flex flex-col mt-4">
     <h4 class="mb-2 font-bold">Item Descriptions</h4>
     <div class="flex flex-row border-b border-custom items-center">
@@ -431,7 +437,7 @@
         <!-- Total -->
         <p class="p-3 w-32 text-right">
           {getCurrencySymbol(appState.currency)}
-          {(item.price * item.quantity).toFixed(2)}
+          {formatNumber(item.price * item.quantity)}
         </p>
       </div>
     {/each}
@@ -457,12 +463,12 @@
     <div class="flex flex-row border-t border-custom" style="background-color: #F8F8F8;">
       <p class="p-3 grow text-right font-bold">Total Due</p>
       <p class="p-3 w-32 text-right">
-        {getCurrencySymbol(appState.currency)}{totalDue}
+        {getCurrencySymbol(appState.currency)}{formatNumber(totalDue)}
       </p>
     </div>
   </div>
 
-  <!-- New Item Form Moved Below Total Due -------------------------------->
+  <!-- New Item Form -->
   <form class="flex flex-col sm:flex-row justify-between gap-2 mt-4 print:hidden">
     <div class="flex items-center">
       <button
@@ -498,16 +504,19 @@
         placeholder="Enter quantity"
         min="1"
         step="1"
-        class="p-2 focus:outline-none w-full sm:w-32"
+        class="p-2 focus:outline-none w-full sm:w-24"
         on:keypress={(e) => e.key == 'Enter' && addItem()}
       />
       <p class="p-2 w-full sm:w-32 text-right">
-        {getCurrencySymbol(appState.currency)}{(itemPrice * itemQty).toFixed(2)}
+        {getCurrencySymbol(appState.currency)}{formatNumber(itemPrice * itemQty)}
       </p>
     </div>
   </form>
 
-  <!-- Payment Info Section Redesigned --------------------------------->
+  <!-- Add a line and spacing before Payment Info -->
+  <hr class="border-custom my-4" />
+
+  <!-- Payment Info -->
   <div class="mt-4">
     <h4 class="mb-2 font-bold">Payment Info</h4>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -573,7 +582,7 @@
     </div>
   </div>
 
-  <!-- Download Button -------------------------------------------------->
+  <!-- Download Button -->
   <div class="mt-6 flex justify-center print:hidden">
     <button
       on:click={() => window.print()}
