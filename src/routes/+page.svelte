@@ -9,11 +9,11 @@
       created: '',
       due: '',
       from: '',
-      fromTaxIdName: '',
+      fromTaxIdName: 'Tax Name',
       fromTaxId: '',
       fromContact: { mail: '', phone: '' },
       to: '',
-      toTaxIdName: '',
+      toTaxIdName: 'Tax Name',
       toTaxId: '',
       toContact: { mail: '', phone: '' }
     },
@@ -34,7 +34,10 @@
   let currencyOptions = [
     { code: 'USD', symbol: '$', name: 'US Dollar', flag: '🇺🇸' },
     { code: 'EUR', symbol: '€', name: 'Euro', flag: '🇪🇺' },
-    // ... other currencies
+    { code: 'GBP', symbol: '£', name: 'British Pound', flag: '🇬🇧' },
+    { code: 'JPY', symbol: '¥', name: 'Japanese Yen', flag: '🇯🇵' },
+    { code: 'AUD', symbol: 'A$', name: 'Australian Dollar', flag: '🇦🇺' },
+    // ... add more currencies as needed
   ];
 
   function getCurrencySymbol(code) {
@@ -154,34 +157,36 @@
   let isTaxEnabled = appState.taxPercent !== '';
 </script>
 
-<svelte:body on:click={() => save()} />
+<svelte:head>
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+</svelte:head>
 
-<div class="container">
-  <!-- Header Section -->
-  <header class="header">
-    <div class="company-info">
+<div class="max-w-4xl mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg">
+  <!-- Header -->
+  <header class="flex flex-wrap justify-between items-center mb-8">
+    <div class="flex items-center space-x-4">
       {#if appState.company.logo}
-        <div class="logo-section">
-          {#if loadingLogo}
-            <div class="loading-spinner">Loading...</div>
-          {:else}
-            <img src={appState.company.logo} alt="Company Logo" class="company-logo" />
-            <button
-              class="icon-button"
-              on:click={() => {
-                appState.company.logo = '';
-                save();
-              }}
-              aria-label="Remove Logo"
-            >
-              <Trash2 />
-            </button>
-          {/if}
+        <div class="relative">
+          <img
+            src={appState.company.logo}
+            alt="Company Logo"
+            class="h-16 w-auto object-contain"
+          />
+          <button
+            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+            on:click={() => {
+              appState.company.logo = '';
+              save();
+            }}
+            aria-label="Remove Logo"
+          >
+            <Trash2 class="h-4 w-4" />
+          </button>
         </div>
       {:else}
-        <label class="logo-upload">
-          <ImagePlus />
-          <span>Upload Logo</span>
+        <label class="flex items-center space-x-2 cursor-pointer text-blue-600 hover:text-blue-700">
+          <ImagePlus class="h-6 w-6" />
+          <span class="text-sm font-medium">Upload Logo</span>
           <input
             type="file"
             accept=".png,.jpg,.jpeg,.webp"
@@ -191,98 +196,149 @@
         </label>
       {/if}
       <input
-        class="company-name"
         type="text"
         bind:value={appState.company.name}
         placeholder="Your Company Name"
+        class="text-2xl font-bold border-none focus:ring-0 dark:bg-gray-900 dark:text-white"
       />
     </div>
-    <div class="invoice-info">
-      <h1>Invoice</h1>
-      <div class="invoice-details">
-        <label>
-          <span>Invoice #</span>
-          <input type="text" bind:value={appState.invoice.number} placeholder="#0001" />
-        </label>
-        <label>
-          <span>Date</span>
-          <input type="date" bind:value={appState.invoice.created} />
-        </label>
-        <label>
-          <span>Due Date</span>
-          <input type="date" bind:value={appState.invoice.due} />
-        </label>
-        <label>
-          <span>Currency</span>
-          <select bind:value={appState.currency}>
+    <div class="mt-4 md:mt-0">
+      <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white">Invoice</h1>
+      <div class="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <div>
+          <label class="block text-sm text-gray-700 dark:text-gray-300">Invoice Number</label>
+          <input
+            type="text"
+            bind:value={appState.invoice.number}
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+          />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-700 dark:text-gray-300">Date</label>
+          <input
+            type="date"
+            bind:value={appState.invoice.created}
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+          />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-700 dark:text-gray-300">Due Date</label>
+          <input
+            type="date"
+            bind:value={appState.invoice.due}
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+          />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-700 dark:text-gray-300">Currency</label>
+          <select
+            bind:value={appState.currency}
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+          >
             {#each currencyOptions as option}
               <option value={option.code}>
                 {option.flag} {option.code} - {option.name}
               </option>
             {/each}
           </select>
-        </label>
+        </div>
       </div>
     </div>
   </header>
 
-  <hr />
+  <hr class="mb-8 border-gray-200 dark:border-gray-700" />
 
-  <!-- Sender and Recipient Section -->
-  <section class="addresses">
-    <div class="address-block">
-      <h2>From</h2>
+  <!-- Addresses -->
+  <section class="grid grid-cols-1 gap-8 md:grid-cols-2 mb-8">
+    <div>
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Bill From</h2>
       <textarea
-        placeholder="Your address"
         bind:value={appState.invoice.from}
         rows="4"
+        placeholder="Your address"
+        class="block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
       ></textarea>
-      <label>
-        <span>{appState.invoice.fromTaxIdName || 'Tax Name'}</span>
-        <input type="text" bind:value={appState.invoice.fromTaxId} />
-      </label>
-      <label>
-        <span>Email</span>
-        <input type="email" bind:value={appState.invoice.fromContact.mail} />
-      </label>
-      <label>
-        <span>Phone</span>
-        <input type="tel" bind:value={appState.invoice.fromContact.phone} />
-      </label>
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label class="block text-sm text-gray-700 dark:text-gray-300">
+            {appState.invoice.fromTaxIdName}
+          </label>
+          <input
+            type="text"
+            bind:value={appState.invoice.fromTaxId}
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+          />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-700 dark:text-gray-300">Email</label>
+          <input
+            type="email"
+            bind:value={appState.invoice.fromContact.mail}
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+          />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-700 dark:text-gray-300">Phone</label>
+          <input
+            type="tel"
+            bind:value={appState.invoice.fromContact.phone}
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+          />
+        </div>
+      </div>
     </div>
-    <div class="address-block">
-      <h2>To</h2>
+    <div>
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Bill To</h2>
       <textarea
-        placeholder="Client's address"
         bind:value={appState.invoice.to}
         rows="4"
+        placeholder="Client's address"
+        class="block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
       ></textarea>
-      <label>
-        <span>{appState.invoice.toTaxIdName || 'Tax Name'}</span>
-        <input type="text" bind:value={appState.invoice.toTaxId} />
-      </label>
-      <label>
-        <span>Email</span>
-        <input type="email" bind:value={appState.invoice.toContact.mail} />
-      </label>
-      <label>
-        <span>Phone</span>
-        <input type="tel" bind:value={appState.invoice.toContact.phone} />
-      </label>
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label class="block text-sm text-gray-700 dark:text-gray-300">
+            {appState.invoice.toTaxIdName}
+          </label>
+          <input
+            type="text"
+            bind:value={appState.invoice.toTaxId}
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+          />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-700 dark:text-gray-300">Email</label>
+          <input
+            type="email"
+            bind:value={appState.invoice.toContact.mail}
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+          />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-700 dark:text-gray-300">Phone</label>
+          <input
+            type="tel"
+            bind:value={appState.invoice.toContact.phone}
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+          />
+        </div>
+      </div>
     </div>
   </section>
 
-  <hr />
-
-  <!-- Items Section -->
-  <section class="items-section">
-    <h2>Invoice Items</h2>
-    <form class="item-form" on:submit|preventDefault={addItem}>
+  <!-- Items -->
+  <section class="mb-8">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Invoice Items</h2>
+    <form
+      class="grid grid-cols-1 gap-4 sm:grid-cols-12 mb-6"
+      on:submit|preventDefault={addItem}
+    >
       <input
         id="descBox"
         type="text"
         bind:value={itemDesc}
         placeholder="Item Description"
+        class="col-span-5 sm:col-span-5 border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
         required
       />
       <input
@@ -291,6 +347,7 @@
         placeholder="Unit Price"
         min="0"
         step="0.01"
+        class="col-span-3 sm:col-span-2 border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
         required
       />
       <input
@@ -299,62 +356,72 @@
         placeholder="Quantity"
         min="1"
         step="1"
+        class="col-span-3 sm:col-span-2 border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
         required
       />
-      <button type="submit" class="add-button" aria-label="Add Item">
-        <Plus />
+      <button
+        type="submit"
+        class="col-span-1 sm:col-span-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center"
+        aria-label="Add Item"
+      >
+        <Plus class="h-5 w-5" />
       </button>
     </form>
 
-    <table class="items-table">
+    <table class="w-full text-left table-auto mb-4">
       <thead>
-        <tr>
-          <th>Description</th>
-          <th>Unit Price ({getCurrencySymbol(appState.currency)})</th>
-          <th>Quantity</th>
-          <th>Total ({getCurrencySymbol(appState.currency)})</th>
-          <th class="actions">Actions</th>
+        <tr class="bg-gray-100 dark:bg-gray-800">
+          <th class="px-4 py-2">Description</th>
+          <th class="px-4 py-2">Unit Price ({getCurrencySymbol(appState.currency)})</th>
+          <th class="px-4 py-2">Quantity</th>
+          <th class="px-4 py-2">Total ({getCurrencySymbol(appState.currency)})</th>
+          <th class="px-4 py-2">Actions</th>
         </tr>
       </thead>
       <tbody>
         {#each appState.items as item, index}
-          <tr>
-            <td>
+          <tr class="border-b dark:border-gray-700">
+            <td class="px-4 py-2">
               <input
                 type="text"
                 bind:value={item.desc}
                 on:input={() => save()}
+                class="w-full border-none focus:ring-0 dark:bg-gray-900 dark:text-white"
                 required
               />
             </td>
-            <td>
+            <td class="px-4 py-2">
               <input
                 type="number"
                 bind:value={item.price}
                 on:input={() => save()}
                 min="0"
                 step="0.01"
+                class="w-full border-none focus:ring-0 dark:bg-gray-900 dark:text-white"
                 required
               />
             </td>
-            <td>
+            <td class="px-4 py-2">
               <input
                 type="number"
                 bind:value={item.quantity}
                 on:input={() => save()}
                 min="1"
                 step="1"
+                class="w-full border-none focus:ring-0 dark:bg-gray-900 dark:text-white"
                 required
               />
             </td>
-            <td>{(item.price * item.quantity).toFixed(2)}</td>
-            <td class="actions">
+            <td class="px-4 py-2">
+              {(item.price * item.quantity).toFixed(2)}
+            </td>
+            <td class="px-4 py-2">
               <button
-                class="icon-button"
+                class="text-red-500 hover:text-red-600"
                 on:click={() => deleteItem(index)}
                 aria-label="Delete Item"
               >
-                <Trash2 />
+                <Trash2 class="h-5 w-5" />
               </button>
             </td>
           </tr>
@@ -363,21 +430,27 @@
     </table>
   </section>
 
-  <!-- Totals Section -->
-  <section class="totals">
-    <div class="totals-row">
-      <span>Subtotal</span>
-      <span>{subTotal}</span>
-    </div>
-    <div class="totals-row">
-      <span>
-        Discount (%)
-        <label class="switch">
-          <input type="checkbox" bind:checked={isDiscountEnabled} />
-          <span class="slider"></span>
-        </label>
-      </span>
-      <span>
+  <!-- Totals -->
+  <section class="mb-8">
+    <div class="max-w-md ml-auto">
+      <div class="flex justify-between py-2">
+        <span class="font-medium text-gray-700 dark:text-gray-300">Subtotal</span>
+        <span class="text-gray-900 dark:text-white">{subTotal}</span>
+      </div>
+      <div class="flex justify-between py-2 items-center">
+        <div class="flex items-center">
+          <span class="font-medium text-gray-700 dark:text-gray-300">Discount (%)</span>
+          <label class="ml-2 relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              bind:checked={isDiscountEnabled}
+              class="sr-only peer"
+            />
+            <div
+              class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer dark:bg-gray-700 peer-checked:bg-blue-600"
+            ></div>
+          </label>
+        </div>
         <input
           type="number"
           bind:value={appState.discountPercent}
@@ -386,22 +459,27 @@
           max="100"
           step="0.01"
           disabled={!isDiscountEnabled}
+          class="w-24 text-right border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
         />
-      </span>
-    </div>
-    <div class="totals-row">
-      <span>Taxable Amount</span>
-      <span>{taxableAmount}</span>
-    </div>
-    <div class="totals-row">
-      <span>
-        Tax (%)
-        <label class="switch">
-          <input type="checkbox" bind:checked={isTaxEnabled} />
-          <span class="slider"></span>
-        </label>
-      </span>
-      <span>
+      </div>
+      <div class="flex justify-between py-2">
+        <span class="font-medium text-gray-700 dark:text-gray-300">Taxable Amount</span>
+        <span class="text-gray-900 dark:text-white">{taxableAmount}</span>
+      </div>
+      <div class="flex justify-between py-2 items-center">
+        <div class="flex items-center">
+          <span class="font-medium text-gray-700 dark:text-gray-300">Tax (%)</span>
+          <label class="ml-2 relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              bind:checked={isTaxEnabled}
+              class="sr-only peer"
+            />
+            <div
+              class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer dark:bg-gray-700 peer-checked:bg-blue-600"
+            ></div>
+          </label>
+        </div>
         <input
           type="number"
           bind:value={appState.taxPercent}
@@ -410,495 +488,103 @@
           max="100"
           step="0.01"
           disabled={!isTaxEnabled}
+          class="w-24 text-right border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
         />
-      </span>
-    </div>
-    <div class="totals-row total-due">
-      <span>Total Due</span>
-      <span>{totalDue}</span>
+      </div>
+      <div class="flex justify-between py-2 border-t mt-4 pt-4 border-gray-200 dark:border-gray-700">
+        <span class="font-semibold text-lg text-gray-900 dark:text-white">Total Due</span>
+        <span class="font-semibold text-lg text-gray-900 dark:text-white">{totalDue}</span>
+      </div>
     </div>
   </section>
 
-  <!-- Payment Info Section -->
-  <section class="payment-info">
-    <h2>Payment Information</h2>
-    <div class="payment-fields">
-      <label>
-        <span>Account Number</span>
+  <!-- Payment Info -->
+  <section class="mb-8">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Payment Information</h2>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div>
+        <label class="block text-sm text-gray-700 dark:text-gray-300">Account Number</label>
         <input
           type="text"
           bind:value={appState.payment.accountNumber}
           maxlength="20"
+          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
         />
-      </label>
-      <label>
-        <span>Account Name</span>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-700 dark:text-gray-300">Account Name</label>
         <input
           type="text"
           bind:value={appState.payment.accountName}
           maxlength="28"
+          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
         />
-      </label>
-      <label>
-        <span>Bank Name</span>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-700 dark:text-gray-300">Bank Name</label>
         <input
           type="text"
           bind:value={appState.payment.bank}
           maxlength="28"
+          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
         />
-      </label>
-      <label>
-        <span>IFSC</span>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-700 dark:text-gray-300">IFSC</label>
         <input
           type="text"
           bind:value={appState.payment.ifsc}
           maxlength="11"
+          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
         />
-      </label>
-      <label>
-        <span>SWIFT Code</span>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-700 dark:text-gray-300">SWIFT Code</label>
         <input
           type="text"
           bind:value={appState.payment.swiftCode}
           maxlength="11"
+          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
         />
-      </label>
+      </div>
     </div>
   </section>
 
   <!-- Download Button -->
-  <footer class="footer">
-    <button class="download-button" on:click={() => window.print()}>
-      <Download />
-      <span>Download Invoice</span>
+  <div class="text-center">
+    <button
+      on:click={() => window.print()}
+      class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+    >
+      <Download class="h-5 w-5 mr-2" />
+      Download Invoice
     </button>
-  </footer>
+  </div>
 </div>
 
 <style>
-  /* Fonts */
-  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-
-  /* Reset and Base Styles */
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
-  .hidden {
-    display: none;
-  }
-
-  body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #f5f7fa;
-    color: #333;
-    line-height: 1.6;
-  }
-
-  /* Container */
-  .container {
-    max-width: 800px;
-    margin: 2rem auto;
-    background-color: #fff;
-    padding: 2rem;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-  }
-
-  /* Header */
-  .header {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 2rem;
-  }
-
-  .company-info,
-  .invoice-info {
-    flex: 1 1 45%;
-  }
-
-  .logo-section {
-    display: flex;
-    align-items: center;
-  }
-
-  .company-logo {
-    max-height: 80px;
-    margin-right: 1rem;
-  }
-
-  .icon-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #dc2626;
-  }
-
-  .icon-button:hover {
-    color: #b91c1c;
-  }
-
-  .logo-upload {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    color: #2563eb;
-  }
-
-  .logo-upload:hover {
-    color: #1d4ed8;
-  }
-
-  .company-name {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-top: 1rem;
-    border: none;
-    border-bottom: 1px solid #d1d5db;
-    width: 100%;
-  }
-
-  .company-name:focus {
-    outline: none;
-    border-bottom-color: #2563eb;
-  }
-
-  .invoice-info h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-  }
-
-  .invoice-details label {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 0.5rem;
-  }
-
-  .invoice-details span {
-    font-size: 0.9rem;
-    color: #6b7280;
-    margin-bottom: 0.25rem;
-  }
-
-  .invoice-details input,
-  .invoice-details select {
-    padding: 0.5rem;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-  }
-
-  .invoice-details input:focus,
-  .invoice-details select:focus {
-    outline: none;
-    border-color: #2563eb;
-  }
-
-  /* Addresses */
-  .addresses {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    margin-bottom: 2rem;
-  }
-
-  .address-block {
-    flex: 1 1 45%;
-    margin-bottom: 1rem;
-  }
-
-  .address-block h2 {
-    font-size: 1.25rem;
-    font-weight: 500;
-    margin-bottom: 1rem;
-  }
-
-  .address-block textarea {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    resize: vertical;
-  }
-
-  .address-block label {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 0.5rem;
-  }
-
-  .address-block span {
-    font-size: 0.9rem;
-    color: #6b7280;
-    margin-bottom: 0.25rem;
-  }
-
-  .address-block input {
-    padding: 0.5rem;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-  }
-
-  .address-block input:focus {
-    outline: none;
-    border-color: #2563eb;
-  }
-
-  /* Items Section */
-  .items-section h2 {
-    font-size: 1.25rem;
-    font-weight: 500;
-    margin-bottom: 1rem;
-  }
-
-  .item-form {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    margin-bottom: 1rem;
-  }
-
-  .item-form input {
-    flex: 1 1 20%;
-    padding: 0.5rem;
-    margin-right: 1rem;
-    margin-bottom: 0.5rem;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-  }
-
-  .item-form input:focus {
-    outline: none;
-    border-color: #2563eb;
-  }
-
-  .add-button {
-    background-color: #2563eb;
-    color: #fff;
-    border: none;
-    padding: 0.5rem;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-
-  .add-button:hover {
-    background-color: #1d4ed8;
-  }
-
-  .items-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  .items-table th,
-  .items-table td {
-    padding: 0.75rem;
-    border: 1px solid #d1d5db;
-    text-align: left;
-  }
-
-  .items-table th {
-    background-color: #f3f4f6;
-  }
-
-  .items-table td input {
-    width: 100%;
-    border: none;
-    padding: 0.25rem;
-  }
-
-  .items-table td input:focus {
-    outline: none;
-    border-bottom: 1px solid #2563eb;
-  }
-
-  .items-table .actions {
-    width: 50px;
-    text-align: center;
-  }
-
-  /* Totals */
-  .totals {
-    margin-top: 2rem;
-    max-width: 400px;
-    margin-left: auto;
-  }
-
-  .totals-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.5rem 0;
-  }
-
-  .totals-row input {
-    width: 80px;
-    padding: 0.25rem;
-    text-align: right;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-  }
-
-  .totals-row input:focus {
-    outline: none;
-    border-color: #2563eb;
-  }
-
-  .total-due {
-    font-weight: 700;
-    font-size: 1.25rem;
-  }
-
-  /* Switch */
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 36px;
-    height: 18px;
-    margin-left: 0.5rem;
-  }
-
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-
-  .switch .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #d1d5db;
-    transition: 0.4s;
-    border-radius: 18px;
-  }
-
-  .switch .slider:before {
-    position: absolute;
-    content: '';
-    height: 14px;
-    width: 14px;
-    left: 2px;
-    bottom: 2px;
-    background-color: white;
-    transition: 0.4s;
-    border-radius: 50%;
-  }
-
-  .switch input:checked + .slider {
-    background-color: #2563eb;
-  }
-
-  .switch input:checked + .slider:before {
-    transform: translateX(18px);
-  }
-
-  /* Payment Info */
-  .payment-info {
-    margin-top: 2rem;
-  }
-
-  .payment-info h2 {
-    font-size: 1.25rem;
-    font-weight: 500;
-    margin-bottom: 1rem;
-  }
-
-  .payment-fields {
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  .payment-fields label {
-    flex: 1 1 45%;
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1rem;
-    margin-right: 1rem;
-  }
-
-  .payment-fields span {
-    font-size: 0.9rem;
-    color: #6b7280;
-    margin-bottom: 0.25rem;
-  }
-
-  .payment-fields input {
-    padding: 0.5rem;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-  }
-
-  .payment-fields input:focus {
-    outline: none;
-    border-color: #2563eb;
-  }
-
-  /* Footer */
-  .footer {
-    display: flex;
-    justify-content: center;
-    margin-top: 2rem;
-  }
-
-  .download-button {
-    background-color: #2563eb;
-    color: #fff;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .download-button:hover {
-    background-color: #1d4ed8;
-  }
-
-  /* Print Styles */
+  /* Ensure print styles are clean */
   @media print {
+    .hidden-print {
+      display: none !important;
+    }
     body {
       background-color: #fff;
     }
-
-    .container {
-      border: none;
-      padding: 0;
+    .dark {
+      background-color: #fff;
+      color: #000;
     }
-
-    .header,
-    .addresses,
-    .items-section,
-    .totals,
-    .payment-info,
-    .footer {
-      margin: 0;
+    .dark * {
+      background-color: #fff;
+      color: #000;
     }
-
-    .icon-button,
-    .add-button,
-    .download-button,
-    .switch {
-      display: none;
-    }
-
     input,
     textarea {
       border: none;
     }
-
-    .items-table th,
-    .items-table td {
-      border: 1px solid #000;
+    button {
+      display: none;
     }
   }
 </style>
