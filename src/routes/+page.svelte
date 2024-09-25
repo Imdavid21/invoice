@@ -154,9 +154,9 @@
     return total + item.price * item.quantity;
   }, 0);
 
-  $: discountAmount = subTotal * (+appState.discountPercent || 0) / 100;
+  $: discountAmount = (subTotal * (+appState.discountPercent || 0)) / 100;
   $: taxableAmount = subTotal - discountAmount;
-  $: taxAmount = taxableAmount * (+appState.taxPercent || 0) / 100;
+  $: taxAmount = (taxableAmount * (+appState.taxPercent || 0)) / 100;
   $: totalDue = taxableAmount + taxAmount;
 </script>
 
@@ -171,7 +171,7 @@
 <svelte:body on:click={() => save()} />
 
 <div
-  class="max-w-screen-md mx-auto px-6 py-8 flex flex-col space-y-6 font-inter bg-[#FAFAFA] border border-[#E2E2E2] rounded-xl shadow-sm print:shadow-none print:bg-white print:border-none"
+  class="max-w-screen-md mx-auto px-6 py-8 flex flex-col space-y-6 font-montserrat bg-gradient-to-b from-[#FAFAFA] to-[#FFFFFF] border border-[#E2E2E2] rounded-xl shadow-sm print:shadow-none print:bg-white print:border-none"
 >
   <!-- Company & Invoice Details --------------------------------------->
   <div class="flex flex-row justify-between items-start">
@@ -181,14 +181,14 @@
           <div class="flex flex-row items-center space-x-4">
             <div class="flex flex-col border border-[#E2E2E2] rounded-xl">
               <button
-                class="p-2 hover:bg-[#E2E2E2] rounded"
+                class="p-2 hover:bg-[#F0F5FF] rounded"
                 on:click={() => {
                   appState.company.logo = null;
                 }}
               >
                 <Trash />
               </button>
-              <button class="p-2 hover:bg-[#E2E2E2] rounded" on:click={() => document.getElementById('imageInput').click()}>
+              <button class="p-2 hover:bg-[#F0F5FF] rounded" on:click={() => document.getElementById('imageInput').click()}>
                 <ImagePlus />
                 <input
                   id="imageInput"
@@ -207,7 +207,7 @@
           </div>
         {:else}
           <button
-            class="p-2 flex flex-row gap-2 rounded-lg border border-[#E2E2E2] cursor-pointer hover:bg-[#F5F5F5] print:hidden"
+            class="p-2 flex flex-row gap-2 rounded-lg border border-[#E2E2E2] cursor-pointer hover:bg-[#F0F5FF] print:hidden"
             on:click={() => document.getElementById('imageInput').click()}
           >
             <ImagePlus />
@@ -222,7 +222,7 @@
           </button>
         {/if}
       </div>
-      <input class="font-bold text-xl border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]" type="text" bind:value={appState.company.name} />
+      <input class="font-bold text-xl border border-[#E2E2E2] p-3 rounded-lg focus:outline-none focus:border-[#5A5A5A]" type="text" bind:value={appState.company.name} />
     </div>
 
     <div class="relative flex flex-col items-end gap-2">
@@ -234,12 +234,12 @@
           placeholder="2341"
           maxlength="4"
           bind:value={appState.invoice.number}
-          class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+          class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
         />
       </h2>
       <button
         on:click={() => reset()}
-        class="p-2 rounded-lg hover:bg-[#E2E2E2] transition-all duration-100 ease-in-out print:hidden"
+        class="p-2 rounded-lg hover:bg-[#F0F5FF] transition-all duration-100 ease-in-out print:hidden"
       >
         <RotateCw strokeWidth={1.5} />
       </button>
@@ -252,7 +252,7 @@
             size="10"
             placeholder="Date Created"
             maxlength="13"
-            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
           />
         </p>
         <p>
@@ -263,11 +263,11 @@
             size="10"
             placeholder="Due Date"
             maxlength="13"
-            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
           />
         </p>
       </div>
-      <select bind:value={appState.currency} class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A] print:hidden">
+      <select bind:value={appState.currency} class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] print:hidden">
         {#each currencyOptions as option}
           <option value={option.code}>{option.code} - {option.name}</option>
         {/each}
@@ -283,7 +283,7 @@
     <div>
       <h4 class="mb-2 font-bold">From</h4>
       <textarea
-        style="resize: none;"
+        style="resize: none; padding: 8px 12px;"
         placeholder="Enter sender's address"
         cols="30"
         rows="3"
@@ -297,7 +297,7 @@
           <input
             type="text"
             bind:value={appState.invoice.fromTaxIdName}
-            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
             placeholder="GSTIN"
           />
         </p>
@@ -306,7 +306,7 @@
           <input
             type="text"
             bind:value={appState.invoice.fromTaxId}
-            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
             placeholder="Enter Tax ID"
           />
         </p>
@@ -315,7 +315,7 @@
           <input
             type="email"
             bind:value={appState.invoice.fromContact.mail}
-            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
             placeholder="bruce@wayneenterprises.com"
           />
         </p>
@@ -324,7 +324,7 @@
           <input
             type="text"
             bind:value={appState.invoice.fromContact.phone}
-            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
             placeholder="+1 555-0199"
           />
         </p>
@@ -333,7 +333,7 @@
     <div>
       <h4 class="mb-2 font-bold">To</h4>
       <textarea
-        style="resize: none;"
+        style="resize: none; padding: 8px 12px;"
         placeholder="Enter recipient's address"
         cols="30"
         rows="3"
@@ -347,7 +347,7 @@
           <input
             type="text"
             bind:value={appState.invoice.toTaxIdName}
-            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
             placeholder="Enter Tax Name"
           />
         </p>
@@ -356,7 +356,7 @@
           <input
             type="text"
             bind:value={appState.invoice.toTaxId}
-            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
             placeholder="Enter Tax ID"
           />
         </p>
@@ -365,7 +365,7 @@
           <input
             type="email"
             bind:value={appState.invoice.toContact.mail}
-            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
             placeholder="rick@c137.com"
           />
         </p>
@@ -374,7 +374,7 @@
           <input
             type="text"
             bind:value={appState.invoice.toContact.phone}
-            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
             placeholder="+1 555-0118"
           />
         </p>
@@ -388,7 +388,7 @@
     <button
       disabled={itemDesc == ''}
       on:click={() => addItem()}
-      class="p-2 rounded-full bg-[#E2E2E2] hover:bg-[#CFCFCF] transition-all duration-100 ease-in-out print:hidden"
+      class="p-2 rounded-full bg-[#F0F5FF] hover:bg-[#EAE9FF] transition-all duration-100 ease-in-out print:hidden"
     >
       <Plus stroke="#557571" />
     </button>
@@ -398,7 +398,7 @@
       type="text"
       bind:value={itemDesc}
       placeholder="Item description"
-      class="border border-[#E2E2E2] rounded-lg p-2 focus:outline-none focus:border-[#5A5A5A] grow"
+      class="border border-[#E2E2E2] rounded-lg p-3 focus:outline-none focus:border-[#5A5A5A] grow"
       on:keypress={(e) => e.key == 'Enter' && addItem()}
     />
     <input
@@ -406,7 +406,7 @@
       bind:value={itemPrice}
       placeholder="Unit Price"
       min="1"
-      class="border border-[#E2E2E2] rounded-lg p-2 focus:outline-none focus:border-[#5A5A5A] w-32"
+      class="border border-[#E2E2E2] rounded-lg p-3 focus:outline-none focus:border-[#5A5A5A] w-32"
       on:keypress={(e) => e.key == 'Enter' && addItem()}
     />
     <input
@@ -415,10 +415,10 @@
       placeholder="Quantity"
       min="1"
       step="1"
-      class="border border-[#E2E2E2] rounded-lg p-2 focus:outline-none focus:border-[#5A5A5A] w-32"
+      class="border border-[#E2E2E2] rounded-lg p-3 focus:outline-none focus:border-[#5A5A5A] w-32"
       on:keypress={(e) => e.key == 'Enter' && addItem()}
     />
-    <p class="border border-[#E2E2E2] p-2 w-32 text-right">
+    <p class="border border-[#E2E2E2] p-3 w-32 text-right">
       {getCurrencySymbol(appState.currency)}{itemPrice * itemQty}
     </p>
   </form>
@@ -427,46 +427,46 @@
 
   <div class="flex flex-col mt-4">
     <div class="flex flex-row bg-[#FAFAFA] border border-[#E2E2E2]">
-      <p class="font-bold p-2 border-r border-[#E2E2E2] grow">Item Description</p>
-      <p class="font-bold p-2 border-r border-[#E2E2E2] w-32">Unit Price</p>
-      <p class="font-bold p-2 border-r border-[#E2E2E2] w-24">Qty</p>
-      <p class="font-bold p-2 w-32 text-right">Total</p>
+      <p class="font-bold p-3 border-r border-[#E2E2E2] grow">Item Description</p>
+      <p class="font-bold p-3 border-r border-[#E2E2E2] w-32">Unit Price</p>
+      <p class="font-bold p-3 border-r border-[#E2E2E2] w-24">Qty</p>
+      <p class="font-bold p-3 w-32 text-right">Total</p>
     </div>
     {#each appState.items as item, index}
       <div class="flex flex-row even:bg-[#F8F8F8] border border-[#E2E2E2]">
         <button
           on:click={() => deleteItem(index)}
-          class="p-2 hover:bg-[#E2E2E2] transition-all duration-100 ease-in-out rounded print:hidden"
+          class="p-3 hover:bg-[#F0F5FF] transition-all duration-100 ease-in-out rounded print:hidden"
         >
           <Trash color="#C96868" />
         </button>
 
-        <p contenteditable="true" class="p-2 border-r border-[#E2E2E2] grow">{item.desc}</p>
-        <input class="p-2 border-r border-[#E2E2E2] w-32" type="text" bind:value={item.price} />
-        <input class="p-2 border-r border-[#E2E2E2] w-24" type="text" bind:value={item.quantity} />
-        <p class="p-2 w-32 text-right">{getCurrencySymbol(appState.currency)}{item.price * item.quantity}</p>
+        <p contenteditable="true" class="p-3 border-r border-[#E2E2E2] grow">{item.desc}</p>
+        <input class="p-3 border-r border-[#E2E2E2] w-32" type="text" bind:value={item.price} />
+        <input class="p-3 border-r border-[#E2E2E2] w-24" type="text" bind:value={item.quantity} />
+        <p class="p-3 w-32 text-right">{getCurrencySymbol(appState.currency)}{item.price * item.quantity}</p>
       </div>
     {/each}
 
     <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2]">
-      <p class="p-2 grow text-right font-bold">Subtotal</p>
-      <p class="p-2 w-32 text-right">{getCurrencySymbol(appState.currency)}{subTotal}</p>
+      <p class="p-3 grow text-right font-bold">Subtotal</p>
+      <p class="p-3 w-32 text-right">{getCurrencySymbol(appState.currency)}{subTotal}</p>
     </div>
     <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2]">
-      <p class="p-2 grow text-right font-bold">Discount %</p>
-      <input class="p-2 w-32 text-right" type="text" bind:value={appState.discountPercent} />
+      <p class="p-3 grow text-right font-bold">Discount %</p>
+      <input class="p-3 w-32 text-right" type="text" bind:value={appState.discountPercent} />
     </div>
     <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2]">
-      <p class="p-2 grow text-right font-bold">Taxable Amount</p>
-      <p class="p-2 w-32 text-right">{getCurrencySymbol(appState.currency)}{taxableAmount}</p>
+      <p class="p-3 grow text-right font-bold">Taxable Amount</p>
+      <p class="p-3 w-32 text-right">{getCurrencySymbol(appState.currency)}{taxableAmount}</p>
     </div>
     <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2]">
-      <p class="p-2 grow text-right font-bold">Tax %</p>
-      <input class="p-2 w-32 text-right" type="text" bind:value={appState.taxPercent} />
+      <p class="p-3 grow text-right font-bold">Tax %</p>
+      <input class="p-3 w-32 text-right" type="text" bind:value={appState.taxPercent} />
     </div>
     <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2]">
-      <p class="p-2 grow text-right font-bold">Total Due</p>
-      <p class="p-2 w-32 text-right">{getCurrencySymbol(appState.currency)}{totalDue}</p>
+      <p class="p-3 grow text-right font-bold">Total Due</p>
+      <p class="p-3 w-32 text-right">{getCurrencySymbol(appState.currency)}{totalDue}</p>
     </div>
   </div>
 
@@ -475,7 +475,7 @@
     <h4 class="mb-2 font-bold">Note</h4>
     <textarea
       bind:value={appState.note}
-      style="resize: none;"
+      style="resize: none; padding: 8px 12px;"
       placeholder="Thank you for your business. Wubba Lubba Dub-Dub!"
       cols="30"
       rows="3"
@@ -496,7 +496,7 @@
             maxlength="20"
             placeholder="987654321098"
             bind:value={appState.payment.accountNumber}
-            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
           />
         </li>
         <li class="flex flex-row gap-2">
@@ -507,7 +507,7 @@
             maxlength="28"
             placeholder="Wayne Enterprises"
             bind:value={appState.payment.accountName}
-            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
           />
         </li>
         <li class="flex flex-row gap-2">
@@ -518,7 +518,7 @@
             maxlength="28"
             placeholder="Gotham National Bank"
             bind:value={appState.payment.bank}
-            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
           />
         </li>
         <li class="flex flex-row gap-2">
@@ -529,7 +529,7 @@
             maxlength="11"
             placeholder="GNB0001234"
             bind:value={appState.payment.ifsc}
-            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
           />
         </li>
         <li class="flex flex-row gap-2">
@@ -540,7 +540,7 @@
             maxlength="11"
             placeholder="GNBKUS6S"
             bind:value={appState.payment.swiftCode}
-            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
           />
         </li>
         <li class="flex flex-row gap-2">
@@ -551,7 +551,7 @@
             maxlength="50"
             placeholder="Payment due within 30 days"
             bind:value={appState.payment.customField}
-            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
           />
         </li>
       </ul>
@@ -563,7 +563,7 @@
   <div class="mt-6 flex justify-center print:hidden">
     <button
       on:click={() => window.print()}
-      class="px-4 py-2 rounded-lg bg-[#E2E2E2] text-[#333] font-semibold flex items-center gap-2 hover:bg-[#CFCFCF] transition-transform"
+      class="px-4 py-3 rounded-lg bg-[#F0F5FF] text-[#333] font-semibold flex items-center gap-2 hover:bg-[#EAE9FF] transition-transform duration-150"
     >
       <Download class="w-5 h-5" />
       <span>Download Invoice</span>
