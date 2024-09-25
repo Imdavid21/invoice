@@ -184,22 +184,6 @@
   // Toggles
   let isDiscountEnabled = true;
   let isTaxEnabled = true;
-
-  // Handle responsive design
-  function handleResize() {
-    const width = window.innerWidth;
-    isMobile = width < 640; // Assuming 640px as the breakpoint for mobile devices
-  }
-
-  let isMobile = false;
-
-  onMount(() => {
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  });
 </script>
 
 <svelte:head>
@@ -212,13 +196,12 @@
     href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap"
     rel="stylesheet"
   />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </svelte:head>
 
 <svelte:body on:click={() => save()} />
 
 <div
-  class="max-w-screen-md mx-auto px-4 py-8 flex flex-col space-y-6 invoice-container print:shadow-none print:bg-white print:border-none"
+  class="max-w-screen-md mx-auto px-4 sm:px-6 py-8 flex flex-col space-y-6 invoice-container print:shadow-none print:bg-white print:border-none"
 >
   <!-- INVOICE Title and Serial No. at Top Center -->
   <div class="text-center mb-6">
@@ -231,7 +214,7 @@
       />
     </h2>
     <div class="mt-2">
-      <div class="flex flex-col justify-center items-center gap-2">
+      <div class="flex flex-col sm:flex-row justify-center items-center gap-2">
         <label class="text-lg font-semibold">
           {appState.invoice.serialLabel}:
         </label>
@@ -243,16 +226,17 @@
         />
       </div>
     </div>
-    <div class="mt-4"></div>
+    <!-- Removed the extra <hr> line here -->
+    <div class="mt-4"></div> <!-- Added some space instead -->
   </div>
 
   <!-- Company & Invoice Details -->
-  <div class="flex flex-col justify-between items-start print:flex">
-    <div class="flex flex-col gap-4 w-full">
+  <div class="flex flex-col sm:flex-row justify-between items-start print:flex">
+    <div class="flex flex-col gap-4 w-full sm:w-auto">
       <div class="">
         {#if appState.company.logo}
           <div class="flex flex-row items-center space-x-4">
-            <div class="flex flex-row print:hidden">
+            <div class="flex flex-col print:hidden">
               <button
                 class="p-2 hover:bg-gray-700 hover:text-white rounded transition-colors duration-150"
                 on:click={() => {
@@ -262,7 +246,7 @@
                 ✕
               </button>
               <button
-                class="p-2 hover:bg-gray-700 hover:text-white rounded transition-colors duration-150 ml-2"
+                class="p-2 hover:bg-gray-700 hover:text-white rounded transition-colors duration-150 mt-2"
                 on:click={() => document.getElementById('imageInput').click()}
               >
                 ＋
@@ -281,7 +265,8 @@
               class="max-h-18 max-w-40 object-cover m-0"
             />
           </div>
-        {:else}
+        {/if}
+        {#if !appState.company.logo}
           <button
             class="p-2 flex flex-row gap-2 rounded-lg cursor-pointer hover:bg-gray-700 hover:text-white transition-colors duration-150 print:hidden"
             on:click={() => document.getElementById('imageInput').click()}
@@ -306,9 +291,9 @@
       />
     </div>
 
-    <div class="relative flex flex-col items-start gap-2 mt-4 w-full">
-      <div class="flex flex-col gap-1 w-full">
-        <p class="flex items-center justify-between">
+    <div class="relative flex flex-col items-start sm:items-end gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
+      <div class="flex flex-col gap-1">
+        <p class="flex items-center">
           <span class="mr-2 secondary-text">Created :</span>
           <input
             bind:value={appState.invoice.created}
@@ -316,7 +301,7 @@
             class="p-2 focus:outline-none"
           />
         </p>
-        <p class="flex items-center justify-between">
+        <p class="flex items-center">
           <span class="mr-2 secondary-text">Due :</span>
           <input
             bind:value={appState.invoice.due}
@@ -327,7 +312,7 @@
       </div>
       <select
         bind:value={appState.currency}
-        class="p-2 focus:outline-none w-full mt-2"
+        class="p-2 focus:outline-none w-full"
       >
         {#each currencyOptions as option}
           <option value={option.code}>
@@ -341,7 +326,7 @@
   <hr class="border-custom" />
 
   <!-- From & To -->
-  <div class="flex flex-col justify-between gap-4">
+  <div class="flex flex-col sm:flex-row justify-between gap-4">
     <!-- Sender Info -->
     <div class="flex flex-col gap-2 w-full">
       <h4 class="mb-2 font-bold">Sender Info</h4>
@@ -355,8 +340,8 @@
         class="p-2 focus:outline-none w-full break-words"
       ></textarea>
       <div class="flex flex-col gap-2">
-        <div class="flex flex-col items-start">
-          <span class="w-full secondary-text">Email:</span>
+        <div class="flex flex-col sm:flex-row items-center">
+          <span class="w-24 secondary-text">Email:</span>
           <input
             type="email"
             bind:value={appState.invoice.fromContact.mail}
@@ -364,8 +349,8 @@
             placeholder="Enter Email Address"
           />
         </div>
-        <div class="flex flex-col items-start">
-          <span class="w-full secondary-text">Phone:</span>
+        <div class="flex flex-col sm:flex-row items-center">
+          <span class="w-24 secondary-text">Phone:</span>
           <input
             type="text"
             bind:value={appState.invoice.fromContact.phone}
@@ -373,8 +358,8 @@
             placeholder="Enter Phone Number"
           />
         </div>
-        <div class="flex flex-col items-start">
-          <span class="w-full secondary-text">Tax Details:</span>
+        <div class="flex flex-col sm:flex-row items-center">
+          <span class="w-24 secondary-text">Tax Details:</span>
           <input
             type="text"
             bind:value={appState.invoice.fromTaxDetails}
@@ -385,7 +370,7 @@
       </div>
     </div>
     <!-- Recipient Info -->
-    <div class="flex flex-col gap-2 w-full mt-4">
+    <div class="flex flex-col gap-2 w-full">
       <h4 class="mb-2 font-bold">Recipient Info</h4>
       <textarea
         style="resize: none; padding: 8px 0;"
@@ -397,17 +382,17 @@
         class="p-2 focus:outline-none w-full break-words"
       ></textarea>
       <div class="flex flex-col gap-2">
-        <div class="flex flex-col items-start">
-          <span class="w-full secondary-text">Email:</span>
+        <div class="flex flex-col sm:flex-row items-center">
+          <span class="w-24 secondary-text">Email:</span>
           <input
             type="email"
-bind:value={appState.invoice.toContact.mail}
+            bind:value={appState.invoice.toContact.mail}
             class="p-2 focus:outline-none w-full border-b-2 border-transparent focus:border-black"
             placeholder="Enter Email Address"
           />
         </div>
-        <div class="flex flex-col items-start">
-          <span class="w-full secondary-text">Phone:</span>
+        <div class="flex flex-col sm:flex-row items-center">
+          <span class="w-24 secondary-text">Phone:</span>
           <input
             type="text"
             bind:value={appState.invoice.toContact.phone}
@@ -415,8 +400,8 @@ bind:value={appState.invoice.toContact.mail}
             placeholder="Enter Phone Number"
           />
         </div>
-        <div class="flex flex-col items-start">
-          <span class="w-full secondary-text">Tax Details:</span>
+        <div class="flex flex-col sm:flex-row items-center">
+          <span class="w-24 secondary-text">Tax Details:</span>
           <input
             type="text"
             bind:value={appState.invoice.toTaxDetails}
@@ -431,151 +416,149 @@ bind:value={appState.invoice.toContact.mail}
   <!-- Item Descriptions -->
   <div class="flex flex-col mt-4">
     <!-- Table Headers -->
-    <div class="flex flex-col border-b border-custom items-start">
-      <div class="p-3 w-full flex justify-between">
-        <p class="font-bold">Item Name</p>
-        <p class="font-bold">Unit Price</p>
-      </div>
-      <div class="p-3 w-full flex justify-between">
-        <p class="font-bold">Quantity</p>
-        <p class="font-bold">Total</p>
-      </div>
+    <div class="flex flex-col sm:flex-row border-b border-custom items-center">
+      <div class="p-3" style="width:40px;"></div>
+      <!-- Placeholder for delete button -->
+      <p class="font-bold p-3 grow">Item Name</p>
+      <p class="font-bold p-3 w-32 text-right">Unit Price</p>
+      <p class="font-bold p-3 w-24 text-right">Quantity</p>
+      <p class="font-bold p-3 w-32 text-right">Total</p>
     </div>
     
     <!-- Item Rows -->
     {#each appState.items as item, index}
-      <div class="flex flex-col items-start border-b border-custom">
-        <div class="p-3 w-full flex justify-between items-center">
-          <input
-            type="text"
-            bind:value={item.desc}
-            class="grow break-words border-none focus:ring-0"
-            placeholder="Enter Item Name"
-          />
-          <input
-            type="number"
-            bind:value={item.price}
-            class="w-24 text-right border-b-2 border-transparent focus:border-black focus:outline-none"
-            placeholder="0"
-            min="0"
-            step="0.01"
-          />
-        </div>
-        <div class="p-3 w-full flex justify-between items-center">
-          <input
-            type="number"
-            bind:value={item.quantity}
-            class="w-24 text-left border-b-2 border-transparent focus:border-black focus:outline-none"
-            placeholder="0"
-            min="1"
-            step="1"
-          />
-          <p class="w-24 text-right">
-            {getCurrencySymbol(appState.currency)}
-            {formatNumber(item.price * item.quantity)}
-          </p>
-        </div>
+      <div class="flex flex-col sm:flex-row items-center border-b border-custom">
+        <!-- Delete button -->
         <button
           on:click={() => deleteItem(index)}
-          class="p-3 hover:bg-gray-700 hover:text-white transition-colors duration-150 rounded print:hidden w-full text-center"
+          class="p-3 hover:bg-gray-700 hover:text-white transition-colors duration-150 rounded print:hidden"
+          style="width:40px;"
         >
-          Delete Item
+          ✕
         </button>
+        <!-- Item name -->
+        <input
+          type="text"
+          bind:value={item.desc}
+          class="p-3 grow break-words border-none focus:ring-0"
+          placeholder="Enter Item Name"
+        />
+        <!-- Unit Price -->
+        <input
+          type="number"
+          bind:value={item.price}
+          class="p-3 w-32 text-right border-b-2 border-transparent focus:border-black focus:outline-none"
+          placeholder="0"
+          min="0"
+          step="0.01"
+        />
+        <!-- Quantity -->
+        <input
+          type="number"
+          bind:value={item.quantity}
+          class="p-3 w-24 text-right border-b-2 border-transparent focus:border-black focus:outline-none"
+          placeholder="0"
+          min="1"
+          step="1"
+        />
+        <!-- Total -->
+        <p class="p-3 w-32 text-right">
+          {getCurrencySymbol(appState.currency)}
+          {formatNumber(item.price * item.quantity)}
+        </p>
       </div>
     {/each}
 
     <!-- Discount, Tax, Total Due Rows -->
-    <div class="flex flex-col border-t border-custom items-start" style="background-color: #F8F8F8;">
-      <div class="p-3 w-full flex justify-between items-center">
-        <p class="font-bold">Discount %</p>
-        <div class="flex items-center">
-          <button class="toggle-switch mr-2 {isDiscountEnabled ? 'active' : ''}" on:click={() => (isDiscountEnabled = !isDiscountEnabled)}></button>
-          <input
-            class="w-24 text-right border-b-2 border-transparent focus:border-black focus:outline-none"
-            type="number"
-            bind:value={appState.discountPercent}
-            disabled={!isDiscountEnabled}
-            step="0.01"
-            max="100"
-            min="0"
-            placeholder="0"
-          />
-        </div>
-      </div>
+    <div class="flex flex-col sm:flex-row border-t border-custom items-center" style="background-color: #F8F8F8;">
+      <p class="p-3 grow text-right font-bold">Discount %</p>
+      <button class="toggle-switch ml-2 mr-1 {isDiscountEnabled ? 'active' : ''}" on:click={() => (isDiscountEnabled = !isDiscountEnabled)}></button>
+      <input
+        class="p-3 w-32 text-right border-b-2 border-transparent focus:border-black focus:outline-none"
+        type="number"
+        bind:value={appState.discountPercent}
+        disabled={!isDiscountEnabled}
+        step="0.01"
+        max="100"
+        min="0"
+        placeholder="0"
+      />
     </div>
-    <div class="flex flex-col border-t border-custom items-start" style="background-color: #F8F8F8;">
-      <div class="p-3 w-full flex justify-between items-center">
-        <p class="font-bold">Tax %</p>
-        <div class="flex items-center">
-          <button class="toggle-switch mr-2 {isTaxEnabled ? 'active' : ''}" on:click={() => (isTaxEnabled = !isTaxEnabled)}></button>
-          <input
-            class="w-24 text-right border-b-2 border-transparent focus:border-black focus:outline-none"
-            type="number"
-            bind:value={appState.taxPercent}
-            disabled={!isTaxEnabled}
-            step="0.01"
-            max="100"
-            min="0"
-            placeholder="0"
-          />
-        </div>
-      </div>
+    <div class="flex flex-col sm:flex-row border-t border-custom items-center" style="background-color: #F8F8F8;">
+      <p class="p-3 grow text-right font-bold">Tax %</p>
+      <button class="toggle-switch ml-2 mr-1 {isTaxEnabled ? 'active' : ''}" on:click={() => (isTaxEnabled = !isTaxEnabled)}></button>
+      <input
+        class="p-3 w-32 text-right border-b-2 border-transparent focus:border-black focus:outline-none"
+        type="number"
+        bind:value={appState.taxPercent}
+        disabled={!isTaxEnabled}
+        step="0.01"
+        max="100"
+        min="0"
+        placeholder="0"
+      />
     </div>
-    <div class="flex flex-col border-t border-custom" style="background-color: #F8F8F8;">
-      <div class="p-3 w-full flex justify-between items-center">
-        <p class="font-bold">Total Due</p>
-        <p class="w-24 text-right">
-          {getCurrencySymbol(appState.currency)}{formatNumber(totalDue)}
-        </p>
-      </div>
+    <div class="flex flex-col sm:flex-row border-t border-custom" style="background-color: #F8F8F8;">
+      <p class="p-3 grow text-right font-bold">Total Due</p>
+      <p class="p-3 w-32 text-right">
+        {getCurrencySymbol(appState.currency)}{formatNumber(totalDue)}
+      </p>
     </div>
   </div>
 
   <!-- New Item Form -->
-  <form class="flex flex-col justify-between gap-2 mt-4 print:hidden">
-    <div class="flex items-center justify-between w-full">
+  <form class="flex flex-col sm:flex-row justify-between gap-2 mt-4 print:hidden">
+    <div class="flex items-center">
+      <button
+        type="button"
+        disabled={itemDesc.trim() === ''}
+        on:click={() => addItem()}
+        class="p-2 rounded-full bg-black text-white hover:bg-gray-700 transition-colors duration-150 disabled:bg-gray-400 cursor-pointer"
+      >
+        ＋
+      </button>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-2 w-full">
       <input
         id="descBox"
         type="text"
         bind:value={itemDesc}
         placeholder="Enter item description"
-        class="p-2 focus:outline-none grow border-b-2 border-transparent focus:border-black"
+        class="p-2 focus:outline-none grow w-full border-b-2 border-transparent focus:border-black"
         on:keypress={(e) => e.key === 'Enter' && addItem()}
       />
-    </div>
-    <div class="flex items-center justify-between w-full mt-2">
       <input
         type="number"
         bind:value={itemPrice}
-        placeholder="Unit Price"
+        placeholder="0"
         min="0"
         step="0.01"
-        class="p-2 focus:outline-none w-1/2 border-b-2 border-transparent focus:border-black"
+        class="p-2 focus:outline-none w-full sm:w-32 border-b-2 border-transparent focus:border-black text-right"
         on:keypress={(e) => e.key === 'Enter' && addItem()}
       />
       <input
         type="number"
         bind:value={itemQty}
-        placeholder="Quantity"
+        placeholder="0"
         min="1"
         step="1"
-        class="p-2 focus:outline-none w-1/2 border-b-2 border-transparent focus:border-black"
+        class="p-2 focus:outline-none w-full sm:w-24 border-b-2 border-transparent focus:border-black text-right"
         on:keypress={(e) => e.key === 'Enter' && addItem()}
       />
+      <p class="p-2 w-full sm:w-32 text-right">
+        {getCurrencySymbol(appState.currency)}{formatNumber(itemPrice * itemQty)}
+      </p>
     </div>
-    <button
-      type="button"
-      on:click={addItem}
-      class="p-2 mt-2 bg-black text-white hover:bg-gray-700 transition-colors duration-150 rounded"
-    >
-      Add Item
-    </button>
   </form>
+
+  <!-- Add a line and spacing before Payment Info -->
+  <hr class="border-custom my-6" />
 
   <!-- Payment Info -->
   <div class="mt-6">
     <h4 class="mb-4 font-bold text-2xl">Payment Info</h4>
-    <div class="grid grid-cols-1 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
       <div class="flex flex-col">
         <label class="text-sm font-semibold">Account No</label>
         <input
@@ -626,7 +609,7 @@ bind:value={appState.invoice.toContact.mail}
           placeholder="Enter SWIFT Code"
         />
       </div>
-      <div class="flex flex-col">
+      <div class="flex flex-col sm:col-span-2">
         <label class="text-sm font-semibold">Note</label>
         <textarea
           bind:value={appState.payment.note}
@@ -642,7 +625,7 @@ bind:value={appState.invoice.toContact.mail}
   <div class="mt-6 flex justify-center print:hidden">
     <button
       on:click={() => window.print()}
-      class="w-full px-6 py-3 rounded-lg bg-black text-white font-semibold flex items-center justify-center gap-2 hover:bg-gray-700 transition-colors duration-150"
+      class="w-full sm:w-auto px-6 py-3 rounded-lg bg-black text-white font-semibold flex items-center justify-center gap-2 hover:bg-gray-700 transition-colors duration-150"
     >
       ⬇
       <span>Download Invoice</span>
@@ -710,9 +693,9 @@ bind:value={appState.invoice.toContact.mail}
   }
 
   .toggle-switch {
-    width: 40px;
-    height: 20px;
-    background-color: #aaa;
+    width: 40px; /* Increased width for better visibility */
+    height: 20px; /* Increased height */
+    background-color: #aaa; /* Light gray background */
     border-radius: 20px;
     position: relative;
     cursor: pointer;
@@ -722,7 +705,7 @@ bind:value={appState.invoice.toContact.mail}
   .toggle-switch:before {
     content: '';
     position: absolute;
-    top: 2px;
+    top: 2px; /* Adjusted for increased toggle height */
     left: 2px;
     width: 16px;
     height: 16px;
@@ -732,15 +715,15 @@ bind:value={appState.invoice.toContact.mail}
   }
 
   .toggle-switch.active {
-    background-color: #4ade80;
+    background-color: #4ade80; /* Vibrant green for active state */
   }
 
   .toggle-switch.active:before {
-    transform: translateX(20px);
+    transform: translateX(20px); /* Adjusted for increased toggle width */
   }
 
   .toggle-switch:hover {
-    background-color: #777;
+    background-color: #777; /* Increased visibility on hover */
   }
 
   .toggle-switch:hover:before {
@@ -753,6 +736,42 @@ bind:value={appState.invoice.toContact.mail}
     word-wrap: break-word;
   }
 
+  /* Specific styling for Download Button */
+  .invoice-container button.bg-black {
+    background-color: #000; /* Black background */
+    color: #fff; /* White text */
+    border-radius: 0.5rem;
+    transition: background-color 0.3s;
+  }
+
+  .invoice-container button.bg-black:hover {
+    background-color: #333; /* Slightly lighter black on hover */
+  }
+
+  /* Adjust "Add Logo" and "＋" buttons */
+  .invoice-container button.p-2.rounded-lg.cursor-pointer {
+    background-color: transparent;
+    color: #000;
+    border: 1px solid #000;
+  }
+
+  .invoice-container button.p-2.rounded-lg.cursor-pointer:hover {
+    background-color: #000;
+    color: #fff;
+  }
+
+  /* Ensure "Add Logo" and "＋" buttons have consistent styles */
+  .invoice-container button.p-2.rounded-full.bg-black.text-white {
+    background-color: transparent;
+    color: #000;
+    border: 1px solid #000;
+  }
+
+  .invoice-container button.p-2.rounded-full.bg-black.text-white:hover {
+    background-color: #000;
+    color: #fff;
+  }
+
   /* Print Styles */
   @media print {
     @page {
@@ -761,9 +780,16 @@ bind:value={appState.invoice.toContact.mail}
     body {
       margin: 0;
     }
-    .print\:hidden {
+    /* Hide unwanted elements */
+    .print:hidden {
       display: none !important;
     }
+    /* Hide buttons and interactive elements */
+    button,
+    input[type="file"] {
+      display: none !important;
+    }
+    /* Ensure logo is displayed */
     .invoice-container img {
       display: block;
     }
