@@ -1,8 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  import { GitHub, Linkedin, Coffee } from 'lucide-svelte';
-
-  export let repo = 'repo-name';
+  import { Linkedin, Coffee } from 'lucide-svelte';
 
   let year = new Date().getFullYear();
   let hover = '';
@@ -24,19 +22,7 @@
     <p class="text-xl font-bold">
       © {year} - Time flies when you're coding!
     </p>
-    <div class="flex justify-center items-center space-x-4">
-      <a
-        href={`https://github.com/commitsovercoffee/${repo}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="{linkStyle} hover:text-blue-600"
-        on:mouseenter={() => hover = 'github'}
-        on:mouseleave={() => hover = ''}
-      >
-        <GitHub class="{iconStyle} {hover === 'github' ? 'rotate-12' : ''}" />
-        <span class="ml-2">{repo}</span>
-      </a>
-      <span class="text-2xl">·</span>
+    <div class="flex justify-center items-center">
       <a
         href="https://www.linkedin.com/in/uddalak-das-crypto-nft-defi/"
         target="_blank"
