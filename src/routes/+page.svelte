@@ -71,15 +71,6 @@
     }
   }
 
-  function generateInitialsLogo(name) {
-    const initials = name
-      .split(' ')
-      .map((word) => word[0])
-      .join('')
-      .toUpperCase();
-    return initials;
-  }
-
   function save() {
     localStorage.setItem('invoiceData', JSON.stringify(appState));
   }
@@ -200,19 +191,6 @@
     href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap"
     rel="stylesheet"
   />
-  <style>
-    @media print {
-      @page {
-        margin: 1cm;
-      }
-      body {
-        -webkit-print-color-adjust: exact;
-      }
-      header, footer {
-        display: none;
-      }
-    }
-  </style>
 </svelte:head>
 
 <svelte:body on:click={() => save()} />
@@ -234,9 +212,9 @@
         type="text"
         size="10"
         placeholder="Enter Invoice Number"
-        maxlength="20"
+        maxlength="10"
         bind:value={appState.invoice.number}
-        class="p-2 focus:outline-none w-32 text-center"
+        class="p-2 focus:outline-none w-40 text-center"
       />
     </p>
   </div>
@@ -277,11 +255,20 @@
             />
           </div>
         {:else}
-          <div class="flex items-center justify-center bg-gray-200 rounded h-24 w-24">
-            <span class="text-3xl font-bold">
-              {generateInitialsLogo(appState.company.name || 'Company')}
-            </span>
-          </div>
+          <button
+            class="p-2 flex flex-row gap-2 rounded-lg cursor-pointer hover:bg-black hover:text-white transition-colors duration-150"
+            on:click={() => document.getElementById('imageInput').click()}
+          >
+            ＋
+            <p class="text-sm">Add Logo</p>
+            <input
+              id="imageInput"
+              type="file"
+              accept=".png,.jpg,.jpeg,.webp"
+              on:change={handleImageChange}
+              class="hidden"
+            />
+          </button>
         {/if}
       </div>
       <input
@@ -324,10 +311,7 @@
     </div>
   </div>
 
-  <!-- Add space and a horizontal line -->
-  <div class="my-4">
-    <hr class="border-custom" />
-  </div>
+  <hr class="border-custom my-4" />
 
   <!-- From & To  ------------------------------------------------------>
   <div class="flex flex-col sm:flex-row justify-between gap-4">
@@ -343,32 +327,31 @@
         class="p-2 focus:outline-none w-full break-words"
       ></textarea>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <p class="flex items-center">
+        <p class="flex items-start">
           <span class="w-24 secondary-text">Email:</span>
-          <input
-            type="email"
+          <textarea
             bind:value={appState.invoice.fromContact.mail}
-            class="p-2 focus:outline-none w-full break-words"
+            class="p-2 focus:outline-none w-full resize-none"
             placeholder="Enter Email Address"
-          />
+            rows="1"
+          ></textarea>
         </p>
-        <p class="flex items-center">
+        <p class="flex items-start">
           <span class="w-24 secondary-text">Phone:</span>
-          <input
-            type="text"
+          <textarea
             bind:value={appState.invoice.fromContact.phone}
-            class="p-2 focus:outline-none w-full break-words"
+            class="p-2 focus:outline-none w-full resize-none"
             placeholder="Enter Phone Number"
-          />
+            rows="1"
+          ></textarea>
         </p>
-        <div class="flex items-center sm:col-span-2">
+        <div class="flex items-start sm:col-span-2">
           <span class="w-24 secondary-text">Tax Details:</span>
           <textarea
             bind:value={appState.invoice.fromTaxDetails}
-            class="p-2 focus:outline-none w-full"
+            class="p-2 focus:outline-none w-full resize-none"
             placeholder="Enter Tax Name and ID"
-            rows="2"
-            style="resize: none;"
+            rows="1"
           ></textarea>
         </div>
       </div>
@@ -385,42 +368,39 @@
         class="p-2 focus:outline-none w-full break-words"
       ></textarea>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <p class="flex items-center">
+        <p class="flex items-start">
           <span class="w-24 secondary-text">Email:</span>
-          <input
-            type="email"
+          <textarea
             bind:value={appState.invoice.toContact.mail}
-            class="p-2 focus:outline-none w-full break-words"
+            class="p-2 focus:outline-none w-full resize-none"
             placeholder="Enter Email Address"
-          />
+            rows="1"
+          ></textarea>
         </p>
-        <p class="flex items-center">
+        <p class="flex items-start">
           <span class="w-24 secondary-text">Phone:</span>
-          <input
-            type="text"
+          <textarea
             bind:value={appState.invoice.toContact.phone}
-            class="p-2 focus:outline-none w-full break-words"
+            class="p-2 focus:outline-none w-full resize-none"
             placeholder="Enter Phone Number"
-          />
+            rows="1"
+          ></textarea>
         </p>
-        <div class="flex items-center sm:col-span-2">
+        <div class="flex items-start sm:col-span-2">
           <span class="w-24 secondary-text">Tax Details:</span>
           <textarea
             bind:value={appState.invoice.toTaxDetails}
-            class="p-2 focus:outline-none w-full"
+            class="p-2 focus:outline-none w-full resize-none"
             placeholder="Enter Tax Name and ID"
-            rows="2"
-            style="resize: none;"
+            rows="1"
           ></textarea>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Add space and a horizontal line -->
-  <div class="my-4">
-    <hr class="border-custom" />
-  </div>
+  <!-- Added space and line for readability -->
+  <hr class="border-custom my-4" />
 
   <!-- Table ----------------------------------------------------------->
   <div class="flex flex-col mt-4">
@@ -457,9 +437,13 @@
       </div>
     {/each}
 
+    <!-- Totals with consistent colors -->
     <div class="flex flex-row even:bg-[#F8F8F8] border-t border-custom items-center">
       <p class="p-3 grow text-right font-bold">Discount %</p>
-      <button class="toggle-switch ml-2 mr-1 {isDiscountEnabled ? 'active' : ''}" on:click={() => (isDiscountEnabled = !isDiscountEnabled)}></button>
+      <button
+        class="toggle-switch ml-2 mr-1 {isDiscountEnabled ? 'active' : ''}"
+        on:click={() => (isDiscountEnabled = !isDiscountEnabled)}
+      ></button>
       <input
         class="p-3 w-32 text-right"
         type="text"
@@ -472,8 +456,19 @@
     </div>
     <div class="flex flex-row even:bg-[#F8F8F8] border-t border-custom items-center">
       <p class="p-3 grow text-right font-bold">Tax %</p>
-      <button class="toggle-switch ml-2 mr-1 {isTaxEnabled ? 'active' : ''}" on:click={() => (isTaxEnabled = !isTaxEnabled)}></button>
-      <input class="p-3 w-32 text-right" type="text" bind:value={appState.taxPercent} disabled={!isTaxEnabled} step="0.01" max="100" min="0" />
+      <button
+        class="toggle-switch ml-2 mr-1 {isTaxEnabled ? 'active' : ''}"
+        on:click={() => (isTaxEnabled = !isTaxEnabled)}
+      ></button>
+      <input
+        class="p-3 w-32 text-right"
+        type="text"
+        bind:value={appState.taxPercent}
+        disabled={!isTaxEnabled}
+        step="0.01"
+        max="100"
+        min="0"
+      />
     </div>
     <div class="flex flex-row even:bg-[#F8F8F8] border-t border-custom">
       <p class="p-3 grow text-right font-bold">Total Due</p>
@@ -489,7 +484,7 @@
       <button
         disabled={itemDesc == ''}
         on:click={() => addItem()}
-        class="p-2 rounded-full bg-black text-white hover:bg-gray-700 transition-all duration-100 ease-in-out"
+        class="p-2 rounded-full bg-black text-white transition-all duration-100 ease-in-out"
       >
         ＋
       </button>
@@ -582,14 +577,15 @@
           placeholder="Enter SWIFT Code"
         />
       </div>
+      <!-- Added Note Field -->
       <div class="flex flex-col sm:col-span-2">
         <label class="text-sm font-semibold">Note</label>
         <textarea
           bind:value={appState.payment.note}
           class="p-2 focus:outline-none w-full"
-          placeholder="Enter any payment notes"
+          placeholder="Enter any payment notes or instructions"
           rows="3"
-          style="resize: none;"
+          style="resize: vertical;"
         ></textarea>
       </div>
     </div>
@@ -599,7 +595,7 @@
   <div class="mt-6 flex justify-center print:hidden">
     <button
       on:click={() => window.print()}
-      class="px-4 py-3 rounded bg-black text-white font-semibold flex items-center gap-2 hover:bg-gray-700 transition-colors duration-150"
+      class="px-4 py-3 rounded-lg bg-black text-white font-semibold flex items-center gap-2"
     >
       ⬇
       <span>Download Invoice</span>
@@ -706,24 +702,24 @@
     word-wrap: break-word;
   }
 
-  /* Adjust hover effect for download button */
-  .hover\:bg-gray-700:hover {
-    background-color: #555;
+  /* Ensuring equal colors for Tax, Discount, and Total Due */
+  .flex-row > p.font-bold {
+    color: #000;
   }
 
-  .hover\:text-white:hover {
-    color: #fff;
-  }
-
-  /* Hide default print headers and footers */
+  /* Remove date and title from print */
   @media print {
     @page {
-      margin: 1cm;
+      margin: 20mm;
     }
     body {
       -webkit-print-color-adjust: exact;
     }
-    header, footer {
+    body::before {
+      content: none;
+    }
+    title,
+    meta {
       display: none;
     }
   }
