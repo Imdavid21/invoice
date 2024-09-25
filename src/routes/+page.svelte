@@ -218,7 +218,7 @@
         <input
           type="text"
           bind:value={appState.invoice.serialLabel}
-          class="p-2 focus:outline-none"
+          class="p-2 focus:outline-none text-center"
           placeholder="Serial No."
         />
         <input
@@ -240,7 +240,7 @@
           <div class="flex flex-row items-center space-x-4">
             <div class="flex flex-col print:hidden">
               <button
-                class="p-2 hover:bg-black hover:text-white rounded"
+                class="p-2 hover:bg-gray-700 hover:text-white rounded transition-colors duration-150"
                 on:click={() => {
                   appState.company.logo = null;
                 }}
@@ -248,7 +248,7 @@
                 ✕
               </button>
               <button
-                class="p-2 hover:bg-black hover:text-white rounded"
+                class="p-2 hover:bg-gray-700 hover:text-white rounded transition-colors duration-150 mt-2"
                 on:click={() => document.getElementById('imageInput').click()}
               >
                 ＋
@@ -270,7 +270,7 @@
         {/if}
         {#if !appState.company.logo}
           <button
-            class="p-2 flex flex-row gap-2 rounded-lg cursor-pointer hover:bg-black hover:text-white transition-colors duration-150 print:hidden"
+            class="p-2 flex flex-row gap-2 rounded-lg cursor-pointer hover:bg-gray-700 hover:text-white transition-colors duration-150 print:hidden"
             on:click={() => document.getElementById('imageInput').click()}
           >
             ＋
@@ -347,7 +347,7 @@
           <input
             type="email"
             bind:value={appState.invoice.fromContact.mail}
-            class="p-2 focus:outline-none w-full"
+            class="p-2 focus:outline-none w-full border-b-2 border-transparent focus:border-black"
             placeholder="Enter Email Address"
           />
         </div>
@@ -356,7 +356,7 @@
           <input
             type="text"
             bind:value={appState.invoice.fromContact.phone}
-            class="p-2 focus:outline-none w-full"
+            class="p-2 focus:outline-none w-full border-b-2 border-transparent focus:border-black"
             placeholder="Enter Phone Number"
           />
         </div>
@@ -365,7 +365,7 @@
           <input
             type="text"
             bind:value={appState.invoice.fromTaxDetails}
-            class="p-2 focus:outline-none w-full"
+            class="p-2 focus:outline-none w-full border-b-2 border-transparent focus:border-black"
             placeholder="Enter Tax Name and ID"
           />
         </div>
@@ -389,7 +389,7 @@
           <input
             type="email"
             bind:value={appState.invoice.toContact.mail}
-            class="p-2 focus:outline-none w-full"
+            class="p-2 focus:outline-none w-full border-b-2 border-transparent focus:border-black"
             placeholder="Enter Email Address"
           />
         </div>
@@ -398,7 +398,7 @@
           <input
             type="text"
             bind:value={appState.invoice.toContact.phone}
-            class="p-2 focus:outline-none w-full"
+            class="p-2 focus:outline-none w-full border-b-2 border-transparent focus:border-black"
             placeholder="Enter Phone Number"
           />
         </div>
@@ -407,7 +407,7 @@
           <input
             type="text"
             bind:value={appState.invoice.toTaxDetails}
-            class="p-2 focus:outline-none w-full"
+            class="p-2 focus:outline-none w-full border-b-2 border-transparent focus:border-black"
             placeholder="Enter Tax Name and ID"
           />
         </div>
@@ -433,7 +433,7 @@
         <!-- Delete button -->
         <button
           on:click={() => deleteItem(index)}
-          class="p-3 hover:bg-black hover:text-white transition-all duration-100 ease-in-out rounded print:hidden"
+          class="p-3 hover:bg-gray-700 hover:text-white transition-colors duration-150 rounded print:hidden"
           style="width:40px;"
         >
           ✕
@@ -514,7 +514,7 @@
         type="button"
         disabled={itemDesc.trim() === ''}
         on:click={() => addItem()}
-        class="p-2 rounded-full bg-black text-white disabled:bg-gray-400 cursor-pointer"
+        class="p-2 rounded-full bg-black text-white hover:bg-gray-700 transition-colors duration-150 disabled:bg-gray-400 cursor-pointer"
       >
         ＋
       </button>
@@ -626,7 +626,7 @@
   <div class="mt-6 flex justify-center print:hidden">
     <button
       on:click={() => window.print()}
-      class="px-4 py-3 rounded-lg bg-black text-white font-semibold flex items-center gap-2"
+      class="px-4 py-3 rounded-lg bg-black text-white font-semibold flex items-center gap-2 hover:bg-gray-700 transition-colors duration-150"
     >
       ⬇
       <span>Download Invoice</span>
@@ -736,34 +736,26 @@
     word-wrap: break-word;
   }
 
-  /* Disable default button hover effects for Download Button */
-  .invoice-container button:not(.toggle-switch) {
-    /* No hover effect */
-  }
-
   /* Specific styling for Download Button */
-  .invoice-container .bg-black {
+  .invoice-container button.bg-black:hover {
+    background-color: #333; /* Lighter black on hover */
+    color: #fff;
+  }
+
+  /* Styling for "＋" Buttons */
+  .invoice-container button.p-2.rounded-full.bg-black.text-white {
+    background-color: transparent;
+    color: #000;
+    border: 1px solid #000;
+  }
+
+  .invoice-container button.p-2.rounded-full.bg-black.text-white:hover {
     background-color: #000;
+    color: #fff;
   }
 
-  .invoice-container .bg-black:hover {
-    /* No hover effect */
-  }
+  /* Remove any global button hover disabling */
+  /* Previously removed .invoice-container button:not(.toggle-switch) { ... } */
 
-  @media print {
-    @page {
-      margin: 0;
-    }
-    body {
-      margin: 0;
-    }
-    /* Hide unwanted elements */
-    .print:hidden {
-      display: none !important;
-    }
-    /* Hide Add Logo button if no logo is present */
-    .invoice-container img {
-      display: none;
-    }
-  }
+  /* Ensure "Add Logo" and "＋" buttons have consistent hover styles */
 </style>
