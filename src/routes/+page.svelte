@@ -102,16 +102,16 @@
       company: { name: 'Wayne Enterprises', logo: '' },
       invoice: {
         number: '1277',
-        created: 'May 24, 2024',
-        due: 'June 24, 2024',
-        from: '1007 Mountain Drive, Gotham City',
+        created: '',
+        due: '',
+        from: '',
         fromTaxIdName: 'GSTIN',
-        fromTaxId: '27AABCU9603R1ZM',
-        fromContact: { mail: 'bruce@wayneenterprises.com', phone: '+1 555-0199' },
-        to: '321 Infinite Loop, Dimension C-137',
+        fromTaxId: '',
+        fromContact: { mail: '', phone: '' },
+        to: '',
         toTaxIdName: 'Interdimensional Tax ID',
-        toTaxId: 'C-137-RS-123456',
-        toContact: { mail: 'rick@c137.com', phone: '+1 555-0118' }
+        toTaxId: '',
+        toContact: { mail: '', phone: '' }
       },
       items: [
         { desc: 'Batmobile Repair', price: '15000', quantity: '1' },
@@ -171,12 +171,12 @@
 <svelte:body on:click={() => save()} />
 
 <div
-  class="max-w-screen-md mx-auto px-6 py-8 flex flex-col space-y-6 font-inter bg-[#FAFAFA] border border-[#E2E2E2] rounded-xl shadow-sm"
+  class="max-w-screen-md mx-auto px-6 py-8 flex flex-col space-y-6 font-inter bg-[#FAFAFA] border border-[#E2E2E2] rounded-xl shadow-sm print:shadow-none print:bg-white print:border-none"
 >
   <!-- Company & Invoice Details --------------------------------------->
   <div class="flex flex-row justify-between items-start">
     <div class="flex flex-col gap-4">
-      <div>
+      <div class="print:hidden">
         {#if appState.company.logo}
           <div class="flex flex-row items-center space-x-4">
             <div class="flex flex-col border border-[#E2E2E2] rounded-xl">
@@ -207,7 +207,7 @@
           </div>
         {:else}
           <button
-            class="p-2 flex flex-row gap-2 rounded-lg border border-[#E2E2E2] cursor-pointer hover:bg-[#F5F5F5]"
+            class="p-2 flex flex-row gap-2 rounded-lg border border-[#E2E2E2] cursor-pointer hover:bg-[#F5F5F5] print:hidden"
             on:click={() => document.getElementById('imageInput').click()}
           >
             <ImagePlus />
@@ -239,18 +239,18 @@
       </h2>
       <button
         on:click={() => reset()}
-        class="p-2 rounded-lg hover:bg-[#E2E2E2] transition-all duration-100 ease-in-out"
+        class="p-2 rounded-lg hover:bg-[#E2E2E2] transition-all duration-100 ease-in-out print:hidden"
       >
         <RotateCw strokeWidth={1.5} />
       </button>
-      <div class="flex flex-col gap-1">
+      <div class="flex flex-col gap-1 print:hidden">
         <p>
           Created :
           <input
             bind:value={appState.invoice.created}
             type="text"
             size="10"
-            placeholder="May 24,2024"
+            placeholder="Date Created"
             maxlength="13"
             class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
           />
@@ -261,13 +261,13 @@
             bind:value={appState.invoice.due}
             type="text"
             size="10"
-            placeholder="June 24,2024"
+            placeholder="Due Date"
             maxlength="13"
             class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
           />
         </p>
       </div>
-      <select bind:value={appState.currency} class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]">
+      <select bind:value={appState.currency} class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A] print:hidden">
         {#each currencyOptions as option}
           <option value={option.code}>{option.code} - {option.name}</option>
         {/each}
@@ -275,7 +275,7 @@
     </div>
   </div>
 
-  <hr class="border-[#E2E2E2]" />
+  <hr class="border-[#E2E2E2] print:hidden" />
 
   <!-- From & To  ------------------------------------------------------>
 
@@ -284,7 +284,7 @@
       <h4 class="mb-2 font-bold">From</h4>
       <textarea
         style="resize: none;"
-        placeholder="Wayne Enterprises, 1007 Mountain Drive, Gotham City"
+        placeholder="Enter sender's address"
         cols="30"
         rows="3"
         maxlength="150"
@@ -307,7 +307,7 @@
             type="text"
             bind:value={appState.invoice.fromTaxId}
             class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
-            placeholder="27AABCU9603R1ZM"
+            placeholder="Enter Tax ID"
           />
         </p>
         <p>
@@ -334,7 +334,7 @@
       <h4 class="mb-2 font-bold">To</h4>
       <textarea
         style="resize: none;"
-        placeholder="Rick Sanchez, 321 Infinite Loop, Dimension C-137"
+        placeholder="Enter recipient's address"
         cols="30"
         rows="3"
         maxlength="150"
@@ -348,7 +348,7 @@
             type="text"
             bind:value={appState.invoice.toTaxIdName}
             class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
-            placeholder="Interdimensional Tax ID"
+            placeholder="Enter Tax Name"
           />
         </p>
         <p>
@@ -357,7 +357,7 @@
             type="text"
             bind:value={appState.invoice.toTaxId}
             class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
-            placeholder="C-137-RS-123456"
+            placeholder="Enter Tax ID"
           />
         </p>
         <p>
@@ -388,7 +388,7 @@
     <button
       disabled={itemDesc == ''}
       on:click={() => addItem()}
-      class="p-2 rounded-full bg-[#E2E2E2] hover:bg-[#CFCFCF] transition-all duration-100 ease-in-out"
+      class="p-2 rounded-full bg-[#E2E2E2] hover:bg-[#CFCFCF] transition-all duration-100 ease-in-out print:hidden"
     >
       <Plus stroke="#557571" />
     </button>
@@ -436,7 +436,7 @@
       <div class="flex flex-row even:bg-[#F8F8F8] border border-[#E2E2E2]">
         <button
           on:click={() => deleteItem(index)}
-          class="p-2 hover:bg-[#E2E2E2] transition-all duration-100 ease-in-out rounded"
+          class="p-2 hover:bg-[#E2E2E2] transition-all duration-100 ease-in-out rounded print:hidden"
         >
           <Trash color="#C96868" />
         </button>
@@ -560,7 +560,7 @@
 
   <!-- Download Button -------------------------------------------------->
 
-  <div class="mt-6 flex justify-center">
+  <div class="mt-6 flex justify-center print:hidden">
     <button
       on:click={() => window.print()}
       class="px-4 py-2 rounded-lg bg-[#E2E2E2] text-[#333] font-semibold flex items-center gap-2 hover:bg-[#CFCFCF] transition-transform"
