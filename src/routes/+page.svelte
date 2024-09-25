@@ -170,24 +170,24 @@
 <svelte:body on:click={() => save()} />
 
 <div
-  class="max-w-screen-md mx-auto px-4 sm:px-6 py-8 flex flex-col space-y-6 font-montserrat bg-[#FAFAFA] border border-[#E2E2E2] rounded-xl shadow-sm print:shadow-none print:bg-white print:border-none"
+  class="max-w-screen-md mx-auto px-4 sm:px-6 py-8 flex flex-col space-y-6 font-montserrat bg-white border border-gray-400 rounded-xl shadow-sm print:shadow-none print:bg-white print:border-none"
 >
   <!-- Company & Invoice Details --------------------------------------->
-  <div class="flex flex-col sm:flex-row justify-between items-start print:flex">
+  <div class="flex flex-col sm:flex-row justify-between items-start print:flex border-b-2 border-gray-400 pb-4">
     <div class="flex flex-col gap-4 w-full sm:w-auto">
       <div class="">
         {#if appState.company.logo}
           <div class="flex flex-row items-center space-x-4">
-            <div class="flex flex-col border border-[#E2E2E2] rounded-xl">
+            <div class="flex flex-col border border-gray-400 rounded-xl">
               <button
-                class="p-2 hover:bg-[#E2E2E2] rounded"
+                class="p-2 hover:bg-gray-300 rounded"
                 on:click={() => {
                   appState.company.logo = null;
                 }}
               >
                 <Trash />
               </button>
-              <button class="p-2 hover:bg-[#E2E2E2] rounded" on:click={() => document.getElementById('imageInput').click()}>
+              <button class="p-2 hover:bg-gray-300 rounded" on:click={() => document.getElementById('imageInput').click()}>
                 <ImagePlus />
                 <input
                   id="imageInput"
@@ -206,11 +206,11 @@
           </div>
         {:else}
           <button
-            class="p-2 flex flex-row gap-2 rounded-lg border border-[#E2E2E2] cursor-pointer hover:bg-[#F5F5F5]"
+            class="p-2 flex flex-row gap-2 rounded-lg border border-gray-400 cursor-pointer hover:bg-gray-200"
             on:click={() => document.getElementById('imageInput').click()}
           >
             <ImagePlus />
-            <p class="text-sm text-[#333]">Click to select an image for logo</p>
+            <p class="text-sm text-gray-700">Click to select an image for logo</p>
             <input
               id="imageInput"
               type="file"
@@ -222,22 +222,23 @@
         {/if}
       </div>
       <input
-        class="font-bold text-xl border border-[#E2E2E2] p-3 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+        class="font-bold text-xl border border-gray-400 p-3 rounded-lg focus:outline-none focus:border-gray-600 w-full"
         type="text"
         bind:value={appState.company.name}
+        placeholder="Company Name"
       />
     </div>
 
     <div class="relative flex flex-col items-start sm:items-end gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
-      <h2 class="font-bold text-2xl text-[#1E6F5C] text-left sm:text-right print:text-left">
+      <h2 class="font-bold text-2xl text-gray-800 text-left sm:text-right print:text-left">
         Invoice :
         <input
           type="text"
-          size="4"
+          size="6"
           placeholder="#0001"
-          maxlength="5"
+          maxlength="10"
           bind:value={appState.invoice.number}
-          class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+          class="border border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600"
         />
       </h2>
       <div class="flex flex-col gap-1">
@@ -246,7 +247,7 @@
           <input
             bind:value={appState.invoice.created}
             type="date"
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600"
           />
         </p>
         <p class="flex items-center">
@@ -254,11 +255,11 @@
           <input
             bind:value={appState.invoice.due}
             type="date"
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600"
           />
         </p>
       </div>
-      <select bind:value={appState.currency} class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full">
+      <select bind:value={appState.currency} class="border border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full">
         {#each currencyOptions as option}
           <option value={option.code}>
             {option.flag} {option.code} - {option.name}
@@ -268,20 +269,17 @@
     </div>
   </div>
 
-  <hr class="border-[#E2E2E2]" />
-
   <!-- From & To  ------------------------------------------------------>
-  <div class="flex flex-col sm:flex-row justify-between gap-4">
-    <div class="flex flex-col gap-2 w-full">
+  <div class="flex flex-col sm:flex-row justify-between gap-4 border-b-2 border-gray-400 pb-4">
+    <div class="flex flex-col gap-2 w-full border p-4 rounded-lg">
       <h2 class="mb-2 font-bold">Sender Info</h2>
       <textarea
-        style="resize: none; padding: 8px 12px;"
+        style="resize: vertical; padding: 8px 12px;"
         placeholder="Enter sender's name and address"
-        cols="30"
         rows="3"
-        maxlength="150"
+        maxlength="500"
         bind:value={appState.invoice.from}
-        class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full break-words"
+        class="border border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full break-words"
       ></textarea>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <p class="flex items-center">
@@ -289,7 +287,7 @@
           <input
             type="text"
             bind:value={appState.invoice.fromTaxIdName}
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full"
             placeholder="Enter Tax Name"
           />
         </p>
@@ -298,7 +296,7 @@
           <input
             type="text"
             bind:value={appState.invoice.fromTaxId}
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full"
             placeholder="Enter Tax ID"
           />
         </p>
@@ -307,7 +305,7 @@
           <input
             type="email"
             bind:value={appState.invoice.fromContact.mail}
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full"
             placeholder="Enter Email"
           />
         </p>
@@ -316,22 +314,21 @@
           <input
             type="text"
             bind:value={appState.invoice.fromContact.phone}
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full"
             placeholder="Enter Phone"
           />
         </p>
       </div>
     </div>
-    <div class="flex flex-col gap-2 w-full">
+    <div class="flex flex-col gap-2 w-full border p-4 rounded-lg">
       <h2 class="mb-2 font-bold">Recipient Info</h2>
       <textarea
-        style="resize: none; padding: 8px 12px;"
+        style="resize: vertical; padding: 8px 12px;"
         placeholder="Enter recipient's name and address"
-        cols="30"
         rows="3"
-        maxlength="150"
+        maxlength="500"
         bind:value={appState.invoice.to}
-        class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full break-words"
+        class="border border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full break-words"
       ></textarea>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <p class="flex items-center">
@@ -339,7 +336,7 @@
           <input
             type="text"
             bind:value={appState.invoice.toTaxIdName}
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full"
             placeholder="Enter Tax Name"
           />
         </p>
@@ -348,7 +345,7 @@
           <input
             type="text"
             bind:value={appState.invoice.toTaxId}
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full"
             placeholder="Enter Tax ID"
           />
         </p>
@@ -357,7 +354,7 @@
           <input
             type="email"
             bind:value={appState.invoice.toContact.mail}
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full"
             placeholder="Enter Email"
           />
         </p>
@@ -366,7 +363,7 @@
           <input
             type="text"
             bind:value={appState.invoice.toContact.phone}
-            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full"
             placeholder="Enter Phone"
           />
         </p>
@@ -375,78 +372,80 @@
   </div>
 
   <!-- New Item Form --------------------------------------------------->
-  <form class="flex flex-col sm:flex-row justify-between gap-2">
-    <div class="flex items-center">
-      <button
-        disabled={itemDesc == ''}
-        on:click={() => addItem()}
-        class="p-2 rounded-full bg-[#E2E2E2] hover:bg-[#CFCFCF] transition-all duration-100 ease-in-out print:hidden"
-      >
-        <Plus stroke="#557571" />
-      </button>
-    </div>
+  <div class="border p-4 rounded-lg">
+    <form class="flex flex-col sm:flex-row justify-between gap-2">
+      <div class="flex items-center">
+        <button
+          disabled={itemDesc == ''}
+          on:click={() => addItem()}
+          class="p-2 rounded-full bg-gray-400 hover:bg-gray-500 transition-all duration-100 ease-in-out print:hidden"
+        >
+          <Plus stroke="#ffffff" />
+        </button>
+      </div>
 
-    <div class="flex flex-col sm:flex-row gap-2 w-full">
-      <input
-        id="descBox"
-        type="text"
-        bind:value={itemDesc}
-        placeholder="Item name"
-        class="border border-[#E2E2E2] rounded-lg p-3 focus:outline-none focus:border-[#5A5A5A] grow w-full"
-        on:keypress={(e) => e.key == 'Enter' && addItem()}
-      />
-      <input
-        type="number"
-        bind:value={itemPrice}
-        placeholder="Unit Price"
-        min="0"
-        step="0.01"
-        class="border border-[#E2E2E2] rounded-lg p-3 focus:outline-none focus:border-[#5A5A5A] w-full sm:w-32"
-        on:keypress={(e) => e.key == 'Enter' && addItem()}
-      />
-      <input
-        type="number"
-        bind:value={itemQty}
-        placeholder="Quantity"
-        min="1"
-        step="1"
-        class="border border-[#E2E2E2] rounded-lg p-3 focus:outline-none focus:border-[#5A5A5A] w-full sm:w-32"
-        on:keypress={(e) => e.key == 'Enter' && addItem()}
-      />
-      <p class="border border-[#E2E2E2] p-3 w-full sm:w-32 text-right">
-        {getCurrencySymbol(appState.currency)}{(itemPrice * itemQty).toFixed(2)}
-      </p>
-    </div>
-  </form>
+      <div class="flex flex-col sm:flex-row gap-2 w-full">
+        <input
+          id="descBox"
+          type="text"
+          bind:value={itemDesc}
+          placeholder="Item name"
+          class="border border-gray-400 rounded-lg p-3 focus:outline-none focus:border-gray-600 grow w-full"
+          on:keypress={(e) => e.key == 'Enter' && addItem()}
+        />
+        <input
+          type="number"
+          bind:value={itemPrice}
+          placeholder="Unit Price"
+          min="0"
+          step="0.01"
+          class="border border-gray-400 rounded-lg p-3 focus:outline-none focus:border-gray-600 w-full sm:w-32"
+          on:keypress={(e) => e.key == 'Enter' && addItem()}
+        />
+        <input
+          type="number"
+          bind:value={itemQty}
+          placeholder="Quantity"
+          min="1"
+          step="1"
+          class="border border-gray-400 rounded-lg p-3 focus:outline-none focus:border-gray-600 w-full sm:w-32"
+          on:keypress={(e) => e.key == 'Enter' && addItem()}
+        />
+        <p class="border border-gray-400 p-3 w-full sm:w-32 text-right">
+          {getCurrencySymbol(appState.currency)}{(itemPrice * itemQty).toFixed(2)}
+        </p>
+      </div>
+    </form>
+  </div>
 
   <!-- Table ----------------------------------------------------------->
-  <div class="flex flex-col mt-4 bg-[#F0F4F8] p-2 rounded-lg">
+  <div class="flex flex-col mt-4 border p-4 rounded-lg">
     <h2 class="mb-2 font-bold">Item Descriptions</h2>
-    <div class="flex flex-row bg-[#FAFAFA] border border-[#E2E2E2]">
-      <p class="font-bold p-3 border-r border-[#E2E2E2] grow">Item name</p>
-      <p class="font-bold p-3 border-r border-[#E2E2E2] w-32 hidden sm:block">Unit Price</p>
-      <p class="font-bold p-3 border-r border-[#E2E2E2] w-24 hidden sm:block">Qty</p>
+    <div class="flex flex-row bg-gray-100 border border-gray-400">
+      <p class="font-bold p-3 border-r border-gray-400 grow">Item name</p>
+      <p class="font-bold p-3 border-r border-gray-400 w-32 hidden sm:block">Unit Price</p>
+      <p class="font-bold p-3 border-r border-gray-400 w-24 hidden sm:block">Qty</p>
       <p class="font-bold p-3 w-32 text-right hidden sm:block">Total</p>
     </div>
     {#each appState.items as item, index}
-      <div class="flex flex-col sm:flex-row even:bg-[#F8F8F8] border border-[#E2E2E2]">
+      <div class="flex flex-col sm:flex-row even:bg-gray-50 border border-gray-400">
         <div class="flex flex-row items-center">
           <button
             on:click={() => deleteItem(index)}
-            class="p-3 hover:bg-[#E2E2E2] transition-all duration-100 ease-in-out rounded print:hidden"
+            class="p-3 hover:bg-gray-300 transition-all duration-100 ease-in-out rounded print:hidden"
           >
             <Trash />
           </button>
-          <input
-            class="p-3 border-r border-[#E2E2E2] grow break-words"
-            type="text"
+          <textarea
+            class="p-3 border-r border-gray-400 grow break-words resize-none focus:outline-none focus:border-gray-600"
             bind:value={item.desc}
             on:input={() => save()}
-          />
+            rows="1"
+          ></textarea>
         </div>
         <div class="flex flex-row sm:flex-row w-full">
           <input
-            class="p-3 border-r border-[#E2E2E2] w-full sm:w-32"
+            class="p-3 border-r border-gray-400 w-full sm:w-32 focus:outline-none focus:border-gray-600"
             type="number"
             min="0"
             step="0.01"
@@ -454,7 +453,7 @@
             on:input={() => save()}
           />
           <input
-            class="p-3 border-r border-[#E2E2E2] w-full sm:w-24"
+            class="p-3 border-r border-gray-400 w-full sm:w-24 focus:outline-none focus:border-gray-600"
             type="number"
             min="0"
             step="1"
@@ -468,14 +467,14 @@
       </div>
     {/each}
 
-    <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2] items-center">
+    <div class="flex flex-row even:bg-gray-50 border-t border-gray-400 items-center">
       <p class="p-3 grow text-right font-bold">Discount %</p>
       <button
         class="toggle-switch ml-2 mr-1 {isDiscountEnabled ? 'active' : ''}"
         on:click={() => (isDiscountEnabled = !isDiscountEnabled)}
       ></button>
       <input
-        class="p-3 w-32 text-right {isDiscountEnabled ? 'enabled' : 'disabled'}"
+        class="p-3 w-32 text-right {isDiscountEnabled ? 'enabled' : 'disabled'} focus:outline-none focus:border-gray-600"
         type="number"
         bind:value={appState.discountPercent}
         disabled={!isDiscountEnabled}
@@ -485,14 +484,14 @@
         on:input={() => save()}
       />
     </div>
-    <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2] items-center">
+    <div class="flex flex-row even:bg-gray-50 border-t border-gray-400 items-center">
       <p class="p-3 grow text-right font-bold">Tax %</p>
       <button
         class="toggle-switch ml-2 mr-1 {isTaxEnabled ? 'active' : ''}"
         on:click={() => (isTaxEnabled = !isTaxEnabled)}
       ></button>
       <input
-        class="p-3 w-32 text-right {isTaxEnabled ? 'enabled' : 'disabled'}"
+        class="p-3 w-32 text-right {isTaxEnabled ? 'enabled' : 'disabled'} focus:outline-none focus:border-gray-600"
         type="number"
         bind:value={appState.taxPercent}
         disabled={!isTaxEnabled}
@@ -502,16 +501,16 @@
         on:input={() => save()}
       />
     </div>
-    <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2]">
+    <div class="flex flex-row even:bg-gray-50 border-t border-gray-400">
       <p class="p-3 grow text-right font-bold">Total Due</p>
-      <p class="p-3 w-32 text-right">
+      <p class="p-3 w-32 text-right font-bold">
         {getCurrencySymbol(appState.currency)}{totalDue}
       </p>
     </div>
   </div>
 
   <!-- Payment Info Section Redesigned --------------------------------->
-  <div class="mt-4">
+  <div class="mt-4 border p-4 rounded-lg">
     <h2 class="mb-2 font-bold">Payment Info</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div class="flex flex-col">
@@ -520,7 +519,8 @@
           type="text"
           maxlength="20"
           bind:value={appState.payment.accountNumber}
-          class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+          class="border border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600"
+          placeholder="Enter Account Number"
         />
       </div>
       <div class="flex flex-col">
@@ -529,7 +529,8 @@
           type="text"
           maxlength="28"
           bind:value={appState.payment.accountName}
-          class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+          class="border border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600"
+          placeholder="Enter Account Name"
         />
       </div>
       <div class="flex flex-col">
@@ -538,7 +539,8 @@
           type="text"
           maxlength="28"
           bind:value={appState.payment.bank}
-          class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+          class="border border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600"
+          placeholder="Enter Bank Name"
         />
       </div>
       <div class="flex flex-col">
@@ -547,7 +549,8 @@
           type="text"
           maxlength="11"
           bind:value={appState.payment.ifsc}
-          class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+          class="border border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600"
+          placeholder="Enter IFSC Code"
         />
       </div>
       <div class="flex flex-col">
@@ -556,7 +559,8 @@
           type="text"
           maxlength="11"
           bind:value={appState.payment.swiftCode}
-          class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+          class="border border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600"
+          placeholder="Enter SWIFT Code"
         />
       </div>
     </div>
@@ -566,7 +570,7 @@
   <div class="mt-6 flex justify-center print:hidden">
     <button
       on:click={() => window.print()}
-      class="px-4 py-3 rounded-lg bg-[#E2E2E2] text-[#333] font-semibold flex items-center gap-2 hover:bg-[#CFCFCF] transition-transform duration-150"
+      class="px-4 py-3 rounded-lg bg-gray-400 text-white font-semibold flex items-center gap-2 hover:bg-gray-500 transition-transform duration-150"
     >
       <Download class="w-5 h-5" />
       <span>Download Invoice</span>
@@ -592,26 +596,28 @@
     left: 1px;
     width: 16px;
     height: 16px;
-    background-color: #8eaccd;
+    background-color: #ffffff;
     border-radius: 50%;
     transition: all 0.3s;
   }
 
   .toggle-switch.active {
-    background-color: #8eaccd;
+    background-color: #4a90e2;
   }
 
   .toggle-switch.active:before {
     transform: translateX(18px);
-    background-color: #333333;
+    background-color: #ffffff;
   }
 
   .enabled {
     background-color: #ffffff;
+    color: #000000;
   }
 
   .disabled {
     background-color: #f0f0f0;
+    color: #a0a0a0;
   }
 
   /* Ensure text wraps inside boxes */
@@ -619,6 +625,7 @@
   p,
   input {
     word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 
   /* Print styles */
@@ -636,10 +643,18 @@
     .print:hidden {
       display: none;
     }
+    body {
+      -webkit-print-color-adjust: exact;
+    }
   }
 
-  /* Highlight Item Descriptions */
-  .item-descriptions {
-    background-color: #f0f8ff;
+  /* Adjust border visibility */
+  .border {
+    border-width: 1.5px;
+  }
+
+  /* Increase spacing between sections */
+  .border-b-2 {
+    margin-bottom: 1rem;
   }
 </style>
