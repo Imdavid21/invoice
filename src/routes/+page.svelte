@@ -340,7 +340,7 @@
         class="p-2 focus:outline-none w-full break-words"
       ></textarea>
       <div class="flex flex-col gap-2">
-        <div class="flex items-center">
+        <div class="flex flex-col sm:flex-row items-center">
           <span class="w-24 secondary-text">Email:</span>
           <input
             type="email"
@@ -349,7 +349,7 @@
             placeholder="Enter Email Address"
           />
         </div>
-        <div class="flex items-center">
+        <div class="flex flex-col sm:flex-row items-center">
           <span class="w-24 secondary-text">Phone:</span>
           <input
             type="text"
@@ -358,7 +358,7 @@
             placeholder="Enter Phone Number"
           />
         </div>
-        <div class="flex items-center">
+        <div class="flex flex-col sm:flex-row items-center">
           <span class="w-24 secondary-text">Tax Details:</span>
           <input
             type="text"
@@ -382,7 +382,7 @@
         class="p-2 focus:outline-none w-full break-words"
       ></textarea>
       <div class="flex flex-col gap-2">
-        <div class="flex items-center">
+        <div class="flex flex-col sm:flex-row items-center">
           <span class="w-24 secondary-text">Email:</span>
           <input
             type="email"
@@ -391,7 +391,7 @@
             placeholder="Enter Email Address"
           />
         </div>
-        <div class="flex items-center">
+        <div class="flex flex-col sm:flex-row items-center">
           <span class="w-24 secondary-text">Phone:</span>
           <input
             type="text"
@@ -400,7 +400,7 @@
             placeholder="Enter Phone Number"
           />
         </div>
-        <div class="flex items-center">
+        <div class="flex flex-col sm:flex-row items-center">
           <span class="w-24 secondary-text">Tax Details:</span>
           <input
             type="text"
@@ -413,7 +413,7 @@
     </div>
   </div>
 
-  <!-- Item Descriptions (Header Removed) -->
+  <!-- Item Descriptions -->
   <div class="flex flex-col mt-4">
     <!-- Table Headers -->
     <div class="flex flex-col sm:flex-row border-b border-custom items-center">
@@ -424,6 +424,8 @@
       <p class="font-bold p-3 w-24 text-right">Quantity</p>
       <p class="font-bold p-3 w-32 text-right">Total</p>
     </div>
+    
+    <!-- Item Rows -->
     {#each appState.items as item, index}
       <div class="flex flex-col sm:flex-row items-center border-b border-custom">
         <!-- Delete button -->
@@ -496,7 +498,7 @@
         placeholder="0"
       />
     </div>
-    <div class="flex flex-row sm:flex-col border-t border-custom" style="background-color: #F8F8F8;">
+    <div class="flex flex-col sm:flex-row border-t border-custom" style="background-color: #F8F8F8;">
       <p class="p-3 grow text-right font-bold">Total Due</p>
       <p class="p-3 w-32 text-right">
         {getCurrencySymbol(appState.currency)}{formatNumber(totalDue)}
@@ -691,9 +693,9 @@
   }
 
   .toggle-switch {
-    width: 40px; /* Increased width */
+    width: 40px; /* Increased width for better visibility */
     height: 20px; /* Increased height */
-    background-color: #ddd; /* Lighter background for better contrast */
+    background-color: #aaa; /* Light gray background */
     border-radius: 20px;
     position: relative;
     cursor: pointer;
@@ -743,10 +745,22 @@
   }
 
   .invoice-container button.bg-black:hover {
-    background-color: #333; /* Darker shade on hover */
+    background-color: #333; /* Slightly lighter black on hover */
   }
 
   /* Adjust "Add Logo" and "＋" buttons */
+  .invoice-container button.p-2.rounded-lg.cursor-pointer {
+    background-color: transparent;
+    color: #000;
+    border: 1px solid #000;
+  }
+
+  .invoice-container button.p-2.rounded-lg.cursor-pointer:hover {
+    background-color: #000;
+    color: #fff;
+  }
+
+  /* Ensure "Add Logo" and "＋" buttons have consistent styles */
   .invoice-container button.p-2.rounded-full.bg-black.text-white {
     background-color: transparent;
     color: #000;
@@ -756,68 +770,6 @@
   .invoice-container button.p-2.rounded-full.bg-black.text-white:hover {
     background-color: #000;
     color: #fff;
-  }
-
-  /* Ensure "Add Logo" button has consistent styles */
-  .invoice-container button.p-2.flex.flex-row.gap-2.rounded-lg.cursor-pointer {
-    background-color: transparent;
-    color: #000;
-    border: 1px solid #000;
-  }
-
-  .invoice-container button.p-2.flex.flex-row.gap-2.rounded-lg.cursor-pointer:hover {
-    background-color: #000;
-    color: #fff;
-  }
-
-  /* Responsive Adjustments */
-  @media (max-width: 640px) { /* Tailwind's sm breakpoint */
-    .invoice-container {
-      padding: 1.5rem;
-    }
-
-    .invoice-container h2.text-3xl {
-      font-size: 1.75rem; /* Slightly smaller on mobile */
-    }
-
-    .invoice-container h4.text-2xl {
-      font-size: 1.5rem;
-    }
-
-    .invoice-container .grid-cols-1 sm:grid-cols-2 {
-      grid-template-columns: 1fr; /* Single column on mobile */
-    }
-
-    /* Make the Download Button full width on mobile */
-    .invoice-container button.bg-black {
-      width: 100%;
-    }
-
-    /* Adjust input widths within item descriptions */
-    .invoice-container .w-32,
-    .invoice-container .w-24 {
-      width: 100%;
-    }
-
-    /* Stack the Total Due on mobile */
-    .invoice-container .flex-row.sm:flex-col {
-      flex-direction: column;
-    }
-
-    /* Ensure toggle switches are large enough */
-    .toggle-switch {
-      width: 44px;
-      height: 24px;
-    }
-
-    .toggle-switch:before {
-      width: 20px;
-      height: 20px;
-    }
-
-    .toggle-switch.active:before {
-      transform: translateX(24px);
-    }
   }
 
   /* Print Styles */
@@ -837,9 +789,9 @@
     input[type="file"] {
       display: none !important;
     }
-    /* Hide logo controls */
+    /* Ensure logo is displayed */
     .invoice-container img {
-      display: block !important;
+      display: block;
     }
   }
 </style>
