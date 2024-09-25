@@ -5,7 +5,7 @@
   let appState = {
     company: { name: '', logo: '' },
     invoice: {
-      number: '#001',
+      number: '007',
       created: '',
       due: '',
       from: '',
@@ -157,7 +157,7 @@
 <div
   class="max-w-screen-md mx-auto px-6 py-8 flex flex-col space-y-6 font-montserrat bg-[#FAFAFA] border border-[#E2E2E2] rounded-xl shadow-sm print:shadow-none print:bg-white print:border-none"
 >
-  <!-- Currency, Created, and Due Dates with Proper Pickers -->
+  <!-- Currency, Created, and Due Dates Reverted to Original Text Inputs -->
   <div class="flex flex-row justify-between items-center gap-4">
     <select
       bind:value={appState.currency}
@@ -171,14 +171,16 @@
     </select>
 
     <input
-      type="date"
+      type="text"
       bind:value={appState.invoice.created}
+      placeholder="Date Created"
       class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] flex-1"
     />
 
     <input
-      type="date"
+      type="text"
       bind:value={appState.invoice.due}
+      placeholder="Due Date"
       class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] flex-1"
     />
   </div>
@@ -264,48 +266,46 @@
     </div>
   </div>
 
-  <!-- Simplified Item Entry Section -->
-  <div class="flex flex-col mt-4 border border-[#E2E2E2] rounded-lg p-3 space-y-2">
-    <div class="flex flex-row items-center">
-      <input
-        type="text"
-        bind:value={itemDesc}
-        placeholder="Item description"
-        class="border border-[#E2E2E2] rounded-lg p-2 focus:outline-none focus:border-[#5A5A5A] flex-grow"
-      />
-      <input
-        type="number"
-        bind:value={itemPrice}
-        placeholder="Unit cost"
-        min="0"
-        step="0.01"
-        class="border border-[#E2E2E2] rounded-lg p-2 focus:outline-none focus:border-[#5A5A5A] w-24"
-      />
-      <input
-        type="number"
-        bind:value={itemQty}
-        placeholder="Quantity"
-        min="1"
-        step="1"
-        class="border border-[#E2E2E2] rounded-lg p-2 focus:outline-none focus:border-[#5A5A5A] w-20"
-      />
-      <p class="p-2 w-20 text-right">
-        {getCurrencySymbol(appState.currency)}{(itemPrice * itemQty).toFixed(2)}
-      </p>
-      <button
-        class="p-2 text-red-500"
-        on:click={() => deleteItem(index)}
-      >
-        <Trash />
-      </button>
-    </div>
+  <!-- Original Item Entry Section -->
+  <form class="flex flex-row justify-between gap-2">
     <button
+      disabled={itemDesc == ''}
       on:click={() => addItem()}
-      class="p-2 text-green-500 hover:text-green-700 mt-2"
+      class="p-2 rounded-lg bg-[#E2E2E2] hover:bg-[#CFCFCF] transition-all duration-100 ease-in-out print:hidden"
     >
-      <Plus /> Add Item
+      <Plus stroke="#557571" />
     </button>
-  </div>
+
+    <input
+      id="descBox"
+      type="text"
+      bind:value={itemDesc}
+      placeholder="Item description"
+      class="border border-[#E2E2E2] rounded-lg p-3 focus:outline-none focus:border-[#5A5A5A] grow"
+      on:keypress={(e) => e.key == 'Enter' && addItem()}
+    />
+    <input
+      type="number"
+      bind:value={itemPrice}
+      placeholder="Unit Price"
+      min="0"
+      step="0.01"
+      class="border border-[#E2E2E2] rounded-lg p-3 focus:outline-none focus:border-[#5A5A5A] w-32"
+      on:keypress={(e) => e.key == 'Enter' && addItem()}
+    />
+    <input
+      type="number"
+      bind:value={itemQty}
+      placeholder="Quantity"
+      min="1"
+      step="1"
+      class="border border-[#E2E2E2] rounded-lg p-3 focus:outline-none focus:border-[#5A5A5A] w-32"
+      on:keypress={(e) => e.key == 'Enter' && addItem()}
+    />
+    <p class="border border-[#E2E2E2] p-3 w-32 text-right">
+      {getCurrencySymbol(appState.currency)}{(itemPrice * itemQty).toFixed(2)}
+    </p>
+  </form>
 
   <!-- Download Button -------------------------------------------------->
   <div class="mt-6 flex justify-center print:hidden">
