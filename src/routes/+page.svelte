@@ -171,24 +171,24 @@
 <svelte:body on:click={() => save()} />
 
 <div
-  class="print:rotate-0 print:m-0 max-w-screen-md mx-auto px-6 py-8 flex flex-col space-y-6 font-inter bg-white print:shadow-none shadow-lg"
+  class="max-w-screen-md mx-auto px-6 py-8 flex flex-col space-y-6 font-inter bg-[#FAFAFA] border border-[#E2E2E2] rounded-xl shadow-sm"
 >
   <!-- Company & Invoice Details --------------------------------------->
-  <div class="flex flex-row justify-between">
+  <div class="flex flex-row justify-between items-start">
     <div class="flex flex-col gap-4">
       <div>
         {#if appState.company.logo}
-          <div class="flex flex-row items-center print:space-x-0 space-x-4">
-            <div class="print:hidden flex flex-col border rounded-xl shadow-md">
+          <div class="flex flex-row items-center space-x-4">
+            <div class="flex flex-col border border-[#E2E2E2] rounded-xl">
               <button
-                class="p-2"
+                class="p-2 hover:bg-[#E2E2E2] rounded"
                 on:click={() => {
                   appState.company.logo = null;
                 }}
               >
                 <Trash2 />
               </button>
-              <button class="p-2" on:click={() => document.getElementById('imageInput').click()}>
+              <button class="p-2 hover:bg-[#E2E2E2] rounded" on:click={() => document.getElementById('imageInput').click()}>
                 <ImageUp />
                 <input
                   id="imageInput"
@@ -207,11 +207,11 @@
           </div>
         {:else}
           <button
-            class="print:hidden p-2 flex flex-row gap-2 rounded-lg shadow-md border cursor-pointer"
+            class="p-2 flex flex-row gap-2 rounded-lg border border-[#E2E2E2] cursor-pointer hover:bg-[#F5F5F5]"
             on:click={() => document.getElementById('imageInput').click()}
           >
             <ImageUp />
-            <p>Click to select an image for logo</p>
+            <p class="text-sm text-[#333]">Click to select an image for logo</p>
             <input
               id="imageInput"
               type="file"
@@ -222,10 +222,10 @@
           </button>
         {/if}
       </div>
-      <input class="font-bold text-2xl border p-2" type="text" bind:value={appState.company.name} />
+      <input class="font-bold text-xl border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]" type="text" bind:value={appState.company.name} />
     </div>
 
-    <div class="relative flex flex-col items-end gap-1">
+    <div class="relative flex flex-col items-end gap-2">
       <h2 class="font-bold text-2xl text-[#1E6F5C] text-right">
         INVOICE :
         <input
@@ -234,58 +234,54 @@
           placeholder="2341"
           maxlength="4"
           bind:value={appState.invoice.number}
-          class="border p-1"
+          class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
         />
       </h2>
-      <div class="flex flex-col space-y-2 absolute -right-20 print:hidden">
-        <button
-          on:click={() => {
-            reset();
-          }}
-          class="p-2 rounded-lg bg-white group hover:bg-[#15273c] active:scale-90 transition-all duration-100 ease-in shadow"
-        >
-          <RotateCcw strokeWidth={1.5} class="group-hover:stroke-white" />
-        </button>
+      <button
+        on:click={() => reset()}
+        class="p-2 rounded-lg hover:bg-[#E2E2E2] transition-all duration-100 ease-in-out"
+      >
+        <RotateCcw strokeWidth={1.5} />
+      </button>
+      <div class="flex flex-col gap-1">
+        <p>
+          Created :
+          <input
+            bind:value={appState.invoice.created}
+            type="text"
+            size="10"
+            placeholder="May 24,2024"
+            maxlength="13"
+            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+          />
+        </p>
+        <p>
+          Due :
+          <input
+            bind:value={appState.invoice.due}
+            type="text"
+            size="10"
+            placeholder="June 24,2024"
+            maxlength="13"
+            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+          />
+        </p>
       </div>
-      <p class="print:hidden">
-        Created :
-        <input
-          bind:value={appState.invoice.created}
-          type="text"
-          size="10"
-          placeholder="May 24,2024"
-          maxlength="13"
-          class="border p-1"
-        />
-      </p>
-      <p class="print:hidden">
-        Due :
-        <input
-          bind:value={appState.invoice.due}
-          type="text"
-          size="10"
-          placeholder="June 24,2024"
-          maxlength="13"
-          class="border p-1"
-        />
-      </p>
-      <div class="print:hidden mt-2">
-        <select bind:value={appState.currency} class="border p-1">
-          {#each currencyOptions as option}
-            <option value={option.code}>{option.code} - {option.name}</option>
-          {/each}
-        </select>
-      </div>
+      <select bind:value={appState.currency} class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]">
+        {#each currencyOptions as option}
+          <option value={option.code}>{option.code} - {option.name}</option>
+        {/each}
+      </select>
     </div>
   </div>
 
-  <hr />
+  <hr class="border-[#E2E2E2]" />
 
   <!-- From & To  ------------------------------------------------------>
 
   <div class="flex flex-row justify-between">
     <div>
-      <h4 class="mb-4 font-bold">From</h4>
+      <h4 class="mb-2 font-bold">From</h4>
       <textarea
         style="resize: none;"
         placeholder="Wayne Enterprises, 1007 Mountain Drive, Gotham City"
@@ -293,7 +289,7 @@
         rows="3"
         maxlength="150"
         bind:value={appState.invoice.from}
-        class="border p-2"
+        class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
       ></textarea>
       <div class="mt-2">
         <p>
@@ -301,7 +297,7 @@
           <input
             type="text"
             bind:value={appState.invoice.fromTaxIdName}
-            class="border p-1"
+            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
             placeholder="GSTIN"
           />
         </p>
@@ -310,7 +306,7 @@
           <input
             type="text"
             bind:value={appState.invoice.fromTaxId}
-            class="border p-1"
+            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
             placeholder="27AABCU9603R1ZM"
           />
         </p>
@@ -319,7 +315,7 @@
           <input
             type="email"
             bind:value={appState.invoice.fromContact.mail}
-            class="border p-1"
+            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
             placeholder="bruce@wayneenterprises.com"
           />
         </p>
@@ -328,14 +324,14 @@
           <input
             type="text"
             bind:value={appState.invoice.fromContact.phone}
-            class="border p-1"
+            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
             placeholder="+1 555-0199"
           />
         </p>
       </div>
     </div>
     <div>
-      <h4 class="mb-4 font-bold">To</h4>
+      <h4 class="mb-2 font-bold">To</h4>
       <textarea
         style="resize: none;"
         placeholder="Rick Sanchez, 321 Infinite Loop, Dimension C-137"
@@ -343,7 +339,7 @@
         rows="3"
         maxlength="150"
         bind:value={appState.invoice.to}
-        class="border p-2"
+        class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
       ></textarea>
       <div class="mt-2">
         <p>
@@ -351,7 +347,7 @@
           <input
             type="text"
             bind:value={appState.invoice.toTaxIdName}
-            class="border p-1"
+            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
             placeholder="Interdimensional Tax ID"
           />
         </p>
@@ -360,7 +356,7 @@
           <input
             type="text"
             bind:value={appState.invoice.toTaxId}
-            class="border p-1"
+            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
             placeholder="C-137-RS-123456"
           />
         </p>
@@ -369,7 +365,7 @@
           <input
             type="email"
             bind:value={appState.invoice.toContact.mail}
-            class="border p-1"
+            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
             placeholder="rick@c137.com"
           />
         </p>
@@ -378,7 +374,7 @@
           <input
             type="text"
             bind:value={appState.invoice.toContact.phone}
-            class="border p-1"
+            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
             placeholder="+1 555-0118"
           />
         </p>
@@ -388,13 +384,11 @@
 
   <!-- New Item Form --------------------------------------------------->
 
-  <form class="print:hidden flex flex-row justify-between gap-2">
+  <form class="flex flex-row justify-between gap-2">
     <button
       disabled={itemDesc == ''}
-      on:click={() => {
-        addItem();
-      }}
-      class="absolute -ml-20 print:hidden rounded-full p-2 bg-white shadow cursor-pointer active:scale-90 transition-all duration-100 ease-in"
+      on:click={() => addItem()}
+      class="p-2 rounded-full bg-[#E2E2E2] hover:bg-[#CFCFCF] transition-all duration-100 ease-in-out"
     >
       <LucidePlus stroke="#557571" />
     </button>
@@ -404,20 +398,16 @@
       type="text"
       bind:value={itemDesc}
       placeholder="Item description"
-      class="border rounded-l p-2 grow"
-      on:keypress={(e) => {
-        e.key == 'Enter' && addItem();
-      }}
+      class="border border-[#E2E2E2] rounded-lg p-2 focus:outline-none focus:border-[#5A5A5A] grow"
+      on:keypress={(e) => e.key == 'Enter' && addItem()}
     />
     <input
       type="number"
       bind:value={itemPrice}
       placeholder="Unit Price"
       min="1"
-      class="border p-2 w-32"
-      on:keypress={(e) => {
-        e.key == 'Enter' && addItem();
-      }}
+      class="border border-[#E2E2E2] rounded-lg p-2 focus:outline-none focus:border-[#5A5A5A] w-32"
+      on:keypress={(e) => e.key == 'Enter' && addItem()}
     />
     <input
       type="number"
@@ -425,130 +415,64 @@
       placeholder="Quantity"
       min="1"
       step="1"
-      class="border p-2 w-32"
-      on:keypress={(e) => {
-        e.key == 'Enter' && addItem();
-      }}
+      class="border border-[#E2E2E2] rounded-lg p-2 focus:outline-none focus:border-[#5A5A5A] w-32"
+      on:keypress={(e) => e.key == 'Enter' && addItem()}
     />
-    <p class="border p-2 w-32">
+    <p class="border border-[#E2E2E2] p-2 w-32 text-right">
       {getCurrencySymbol(appState.currency)}{itemPrice * itemQty}
     </p>
   </form>
 
   <!-- Table ----------------------------------------------------------->
 
-  <div class="flex flex-col">
-    <div class="flex flex-row bg-[#1e6f5c]">
-      <p class="font-bold text-white p-2 border grow break-all">Item Description</p>
-      <input
-        disabled
-        class="p-2 bg-inherit border placeholder:font-bold placeholder:text-white"
-        maxlength="7"
-        size="6"
-        type="text"
-        placeholder="Unit Price"
-      />
-      <input
-        disabled
-        class="p-2 bg-inherit border placeholder:font-bold placeholder:text-white"
-        maxlength="4"
-        size="4"
-        type="text"
-        placeholder="Qty"
-      />
-      <input
-        disabled
-        class="p-2 bg-inherit border placeholder:font-bold placeholder:text-white"
-        maxlength="4"
-        size="12"
-        type="text"
-        placeholder="Total"
-      />
+  <div class="flex flex-col mt-4">
+    <div class="flex flex-row bg-[#FAFAFA] border border-[#E2E2E2]">
+      <p class="font-bold p-2 border-r border-[#E2E2E2] grow">Item Description</p>
+      <p class="font-bold p-2 border-r border-[#E2E2E2] w-32">Unit Price</p>
+      <p class="font-bold p-2 border-r border-[#E2E2E2] w-24">Qty</p>
+      <p class="font-bold p-2 w-32 text-right">Total</p>
     </div>
     {#each appState.items as item, index}
-      <div class="flex flex-row even:bg-gray-50 break-all">
+      <div class="flex flex-row even:bg-[#F8F8F8] border border-[#E2E2E2]">
         <button
-          on:click={() => {
-            deleteItem(index);
-          }}
-          class="absolute -ml-20 print:hidden rounded-full p-2 bg-white shadow cursor-pointer active:scale-90 transition-all duration-100 ease-in"
+          on:click={() => deleteItem(index)}
+          class="p-2 hover:bg-[#E2E2E2] transition-all duration-100 ease-in-out rounded"
         >
           <Trash2 color="#C96868" />
         </button>
 
-        <p contenteditable="true" class="p-2 border grow break-all">{item.desc}</p>
-        <input class="p-2 border" maxlength="7" size="6" type="text" bind:value={item.price} />
-        <input class="p-2 border" maxlength="4" size="4" type="text" bind:value={item.quantity} />
-        <input
-          disabled
-          class="p-2 border"
-          maxlength="4"
-          size="12"
-          type="text"
-          placeholder={`${getCurrencySymbol(appState.currency)}${item.price * item.quantity}`}
-        />
+        <p contenteditable="true" class="p-2 border-r border-[#E2E2E2] grow">{item.desc}</p>
+        <input class="p-2 border-r border-[#E2E2E2] w-32" type="text" bind:value={item.price} />
+        <input class="p-2 border-r border-[#E2E2E2] w-24" type="text" bind:value={item.quantity} />
+        <p class="p-2 w-32 text-right">{getCurrencySymbol(appState.currency)}{item.price * item.quantity}</p>
       </div>
     {/each}
 
-    <div class="flex flex-row even:bg-gray-50 break-all">
-      <p class="p-2 border grow break-all text-right font-bold">Subtotal</p>
-      <input
-        disabled
-        class="p-2 border"
-        maxlength="2"
-        size="12"
-        type="text"
-        placeholder={`${getCurrencySymbol(appState.currency)}${subTotal}`}
-      />
+    <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2]">
+      <p class="p-2 grow text-right font-bold">Subtotal</p>
+      <p class="p-2 w-32 text-right">{getCurrencySymbol(appState.currency)}{subTotal}</p>
     </div>
-    <div class="flex flex-row even:bg-gray-50 break-all">
-      <p class="p-2 border grow break-all text-right font-bold">Discount %</p>
-      <input
-        class="p-2 border"
-        maxlength="2"
-        size="12"
-        type="text"
-        bind:value={appState.discountPercent}
-      />
+    <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2]">
+      <p class="p-2 grow text-right font-bold">Discount %</p>
+      <input class="p-2 w-32 text-right" type="text" bind:value={appState.discountPercent} />
     </div>
-    <div class="flex flex-row even:bg-gray-50 break-all">
-      <p class="p-2 border grow break-all text-right font-bold">Taxable Amount</p>
-      <input
-        disabled
-        class="p-2 border"
-        maxlength="2"
-        size="12"
-        type="text"
-        placeholder={`${getCurrencySymbol(appState.currency)}${taxableAmount}`}
-      />
+    <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2]">
+      <p class="p-2 grow text-right font-bold">Taxable Amount</p>
+      <p class="p-2 w-32 text-right">{getCurrencySymbol(appState.currency)}{taxableAmount}</p>
     </div>
-    <div class="flex flex-row even:bg-gray-50 break-all">
-      <p class="p-2 border grow break-all text-right font-bold">Tax %</p>
-      <input
-        class="p-2 border"
-        maxlength="2"
-        size="12"
-        type="text"
-        bind:value={appState.taxPercent}
-      />
+    <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2]">
+      <p class="p-2 grow text-right font-bold">Tax %</p>
+      <input class="p-2 w-32 text-right" type="text" bind:value={appState.taxPercent} />
     </div>
-    <div class="flex flex-row even:bg-gray-50 break-all">
-      <p class="p-2 border grow break-all text-right font-bold">Total Due</p>
-      <input
-        disabled
-        class="p-2 border"
-        maxlength="2"
-        size="12"
-        type="text"
-        placeholder={`${getCurrencySymbol(appState.currency)}${totalDue}`}
-      />
+    <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2]">
+      <p class="p-2 grow text-right font-bold">Total Due</p>
+      <p class="p-2 w-32 text-right">{getCurrencySymbol(appState.currency)}{totalDue}</p>
     </div>
   </div>
 
   <!-- Additional Details  --------------------------------------------->
-
-  <div>
-    <h4 class="mb-4 font-bold">Note</h4>
+  <div class="mt-4">
+    <h4 class="mb-2 font-bold">Note</h4>
     <textarea
       bind:value={appState.note}
       style="resize: none;"
@@ -556,17 +480,15 @@
       cols="30"
       rows="3"
       maxlength="150"
-      class="border p-2"
+      class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
     ></textarea>
   </div>
-  <p>Thank you for your business</p>
-  <hr />
 
-  <div class="flex flex-row justify-between break-inside-avoid">
+  <div class="flex flex-row justify-between mt-6">
     <div>
-      <h4 class="mb-4 font-bold">Payment Info</h4>
-      <ul>
-        <li class="m-1 flex flex-row gap-1">
+      <h4 class="mb-2 font-bold">Payment Info</h4>
+      <ul class="space-y-2">
+        <li class="flex flex-row gap-2">
           <p>Account</p>
           <span>:</span>
           <input
@@ -574,34 +496,32 @@
             maxlength="20"
             placeholder="987654321098"
             bind:value={appState.payment.accountNumber}
-            class="border p-1"
+            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
           />
         </li>
-        <li class="m-1 flex flex-row gap-1">
+        <li class="flex flex-row gap-2">
           <p>A/C Name</p>
           <span>:</span>
           <input
             type="text"
-            minlength="0"
             maxlength="28"
             placeholder="Wayne Enterprises"
             bind:value={appState.payment.accountName}
-            class="border p-1"
+            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
           />
         </li>
-        <li class="m-1 flex flex-row gap-1">
+        <li class="flex flex-row gap-2">
           <p>Bank Name</p>
           <span>:</span>
           <input
             type="text"
-            minlength="0"
             maxlength="28"
             placeholder="Gotham National Bank"
             bind:value={appState.payment.bank}
-            class="border p-1"
+            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
           />
         </li>
-        <li class="m-1 flex flex-row gap-1">
+        <li class="flex flex-row gap-2">
           <p>IFSC</p>
           <span>:</span>
           <input
@@ -609,10 +529,10 @@
             maxlength="11"
             placeholder="GNB0001234"
             bind:value={appState.payment.ifsc}
-            class="border p-1"
+            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
           />
         </li>
-        <li class="m-1 flex flex-row gap-1">
+        <li class="flex flex-row gap-2">
           <p>SWIFT Code</p>
           <span>:</span>
           <input
@@ -620,10 +540,10 @@
             maxlength="11"
             placeholder="GNBKUS6S"
             bind:value={appState.payment.swiftCode}
-            class="border p-1"
+            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
           />
         </li>
-        <li class="m-1 flex flex-row gap-1">
+        <li class="flex flex-row gap-2">
           <p>Note</p>
           <span>:</span>
           <input
@@ -631,7 +551,7 @@
             maxlength="50"
             placeholder="Payment due within 30 days"
             bind:value={appState.payment.customField}
-            class="border p-1"
+            class="border border-[#E2E2E2] p-1 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
           />
         </li>
       </ul>
@@ -640,12 +560,10 @@
 
   <!-- Download Button -------------------------------------------------->
 
-  <div class="mt-6 flex justify-center print:hidden">
+  <div class="mt-6 flex justify-center">
     <button
-      on:click={() => {
-        window.print();
-      }}
-      class="px-6 py-3 rounded-full bg-gradient-to-r from-blue-500 to-green-500 text-white font-bold shadow-lg transform hover:scale-105 transition-transform"
+      on:click={() => window.print()}
+      class="px-6 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-green-500 text-white font-bold shadow-sm hover:shadow-md transform hover:scale-105 transition-transform"
     >
       Download Invoice
     </button>
