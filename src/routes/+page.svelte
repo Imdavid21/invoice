@@ -1,60 +1,34 @@
 <script>
   import { Plus, Trash2, ImagePlus, Download } from 'lucide-svelte';
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
+  import { fade } from 'svelte/transition';
 
   let appState = {
     company: { name: '', logo: '' },
     invoice: {
-      number: '#0001',
+      number: '',
       created: '',
       due: '',
       from: '',
-      fromTaxIdName: 'Tax ID',
-      fromTaxId: '',
-      fromContact: { mail: '', phone: '' },
+      fromDetailsVisible: false,
       to: '',
-      toTaxIdName: 'Tax ID',
-      toTaxId: '',
-      toContact: { mail: '', phone: '' }
+      toDetailsVisible: false
     },
     items: [],
     taxPercent: '',
     discountPercent: '',
-    note: '',
-    payment: {
-      accountNumber: '',
-      accountName: '',
-      bank: '',
-      ifsc: '',
-      swiftCode: ''
-    },
     currency: 'USD'
   };
 
   let currencyOptions = [
     { code: 'USD', symbol: '$', name: 'US Dollar', flag: '🇺🇸' },
     { code: 'EUR', symbol: '€', name: 'Euro', flag: '🇪🇺' },
-    // ... add other currencies as needed
+    // Add more currencies as needed
   ];
 
   function getCurrencySymbol(code) {
     const currency = currencyOptions.find((c) => c.code === code);
     return currency ? currency.symbol : '';
-  }
-
-  function handleImageChange(event) {
-    const file = event.target.files[0];
-
-    if (file && ['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        appState.company.logo = reader.result;
-        save();
-      };
-      reader.readAsDataURL(file);
-    } else {
-      alert('Please select a valid image (.png, .jpg, or .webp)');
-    }
   }
 
   function save() {
@@ -77,9 +51,10 @@
       itemQty = 1;
 
       save();
-      document.getElementById('descBox').focus();
+      document.getElementById('itemDesc').focus();
     } else {
-      alert('Please enter valid item details.');
+      // Display gentle error message
+      showError('Please enter valid item details.');
     }
   }
 
@@ -90,31 +65,19 @@
 
   function reset() {
     appState = {
-      company: { name: 'Your Company', logo: '' },
+      company: { name: '', logo: '' },
       invoice: {
-        number: '#0001',
+        number: '',
         created: '',
         due: '',
         from: '',
-        fromTaxIdName: 'Tax ID',
-        fromTaxId: '',
-        fromContact: { mail: '', phone: '' },
+        fromDetailsVisible: false,
         to: '',
-        toTaxIdName: 'Tax ID',
-        toTaxId: '',
-        toContact: { mail: '', phone: '' }
+        toDetailsVisible: false
       },
       items: [],
       taxPercent: '',
       discountPercent: '',
-      note: '',
-      payment: {
-        accountNumber: '',
-        accountName: '',
-        bank: '',
-        ifsc: '',
-        swiftCode: ''
-      },
       currency: 'USD'
     };
 
@@ -128,11 +91,34 @@
     } else {
       reset();
     }
+
+    // Intelligent defaults
+    if (!appState.invoice.number) {
+      appState.invoice.number = '#' + Math.floor(Math.random() * 90000 + 10000);
+    }
+    if (!appState.invoice.created) {
+      appState.invoice.created = new Date().toISOString().split('T')[0];
+    }
+    if (!appState.invoice.due) {
+      const dueDate = new Date();
+      dueDate.setDate(dueDate.getDate() + 30);
+      appState.invoice.due = dueDate.toISOString().split('T')[0];
+    }
   });
 
   let itemDesc = '';
   let itemPrice = 1;
   let itemQty = 1;
+
+  let showForm = false;
+  let showErrorMsg = false;
+  let errorMsg = '';
+
+  function showError(message) {
+    errorMsg = message;
+    showErrorMsg = true;
+    setTimeout(() => (showErrorMsg = false), 3000);
+  }
 
   $: subTotal = appState.items
     .reduce((total, item) => {
@@ -145,335 +131,417 @@
   $: taxAmount = ((taxableAmount * (+appState.taxPercent || 0)) / 100).toFixed(2);
   $: totalDue = (parseFloat(taxableAmount) + parseFloat(taxAmount)).toFixed(2);
 
-  // Toggles
   let isDiscountEnabled = appState.discountPercent !== '';
   let isTaxEnabled = appState.taxPercent !== '';
+
+  // For instant preview toggle
+  let showPreview = false;
+
+  // Handle company logo upload
+  function handleImageChange(event) {
+    const file = event.target.files[0];
+
+    if (file && ['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        appState.company.logo = reader.result;
+        save();
+      };
+      reader.readAsDataURL(file);
+    } else {
+      showError('Please select a valid image (.png, .jpg, or .webp)');
+    }
+  }
+
+  // Handle form expansion
+  async function handleInitialInput() {
+    if (initialInput.trim() !== '') {
+      appState.items = [
+        {
+          desc: initialInput.trim(),
+          price: '0.00',
+          quantity: '1'
+        }
+      ];
+      showForm = true;
+      await tick();
+      document.getElementById('companyName').focus();
+    } else {
+      showError('Please enter what you are invoicing for.');
+    }
+  }
+
+  let initialInput = '';
 </script>
 
-<svelte:body on:click={() => save()} />
+<svelte:window bind:innerWidth />
 
-<div class="invoice-container">
-  <!-- Header -->
-  <header class="invoice-header">
-    <div class="company-section">
-      {#if appState.company.logo}
-        <div class="logo-wrapper">
-          <img src={appState.company.logo} alt="Company Logo" class="company-logo" />
-          <button class="remove-logo" on:click={() => { appState.company.logo = ''; save(); }}>
-            <Trash2 />
-          </button>
-        </div>
-      {:else}
-        <label class="logo-upload">
-          <ImagePlus />
-          <span>Upload Logo</span>
-          <input type="file" accept=".png,.jpg,.jpeg,.webp" on:change={handleImageChange} />
-        </label>
-      {/if}
-      <input
-        type="text"
-        bind:value={appState.company.name}
-        placeholder="Company Name"
-        class="company-name"
-      />
-    </div>
-    <div class="invoice-details">
-      <h1>Invoice</h1>
-      <div class="invoice-info">
-        <div class="input-group">
-          <label>Invoice Number</label>
-          <input type="text" bind:value={appState.invoice.number} placeholder="#0001" />
-        </div>
-        <div class="input-group">
-          <label>Invoice Date</label>
-          <input type="date" bind:value={appState.invoice.created} />
-        </div>
-        <div class="input-group">
-          <label>Due Date</label>
-          <input type="date" bind:value={appState.invoice.due} />
-        </div>
-        <div class="input-group">
-          <label>Currency</label>
-          <select bind:value={appState.currency}>
-            {#each currencyOptions as option}
-              <option value={option.code}>{option.flag} {option.code} - {option.name}</option>
-            {/each}
-          </select>
-        </div>
+<div class="app-container">
+  <!-- One-Field Start -->
+  {#if !showForm}
+    <div class="initial-input-container">
+      <h1>Create an Invoice</h1>
+      <div class="initial-input">
+        <input
+          type="text"
+          bind:value={initialInput}
+          placeholder="What are you invoicing for?"
+          on:keypress={(e) => e.key === 'Enter' && handleInitialInput()}
+        />
+        <button on:click={handleInitialInput}>Start</button>
       </div>
     </div>
-  </header>
+  {/if}
 
-  <hr />
-
-  <!-- Addresses -->
-  <section class="addresses">
-    <div class="address-block">
-      <h2>Bill From</h2>
-      <textarea
-        bind:value={appState.invoice.from}
-        placeholder="Your Address"
-        rows="4"
-      ></textarea>
-      <div class="contact-info">
-        <div class="input-group">
-          <label>{appState.invoice.fromTaxIdName || 'Tax ID'}</label>
-          <input type="text" bind:value={appState.invoice.fromTaxId} />
-        </div>
-        <div class="input-group">
-          <label>Email</label>
-          <input type="email" bind:value={appState.invoice.fromContact.mail} />
-        </div>
-        <div class="input-group">
-          <label>Phone</label>
-          <input type="tel" bind:value={appState.invoice.fromContact.phone} />
-        </div>
-      </div>
-    </div>
-    <div class="address-block">
-      <h2>Bill To</h2>
-      <textarea
-        bind:value={appState.invoice.to}
-        placeholder="Client's Address"
-        rows="4"
-      ></textarea>
-      <div class="contact-info">
-        <div class="input-group">
-          <label>{appState.invoice.toTaxIdName || 'Tax ID'}</label>
-          <input type="text" bind:value={appState.invoice.toTaxId} />
-        </div>
-        <div class="input-group">
-          <label>Email</label>
-          <input type="email" bind:value={appState.invoice.toContact.mail} />
-        </div>
-        <div class="input-group">
-          <label>Phone</label>
-          <input type="tel" bind:value={appState.invoice.toContact.phone} />
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <hr />
-
-  <!-- Items -->
-  <section class="items-section">
-    <h2>Invoice Items</h2>
-    <form class="item-form" on:submit|preventDefault={addItem}>
-      <input
-        id="descBox"
-        type="text"
-        bind:value={itemDesc}
-        placeholder="Item Description"
-        required
-      />
-      <input
-        type="number"
-        bind:value={itemPrice}
-        placeholder="Unit Price"
-        min="0"
-        step="0.01"
-        required
-      />
-      <input
-        type="number"
-        bind:value={itemQty}
-        placeholder="Quantity"
-        min="1"
-        step="1"
-        required
-      />
-      <button type="submit" class="add-item">
-        <Plus />
-      </button>
-    </form>
-
-    <div class="items-table">
-      <div class="table-header">
-        <div>Description</div>
-        <div>Unit Price</div>
-        <div>Quantity</div>
-        <div>Total</div>
-        <div></div>
-      </div>
-      {#each appState.items as item, index}
-        <div class="table-row">
-          <div>
+  <!-- Main Form -->
+  {#if showForm}
+    <div class="main-container">
+      <!-- Edit and Preview Panels -->
+      <div class="panels">
+        <!-- Edit Panel -->
+        <div class="edit-panel">
+          <!-- Smart Company Section -->
+          <section class="company-section">
             <input
+              id="companyName"
               type="text"
-              bind:value={item.desc}
-              on:input={() => save()}
-              required
+              bind:value={appState.company.name}
+              placeholder="Company Name"
+              class="company-name"
             />
-          </div>
-          <div>
-            <input
-              type="number"
-              bind:value={item.price}
-              on:input={() => save()}
-              min="0"
-              step="0.01"
-              required
-            />
-          </div>
-          <div>
-            <input
-              type="number"
-              bind:value={item.quantity}
-              on:input={() => save()}
-              min="1"
-              step="1"
-              required
-            />
-          </div>
-          <div>{(item.price * item.quantity).toFixed(2)}</div>
-          <div>
-            <button class="delete-item" on:click={() => deleteItem(index)}>
-              <Trash2 />
-            </button>
-          </div>
+            {#if appState.company.logo}
+              <div class="logo-wrapper">
+                <img src={appState.company.logo} alt="Company Logo" class="company-logo" />
+                <button class="remove-logo" on:click={() => { appState.company.logo = ''; save(); }}>
+                  <Trash2 />
+                </button>
+              </div>
+            {:else}
+              <label class="logo-upload">
+                <ImagePlus />
+                <span>Upload Logo</span>
+                <input type="file" accept=".png,.jpg,.jpeg,.webp" on:change={handleImageChange} />
+              </label>
+            {/if}
+          </section>
+
+          <!-- Invoice Details -->
+          <section class="invoice-details">
+            <div class="input-group">
+              <label>Invoice Number</label>
+              <input type="text" bind:value={appState.invoice.number} />
+            </div>
+            <div class="input-group">
+              <label>Invoice Date</label>
+              <input type="date" bind:value={appState.invoice.created} />
+            </div>
+            <div class="input-group">
+              <label>Due Date</label>
+              <input type="date" bind:value={appState.invoice.due} />
+            </div>
+            <div class="input-group">
+              <label>Currency</label>
+              <select bind:value={appState.currency}>
+                {#each currencyOptions as option}
+                  <option value={option.code}>{option.flag} {option.code} - {option.name}</option>
+                {/each}
+              </select>
+            </div>
+          </section>
+
+          <!-- Intuitive Client Input -->
+          <section class="client-section">
+            <div class="client-input">
+              <input
+                type="text"
+                bind:value={appState.invoice.to}
+                placeholder="Bill To"
+                on:focus={() => appState.invoice.toDetailsVisible = true}
+              />
+              {#if appState.invoice.toDetailsVisible}
+                <div class="client-details" transition:fade>
+                  <!-- Additional client fields can be added here -->
+                </div>
+              {/if}
+            </div>
+          </section>
+
+          <!-- Dynamic Line Items -->
+          <section class="items-section">
+            <h2>Invoice Items</h2>
+            <form class="item-form" on:submit|preventDefault={addItem}>
+              <input
+                id="itemDesc"
+                type="text"
+                bind:value={itemDesc}
+                placeholder="Description"
+                required
+              />
+              <input
+                type="number"
+                bind:value={itemPrice}
+                placeholder="Unit Price"
+                min="0"
+                step="0.01"
+                required
+              />
+              <input
+                type="number"
+                bind:value={itemQty}
+                placeholder="Quantity"
+                min="1"
+                step="1"
+                required
+              />
+              <button type="submit" class="add-item">
+                <Plus />
+              </button>
+            </form>
+
+            <div class="items-table">
+              {#each appState.items as item, index}
+                <div class="table-row">
+                  <div>
+                    <input
+                      type="text"
+                      bind:value={item.desc}
+                      on:input={() => save()}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="number"
+                      bind:value={item.price}
+                      on:input={() => save()}
+                      min="0"
+                      step="0.01"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="number"
+                      bind:value={item.quantity}
+                      on:input={() => save()}
+                      min="1"
+                      step="1"
+                      required
+                    />
+                  </div>
+                  <div>{(item.price * item.quantity).toFixed(2)}</div>
+                  <div>
+                    <button class="delete-item" on:click={() => deleteItem(index)}>
+                      <Trash2 />
+                    </button>
+                  </div>
+                </div>
+              {/each}
+            </div>
+          </section>
+
+          <!-- Totals -->
+          <section class="totals-section">
+            <div class="totals-row">
+              <span>Subtotal</span>
+              <span>{subTotal}</span>
+            </div>
+            <div class="totals-row">
+              <span>
+                Discount (%)
+                <label class="toggle-switch">
+                  <input type="checkbox" bind:checked={isDiscountEnabled} />
+                  <span class="slider"></span>
+                </label>
+              </span>
+              <span>
+                <input
+                  type="number"
+                  bind:value={appState.discountPercent}
+                  on:input={() => save()}
+                  min="0"
+                  max="100"
+                  step="0.01"
+                  disabled={!isDiscountEnabled}
+                />
+              </span>
+            </div>
+            <div class="totals-row">
+              <span>Taxable Amount</span>
+              <span>{taxableAmount}</span>
+            </div>
+            <div class="totals-row">
+              <span>
+                Tax (%)
+                <label class="toggle-switch">
+                  <input type="checkbox" bind:checked={isTaxEnabled} />
+                  <span class="slider"></span>
+                </label>
+              </span>
+              <span>
+                <input
+                  type="number"
+                  bind:value={appState.taxPercent}
+                  on:input={() => save()}
+                  min="0"
+                  max="100"
+                  step="0.01"
+                  disabled={!isTaxEnabled}
+                />
+              </span>
+            </div>
+            <div class="totals-row total-due">
+              <span>Total Due</span>
+              <span>{totalDue}</span>
+            </div>
+          </section>
         </div>
-      {/each}
-    </div>
-  </section>
 
-  <!-- Totals -->
-  <section class="totals-section">
-    <div class="totals-row">
-      <span>Subtotal</span>
-      <span>{subTotal}</span>
-    </div>
-    <div class="totals-row">
-      <span>
-        Discount (%)
-        <label class="toggle-switch">
-          <input type="checkbox" bind:checked={isDiscountEnabled} />
-          <span class="slider"></span>
-        </label>
-      </span>
-      <span>
-        <input
-          type="number"
-          bind:value={appState.discountPercent}
-          on:input={() => save()}
-          min="0"
-          max="100"
-          step="0.01"
-          disabled={!isDiscountEnabled}
-        />
-      </span>
-    </div>
-    <div class="totals-row">
-      <span>Taxable Amount</span>
-      <span>{taxableAmount}</span>
-    </div>
-    <div class="totals-row">
-      <span>
-        Tax (%)
-        <label class="toggle-switch">
-          <input type="checkbox" bind:checked={isTaxEnabled} />
-          <span class="slider"></span>
-        </label>
-      </span>
-      <span>
-        <input
-          type="number"
-          bind:value={appState.taxPercent}
-          on:input={() => save()}
-          min="0"
-          max="100"
-          step="0.01"
-          disabled={!isTaxEnabled}
-        />
-      </span>
-    </div>
-    <div class="totals-row total-due">
-      <span>Total Due</span>
-      <span>{totalDue}</span>
-    </div>
-  </section>
+        <!-- Preview Panel -->
+        {#if innerWidth > 768}
+          <div class="preview-panel">
+            <!-- Implement a simplified preview of the invoice -->
+            <div class="invoice-preview">
+              <h2>Invoice Preview</h2>
+              <p><strong>{appState.company.name}</strong></p>
+              <p>{appState.invoice.number}</p>
+              <p>{appState.invoice.created}</p>
+              <!-- Additional preview details -->
+            </div>
+          </div>
+        {/if}
+      </div>
 
-  <!-- Payment Info -->
-  <section class="payment-info">
-    <h2>Payment Information</h2>
-    <div class="payment-fields">
-      <div class="input-group">
-        <label>Account Number</label>
-        <input type="text" bind:value={appState.payment.accountNumber} maxlength="20" />
-      </div>
-      <div class="input-group">
-        <label>Account Name</label>
-        <input type="text" bind:value={appState.payment.accountName} maxlength="28" />
-      </div>
-      <div class="input-group">
-        <label>Bank Name</label>
-        <input type="text" bind:value={appState.payment.bank} maxlength="28" />
-      </div>
-      <div class="input-group">
-        <label>IFSC</label>
-        <input type="text" bind:value={appState.payment.ifsc} maxlength="11" />
-      </div>
-      <div class="input-group">
-        <label>SWIFT Code</label>
-        <input type="text" bind:value={appState.payment.swiftCode} maxlength="11" />
-      </div>
+      <!-- Quick Actions Footer -->
+      <footer class="quick-actions">
+        <button on:click={() => window.print()}>
+          <Download />
+          <span>Download PDF</span>
+        </button>
+        <!-- Additional buttons like "Send Invoice" and "Save as Link" can be added -->
+      </footer>
     </div>
-  </section>
+  {/if}
 
-  <!-- Download Button -->
-  <footer class="invoice-footer">
-    <button class="download-button" on:click={() => window.print()}>
-      <Download />
-      <span>Download Invoice</span>
-    </button>
-  </footer>
+  <!-- Error Message -->
+  {#if showErrorMsg}
+    <div class="error-message" transition:fade>
+      {errorMsg}
+    </div>
+  {/if}
 </div>
 
 <style>
+  /* Global Styles */
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
 
-  /* Global Styles */
   body {
     margin: 0;
     font-family: 'Inter', sans-serif;
-    background-color: #fafafa;
-    color: #333;
+    background-color: #f9fafb;
+    color: #111827;
   }
 
-  .invoice-container {
-    max-width: 900px;
-    margin: 40px auto;
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 40px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  .app-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px;
   }
 
-  /* Header */
-  .invoice-header {
+  /* One-Field Start */
+  .initial-input-container {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
+    padding: 100px 20px;
   }
 
+  .initial-input-container h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+
+  .initial-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .initial-input input {
+    padding: 12px;
+    font-size: 1rem;
+    width: 300px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+  }
+
+  .initial-input button {
+    padding: 12px 20px;
+    background-color: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .initial-input button:hover {
+    background-color: #2563eb;
+  }
+
+  /* Main Container */
+  .main-container {
+    margin-top: 40px;
+  }
+
+  .panels {
+    display: flex;
+  }
+
+  .edit-panel {
+    flex: 1;
+    padding-right: 20px;
+  }
+
+  .preview-panel {
+    width: 40%;
+    padding-left: 20px;
+    border-left: 1px solid #e5e7eb;
+  }
+
+  /* Company Section */
   .company-section {
-    flex: 1 1 40%;
+    margin-bottom: 40px;
+  }
+
+  .company-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    border: none;
+    border-bottom: 1px solid #d1d5db;
+    padding: 8px 0;
+    width: 100%;
+    transition: border-color 0.2s;
+  }
+
+  .company-name:focus {
+    outline: none;
+    border-color: #3b82f6;
   }
 
   .logo-wrapper {
     position: relative;
+    margin-top: 20px;
   }
 
   .company-logo {
     max-height: 80px;
-    margin-bottom: 20px;
   }
 
   .remove-logo {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: -10px;
+    right: -10px;
     background: #fff;
     border: none;
     cursor: pointer;
@@ -483,15 +551,15 @@
   }
 
   .remove-logo:hover {
-    background: #f0f0f0;
+    background: #f3f4f6;
   }
 
   .logo-upload {
     display: flex;
     align-items: center;
     cursor: pointer;
-    color: #666;
-    margin-bottom: 20px;
+    color: #6b7280;
+    margin-top: 20px;
   }
 
   .logo-upload input {
@@ -499,150 +567,65 @@
   }
 
   .logo-upload:hover {
-    color: #000;
+    color: #111827;
   }
 
-  .company-name {
-    font-size: 1.5rem;
-    font-weight: 700;
-    border: none;
-    border-bottom: 1px solid #ccc;
-    padding: 8px 0;
-    width: 100%;
-    transition: border-color 0.2s;
-  }
-
-  .company-name:focus {
-    outline: none;
-    border-color: #000;
-  }
-
+  /* Invoice Details */
   .invoice-details {
-    flex: 1 1 50%;
-    text-align: right;
-  }
-
-  .invoice-details h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-  }
-
-  .invoice-info {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-
-  .invoice-info .input-group {
-    width: 48%;
-    margin-bottom: 10px;
-    margin-left: 4%;
-  }
-
-  .invoice-info .input-group:nth-child(odd) {
-    margin-left: 0;
-  }
-
-  .invoice-info label {
-    font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 4px;
-  }
-
-  .invoice-info input,
-  .invoice-info select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.95rem;
-    transition: border-color 0.2s;
-  }
-
-  .invoice-info input:focus,
-  .invoice-info select:focus {
-    outline: none;
-    border-color: #000;
-  }
-
-  /* Addresses */
-  .addresses {
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 40px;
-  }
-
-  .address-block {
-    flex: 1 1 45%;
-    margin-right: 5%;
+    gap: 20px;
     margin-bottom: 40px;
   }
 
-  .address-block:last-child {
-    margin-right: 0;
+  .invoice-details .input-group {
+    flex: 1 1 200px;
   }
 
-  .address-block h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 20px;
-  }
-
-  .address-block textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    resize: vertical;
-    font-size: 0.95rem;
-    transition: border-color 0.2s;
-    margin-bottom: 20px;
-  }
-
-  .address-block textarea:focus {
-    outline: none;
-    border-color: #000;
-  }
-
-  .contact-info {
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  .contact-info .input-group {
-    width: 48%;
-    margin-right: 4%;
-    margin-bottom: 10px;
-  }
-
-  .contact-info .input-group:last-child {
-    margin-right: 0;
-  }
-
-  .contact-info label {
+  .invoice-details label {
     font-size: 0.9rem;
-    color: #666;
+    color: #6b7280;
     margin-bottom: 4px;
   }
 
-  .contact-info input {
+  .invoice-details input,
+  .invoice-details select {
     width: 100%;
     padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.95rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
     transition: border-color 0.2s;
   }
 
-  .contact-info input:focus {
+  .invoice-details input:focus,
+  .invoice-details select:focus {
     outline: none;
-    border-color: #000;
+    border-color: #3b82f6;
   }
 
-  /* Items */
+  /* Client Section */
+  .client-section {
+    margin-bottom: 40px;
+  }
+
+  .client-input input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+  }
+
+  .client-input input:focus {
+    outline: none;
+    border-color: #3b82f6;
+  }
+
+  /* Items Section */
   .items-section {
-    margin-top: 40px;
+    margin-bottom: 40px;
   }
 
   .items-section h2 {
@@ -653,101 +636,77 @@
 
   .item-form {
     display: flex;
-    flex-wrap: wrap;
+    gap: 10px;
     margin-bottom: 20px;
   }
 
   .item-form input {
-    flex: 1 1 23%;
-    margin-right: 2%;
+    flex: 1;
     padding: 8px;
-    font-size: 0.95rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
     transition: border-color 0.2s;
-    margin-bottom: 10px;
   }
 
   .item-form input:focus {
     outline: none;
-    border-color: #000;
-  }
-
-  .item-form input:last-child {
-    margin-right: 0;
+    border-color: #3b82f6;
   }
 
   .add-item {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 1.5rem;
-    color: #666;
+    color: #6b7280;
     transition: color 0.2s;
     padding: 0;
-    margin-left: 10px;
   }
 
   .add-item:hover {
-    color: #000;
+    color: #111827;
   }
 
-  .items-table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-
-  .items-table .table-header,
   .items-table .table-row {
     display: flex;
-    border-bottom: 1px solid #e0e0e0;
-  }
-
-  .items-table .table-header div,
-  .items-table .table-row div {
-    flex: 1 1 20%;
-    padding: 12px;
-    font-size: 0.95rem;
-  }
-
-  .items-table .table-header div {
-    font-weight: 600;
-    color: #666;
-  }
-
-  .items-table .table-row div {
     align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
   }
 
-  .items-table .table-row div input {
+  .items-table .table-row div {
+    flex: 1;
+  }
+
+  .items-table .table-row input {
     width: 100%;
-    border: none;
     padding: 8px;
-    font-size: 0.95rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
     transition: border-color 0.2s;
   }
 
-  .items-table .table-row div input:focus {
+  .items-table .table-row input:focus {
     outline: none;
-    border-bottom: 1px solid #000;
+    border-color: #3b82f6;
   }
 
   .delete-item {
     background: none;
     border: none;
     cursor: pointer;
-    color: #666;
+    color: #6b7280;
     transition: color 0.2s;
     padding: 0;
   }
 
   .delete-item:hover {
-    color: #000;
+    color: #111827;
   }
 
-  /* Totals */
+  /* Totals Section */
   .totals-section {
-    margin-top: 40px;
     max-width: 400px;
     margin-left: auto;
   }
@@ -756,26 +715,25 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
-    font-size: 0.95rem;
+    font-size: 1rem;
   }
 
   .totals-row input {
     width: 80px;
     padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
     text-align: right;
     transition: border-color 0.2s;
   }
 
   .totals-row input:focus {
     outline: none;
-    border-color: #000;
+    border-color: #3b82f6;
   }
 
   .totals-row.total-due {
     font-weight: 700;
-    font-size: 1.1rem;
   }
 
   .toggle-switch {
@@ -795,7 +753,7 @@
   .toggle-switch .slider {
     position: absolute;
     cursor: pointer;
-    background-color: #ccc;
+    background-color: #d1d5db;
     border-radius: 20px;
     top: 0;
     left: 0;
@@ -817,136 +775,83 @@
   }
 
   .toggle-switch input:checked + .slider {
-    background-color: #000;
+    background-color: #3b82f6;
   }
 
   .toggle-switch input:checked + .slider:before {
     transform: translateX(16px);
   }
 
-  /* Payment Info */
-  .payment-info {
-    margin-top: 40px;
-  }
-
-  .payment-info h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 20px;
-  }
-
-  .payment-fields {
+  /* Quick Actions Footer */
+  .quick-actions {
     display: flex;
-    flex-wrap: wrap;
-  }
-
-  .payment-fields .input-group {
-    flex: 1 1 48%;
-    margin-right: 4%;
-    margin-bottom: 20px;
-  }
-
-  .payment-fields .input-group:nth-child(2n) {
-    margin-right: 0;
-  }
-
-  .payment-fields label {
-    font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 4px;
-  }
-
-  .payment-fields input {
-    width: 100%;
-    padding: 8px;
-    font-size: 0.95rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    transition: border-color 0.2s;
-  }
-
-  .payment-fields input:focus {
-    outline: none;
-    border-color: #000;
-  }
-
-  /* Footer */
-  .invoice-footer {
-    text-align: center;
+    justify-content: center;
     margin-top: 40px;
   }
 
-  .download-button {
-    background: #000;
+  .quick-actions button {
+    background-color: #3b82f6;
     color: #fff;
     border: none;
     padding: 12px 24px;
     font-size: 1rem;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    transition: background 0.2s;
+    gap: 8px;
+    transition: background-color 0.2s;
   }
 
-  .download-button:hover {
-    background: #333;
+  .quick-actions button:hover {
+    background-color: #2563eb;
   }
 
-  .download-button svg {
-    margin-right: 8px;
+  /* Error Message */
+  .error-message {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f87171;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 1rem;
   }
 
-  /* Responsive */
+  /* Responsive Design */
   @media (max-width: 768px) {
-    .invoice-info .input-group,
-    .contact-info .input-group,
-    .payment-fields .input-group {
-      width: 100%;
-      margin-right: 0;
+    .panels {
+      flex-direction: column;
     }
 
-    .items-table .table-header div,
-    .items-table .table-row div {
-      flex: 1 1 100%;
-    }
-
-    .items-table .table-row {
-      flex-wrap: wrap;
-    }
-
-    .items-table .table-row div {
-      margin-bottom: 10px;
-    }
-
-    .items-table .table-row div:last-child {
-      margin-bottom: 0;
+    .preview-panel {
+      display: none;
     }
   }
 
   /* Print Styles */
   @media print {
-    .invoice-container {
-      box-shadow: none;
-      border: none;
+    .app-container {
       padding: 0;
     }
 
-    .remove-logo,
-    .add-item,
-    .delete-item,
-    .download-button {
+    .initial-input-container,
+    .quick-actions,
+    .error-message {
       display: none;
+    }
+
+    .edit-panel {
+      width: 100%;
+      padding: 0;
     }
 
     input,
     textarea,
     select {
       border: none;
-    }
-
-    .toggle-switch {
-      display: none;
     }
   }
 </style>
