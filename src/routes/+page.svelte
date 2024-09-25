@@ -1,11 +1,12 @@
 <script>
-  import { Plus, Trash, ImagePlus, RotateCw, Download } from 'lucide-svelte';
+  import { Plus, Trash, ImagePlus, Download } from 'lucide-svelte';
   import { onMount } from 'svelte';
 
-  // Toggles
+  // Toggles for discount and tax functionality
   let isDiscountEnabled = true;
   let isTaxEnabled = true;
 
+  // Initial state of the application
   let appState = {
     company: { name: '', logo: '' },
     invoice: {
@@ -14,11 +15,9 @@
       due: '',
       from: '',
       fromTaxId: '',
-      fromTaxIdName: 'Tax Name',
       fromContact: { mail: '', phone: '' },
       to: '',
       toTaxId: '',
-      toTaxIdName: 'Tax Name',
       toContact: { mail: '', phone: '' }
     },
     items: [{ desc: '', price: '', quantity: '' }],
@@ -35,6 +34,7 @@
     currency: 'USD'
   };
 
+  // Currency options with flags
   let currencyOptions = [
     { code: 'USD', symbol: '$', name: 'US Dollar', flag: '🇺🇸' },
     { code: 'EUR', symbol: '€', name: 'Euro', flag: '🇪🇺' },
@@ -53,17 +53,16 @@
     { code: 'SGD', symbol: 'S$', name: 'Singapore Dollar', flag: '🇸🇬' }
   ];
 
+  // Utility function to get currency symbols
   function getCurrencySymbol(code) {
     const currency = currencyOptions.find((c) => c.code === code);
     return currency ? currency.symbol : '';
   }
 
+  // Handle image change for logo upload
   function handleImageChange(event) {
     const file = event.target.files[0];
-    if (
-      file &&
-      (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/webp')
-    ) {
+    if (file && ['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
       const reader = new FileReader();
       reader.onload = () => {
         appState.company.logo = reader.result;
@@ -75,10 +74,12 @@
     }
   }
 
+  // Save data to local storage
   function save() {
     localStorage.setItem('invoiceData', JSON.stringify(appState));
   }
 
+  // Add item to the invoice
   function addItem() {
     if (itemDesc !== '' && itemPrice > 0 && itemQty > 0) {
       appState.items = [
@@ -99,11 +100,13 @@
     }
   }
 
+  // Delete an item from the invoice
   function deleteItem(index) {
     appState.items = appState.items.filter((_, i) => i !== index);
     save();
   }
 
+  // Reset application state
   function reset() {
     appState = {
       company: { name: 'Wayne Enterprises', logo: '' },
@@ -139,6 +142,7 @@
     save();
   }
 
+  // On component mount, load saved data or reset
   onMount(() => {
     const savedData = localStorage.getItem('invoiceData');
     if (savedData) {
@@ -148,20 +152,21 @@
     }
   });
 
+  // Item details for adding to the invoice
   let itemDesc = '';
   let itemPrice = 1;
   let itemQty = 1;
 
-  $: subTotal = appState.items
-    .reduce((total, item) => {
-      return total + item.price * item.quantity;
-    }, 0)
-    .toFixed(2);
+  // Calculate financial data
+  $: subTotal = appState.items.reduce((total, item) => {
+    return total + item.price * item.quantity;
+  }, 0).toFixed(2);
 
   $: discountAmount = ((subTotal * (+appState.discountPercent || 0)) / 100).toFixed(2);
   $: taxableAmount = (subTotal - discountAmount).toFixed(2);
   $: taxAmount = ((taxableAmount * (+appState.taxPercent || 0)) / 100).toFixed(2);
-  $: totalDue = (parseFloat(taxableAmount) + parseFloat(taxAmount)).toFixed(2);
+  $: totalDue = Math.min(parseFloat(taxableAmount) + parseFloat(taxAmount), 10000000000).toFixed(2); // Limit to 10 billion
+
 </script>
 
 <svelte:head>
@@ -177,7 +182,7 @@
 <div
   class="max-w-screen-md mx-auto px-6 py-8 flex flex-col space-y-6 font-montserrat bg-[#FAFAFA] border border-[#E2E2E2] rounded-xl shadow-sm print:shadow-none print:bg-white print:border-none"
 >
-  <!-- Company & Invoice Details --------------------------------------->
+  <!-- Company & Invoice Details -->
   <div class="flex flex-row justify-between items-start print:flex">
     <div class="flex flex-col gap-4">
       <div>
@@ -245,12 +250,6 @@
           class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
         />
       </h2>
-      <button
-        on:click={() => reset()}
-        class="p-2 rounded-lg hover:bg-[#E2E2E2] transition-all duration-100 ease-in-out print:hidden"
-      >
-        <RotateCw strokeWidth={1.5} />
-      </button>
       <div class="flex flex-col gap-1">
         <p>
           Created :
@@ -281,8 +280,7 @@
 
   <hr class="border-[#E2E2E2]" />
 
-  <!-- From & To  ------------------------------------------------------>
-
+  <!-- From & To -->
   <div class="flex flex-row justify-between gap-4">
     <div class="flex flex-col gap-2">
       <h4 class="mb-2 font-bold">From</h4>
@@ -296,6 +294,15 @@
         class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
       ></textarea>
       <div class="grid grid-cols-2 gap-2">
+        <p class="flex items-center">
+          <span class="w-24">Tax Name:</span>
+          <input
+            type="text"
+            bind:value={appState.invoice.fromTaxId}
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            placeholder="Enter Tax Name"
+          />
+        </p>
         <p class="flex items-center">
           <span class="w-24">Tax ID:</span>
           <input
@@ -338,6 +345,15 @@
       ></textarea>
       <div class="grid grid-cols-2 gap-2">
         <p class="flex items-center">
+          <span class="w-24">Tax Name:</span>
+          <input
+            type="text"
+            bind:value={appState.invoice.toTaxId}
+            class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            placeholder="Enter Tax Name"
+          />
+        </p>
+        <p class="flex items-center">
           <span class="w-24">Tax ID:</span>
           <input
             type="text"
@@ -368,15 +384,14 @@
     </div>
   </div>
 
-  <!-- New Item Form --------------------------------------------------->
-
+  <!-- New Item Form -->
   <form class="flex flex-row justify-between gap-2">
     <button
-      disabled={itemDesc === ''}
+      disabled={itemDesc == ''}
       on:click={() => addItem()}
       class="p-2 rounded-full bg-[#E2E2E2] hover:bg-[#CFCFCF] transition-all duration-100 ease-in-out print:hidden"
     >
-      <img src="https://www.noticons.com/icon/O540/000000/FFFEFE00.svg" alt="Add Item" class="h-5 w-5"/>
+      <Plus stroke="#557571" />
     </button>
 
     <input
@@ -385,7 +400,7 @@
       bind:value={itemDesc}
       placeholder="Item name"
       class="border border-[#E2E2E2] rounded-lg p-3 focus:outline-none focus:border-[#5A5A5A] grow"
-      on:keypress={(e) => e.key === 'Enter' && addItem()}
+      on:keypress={(e) => e.key == 'Enter' && addItem()}
     />
     <input
       type="number"
@@ -394,7 +409,7 @@
       min="0"
       step="0.01"
       class="border border-[#E2E2E2] rounded-lg p-3 focus:outline-none focus:border-[#5A5A5A] w-32"
-      on:keypress={(e) => e.key === 'Enter' && addItem()}
+      on:keypress={(e) => e.key == 'Enter' && addItem()}
     />
     <input
       type="number"
@@ -403,16 +418,15 @@
       min="1"
       step="1"
       class="border border-[#E2E2E2] rounded-lg p-3 focus:outline-none focus:border-[#5A5A5A] w-32"
-      on:keypress={(e) => e.key === 'Enter' && addItem()}
+      on:keypress={(e) => e.key == 'Enter' && addItem()}
     />
     <p class="border border-[#E2E2E2] p-3 w-32 text-right">
       {getCurrencySymbol(appState.currency)}{(itemPrice * itemQty).toFixed(2)}
     </p>
   </form>
 
-  <!-- Table ----------------------------------------------------------->
-
-  <div class="flex flex-col mt-4 bg-[#EFEFEF] p-4 rounded-lg">
+  <!-- Table -->
+  <div class="flex flex-col mt-4">
     <div class="flex flex-row bg-[#FAFAFA] border border-[#E2E2E2]">
       <p class="font-bold p-3 border-r border-[#E2E2E2] grow">Item name</p>
       <p class="font-bold p-3 border-r border-[#E2E2E2] w-32">Unit Price</p>
@@ -459,7 +473,7 @@
     </div>
   </div>
 
-  <!-- Payment Info Section Redesigned --------------------------------->
+  <!-- Payment Info Section Redesigned -->
   <div class="mt-4">
     <h4 class="mb-2 font-bold">Payment Info</h4>
     <div class="grid grid-cols-2 gap-4">
@@ -511,8 +525,7 @@
     </div>
   </div>
 
-  <!-- Download Button -------------------------------------------------->
-
+  <!-- Download Button -->
   <div class="mt-6 flex justify-center print:hidden">
     <button
       on:click={() => window.print()}
