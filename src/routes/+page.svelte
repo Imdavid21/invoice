@@ -33,20 +33,7 @@
 
   let currencyOptions = [
     { code: 'USD', symbol: '$', name: 'US Dollar', flag: '🇺🇸' },
-    { code: 'EUR', symbol: '€', name: 'Euro', flag: '🇪🇺' },
-    { code: 'GBP', symbol: '£', name: 'British Pound', flag: '🇬🇧' },
-    { code: 'JPY', symbol: '¥', name: 'Japanese Yen', flag: '🇯🇵' },
-    { code: 'AUD', symbol: 'A$', name: 'Australian Dollar', flag: '🇦🇺' },
-    { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar', flag: '🇨🇦' },
-    { code: 'CHF', symbol: 'CHF', name: 'Swiss Franc', flag: '🇨🇭' },
-    { code: 'CNY', symbol: '¥', name: 'Chinese Yuan', flag: '🇨🇳' },
-    { code: 'INR', symbol: '₹', name: 'Indian Rupee', flag: '🇮🇳' },
-    { code: 'RUB', symbol: '₽', name: 'Russian Ruble', flag: '🇷🇺' },
-    { code: 'BRL', symbol: 'R$', name: 'Brazilian Real', flag: '🇧🇷' },
-    { code: 'ZAR', symbol: 'R', name: 'South African Rand', flag: '🇿🇦' },
-    { code: 'MXN', symbol: '$', name: 'Mexican Peso', flag: '🇲🇽' },
-    { code: 'NZD', symbol: 'NZ$', name: 'New Zealand Dollar', flag: '🇳🇿' },
-    { code: 'SGD', symbol: 'S$', name: 'Singapore Dollar', flag: '🇸🇬' }
+    // ... other currencies
   ];
 
   function getCurrencySymbol(code) {
@@ -184,17 +171,18 @@
 <svelte:body on:click={() => save()} />
 
 <div
-  class="max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl mx-auto px-4 sm:px-6 py-8 flex flex-col space-y-6 font-montserrat bg-[#FAFAFA] border-2 border-gray-600 rounded-xl shadow-sm print:shadow-none print:bg-white print:border-none"
+  class="max-w-screen-xl mx-auto px-4 sm:px-6 py-8 flex flex-col space-y-6 font-montserrat bg-white border-2 border-gray-600 rounded-xl shadow-sm print:shadow-none print:bg-white print:border-none"
 >
   <!-- Company & Invoice Details -->
-  <div class="flex flex-col sm:flex-row justify-between items-start print:flex">
+  <div class="flex flex-col sm:flex-row justify-between items-start">
     <div class="flex flex-col gap-4 w-full sm:w-auto">
+      <!-- Company Logo -->
       <div>
         {#if appState.company.logo}
-          <div class="flex flex-row items-center space-x-4">
+          <div class="flex items-center space-x-4">
             <div class="flex flex-col border-2 border-gray-600 rounded-xl">
               <button
-                class="p-2 hover:bg-[#E2E2E2] rounded"
+                class="p-2 hover:bg-gray-200 rounded"
                 on:click={() => {
                   appState.company.logo = null;
                 }}
@@ -202,7 +190,7 @@
                 <Trash />
               </button>
               <button
-                class="p-2 hover:bg-[#E2E2E2] rounded"
+                class="p-2 hover:bg-gray-200 rounded"
                 on:click={() => document.getElementById('imageInput').click()}
               >
                 <ImagePlus />
@@ -223,11 +211,11 @@
           </div>
         {:else}
           <button
-            class="p-2 flex flex-row gap-2 rounded-lg border-2 border-gray-600 cursor-pointer hover:bg-[#F5F5F5]"
+            class="p-2 flex items-center gap-2 rounded-lg border-2 border-gray-600 cursor-pointer hover:bg-gray-100"
             on:click={() => document.getElementById('imageInput').click()}
           >
             <ImagePlus />
-            <p class="text-sm text-[#333]">Click to select an image for logo</p>
+            <p class="text-sm text-gray-700">Click to select an image for logo</p>
             <input
               id="imageInput"
               type="file"
@@ -238,15 +226,17 @@
           </button>
         {/if}
       </div>
+      <!-- Company Name -->
       <input
-        class="font-bold text-xl border-2 border-gray-600 p-3 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+        class="font-bold text-xl border-2 border-gray-600 p-3 rounded-lg focus:outline-none focus:border-gray-800 w-full"
         type="text"
         bind:value={appState.company.name}
       />
     </div>
 
+    <!-- Invoice Details -->
     <div class="relative flex flex-col items-start sm:items-end gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
-      <h2 class="font-bold text-2xl text-[#1E6F5C] text-left sm:text-right print:text-left">
+      <h2 class="font-bold text-2xl text-green-700 text-left sm:text-right">
         Invoice :
         <input
           type="text"
@@ -254,16 +244,16 @@
           placeholder="#0001"
           maxlength="5"
           bind:value={appState.invoice.number}
-          class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+          class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-gray-800"
         />
       </h2>
-      <div class="flex flex-col gap-1">
+      <div class="flex flex-row gap-4">
         <p class="flex items-center">
           <span class="mr-2">Created :</span>
           <input
             bind:value={appState.invoice.created}
             type="date"
-            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-gray-800"
           />
         </p>
         <p class="flex items-center">
@@ -271,13 +261,13 @@
           <input
             bind:value={appState.invoice.due}
             type="date"
-            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
+            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-gray-800"
           />
         </p>
       </div>
       <select
         bind:value={appState.currency}
-        class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+        class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-gray-800 w-full"
       >
         {#each currencyOptions as option}
           <option value={option.code}>
@@ -290,103 +280,113 @@
 
   <hr class="border-gray-600 border-2" />
 
-  <!-- From & To -->
+  <!-- Contact Details -->
   <div class="flex flex-col sm:flex-row justify-between gap-4">
+    <!-- Sender Info -->
     <div class="flex flex-col gap-2 w-full">
       <h2 class="mb-2 font-bold">Sender Info</h2>
       <textarea
         placeholder="Enter sender's name and address"
         maxlength="150"
         bind:value={appState.invoice.from}
-        class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+        class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-gray-800 w-full"
         on:input={(e) => autoExpand(e.target)}
         rows="1"
       ></textarea>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <p class="flex items-center">
           <span class="w-24">Tax Name:</span>
-          <input
-            type="text"
+          <textarea
             bind:value={appState.invoice.fromTaxIdName}
-            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-gray-800 w-full"
             placeholder="Enter Tax Name"
-          />
+            on:input={(e) => autoExpand(e.target)}
+            rows="1"
+          ></textarea>
         </p>
         <p class="flex items-center">
           <span class="w-24">Tax ID:</span>
-          <input
-            type="text"
+          <textarea
             bind:value={appState.invoice.fromTaxId}
-            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-gray-800 w-full"
             placeholder="Enter Tax ID"
-          />
+            on:input={(e) => autoExpand(e.target)}
+            rows="1"
+          ></textarea>
         </p>
         <p class="flex items-center">
           <span class="w-24">Email:</span>
-          <input
-            type="email"
+          <textarea
             bind:value={appState.invoice.fromContact.mail}
-            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-gray-800 w-full"
             placeholder="Enter Email"
-          />
+            on:input={(e) => autoExpand(e.target)}
+            rows="1"
+          ></textarea>
         </p>
         <p class="flex items-center">
           <span class="w-24">Phone:</span>
-          <input
-            type="text"
+          <textarea
             bind:value={appState.invoice.fromContact.phone}
-            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-gray-800 w-full"
             placeholder="Enter Phone"
-          />
+            on:input={(e) => autoExpand(e.target)}
+            rows="1"
+          ></textarea>
         </p>
       </div>
     </div>
+    <!-- Recipient Info -->
     <div class="flex flex-col gap-2 w-full">
       <h2 class="mb-2 font-bold">Recipient Info</h2>
       <textarea
         placeholder="Enter recipient's name and address"
         maxlength="150"
         bind:value={appState.invoice.to}
-        class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+        class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-gray-800 w-full"
         on:input={(e) => autoExpand(e.target)}
         rows="1"
       ></textarea>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <p class="flex items-center">
           <span class="w-24">Tax Name:</span>
-          <input
-            type="text"
+          <textarea
             bind:value={appState.invoice.toTaxIdName}
-            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-gray-800 w-full"
             placeholder="Enter Tax Name"
-          />
+            on:input={(e) => autoExpand(e.target)}
+            rows="1"
+          ></textarea>
         </p>
         <p class="flex items-center">
           <span class="w-24">Tax ID:</span>
-          <input
-            type="text"
+          <textarea
             bind:value={appState.invoice.toTaxId}
-            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-gray-800 w-full"
             placeholder="Enter Tax ID"
-          />
+            on:input={(e) => autoExpand(e.target)}
+            rows="1"
+          ></textarea>
         </p>
         <p class="flex items-center">
           <span class="w-24">Email:</span>
-          <input
-            type="email"
+          <textarea
             bind:value={appState.invoice.toContact.mail}
-            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-gray-800 w-full"
             placeholder="Enter Email"
-          />
+            on:input={(e) => autoExpand(e.target)}
+            rows="1"
+          ></textarea>
         </p>
         <p class="flex items-center">
           <span class="w-24">Phone:</span>
-          <input
-            type="text"
+          <textarea
             bind:value={appState.invoice.toContact.phone}
-            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A] w-full"
+            class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-gray-800 w-full"
             placeholder="Enter Phone"
-          />
+            on:input={(e) => autoExpand(e.target)}
+            rows="1"
+          ></textarea>
         </p>
       </div>
     </div>
@@ -398,7 +398,7 @@
       <button
         disabled={itemDesc == ''}
         on:click={() => addItem()}
-        class="p-2 rounded-full bg-[#E2E2E2] hover:bg-[#CFCFCF] transition-all duration-100 ease-in-out print:hidden"
+        class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 transition-all duration-100 ease-in-out print:hidden"
       >
         <Plus stroke="#557571" />
       </button>
@@ -409,7 +409,7 @@
         id="descBox"
         bind:value={itemDesc}
         placeholder="Item name"
-        class="border-2 border-gray-600 rounded-lg p-3 focus:outline-none focus:border-[#5A5A5A] grow w-full resize-none"
+        class="border-2 border-gray-600 rounded-lg p-3 focus:outline-none focus:border-gray-800 grow w-full resize-none"
         rows="1"
         on:keypress={(e) => e.key == 'Enter' && addItem()}
         on:input={(e) => autoExpand(e.target)}
@@ -420,7 +420,7 @@
         placeholder="Unit Price"
         min="0"
         step="0.01"
-        class="border-2 border-gray-600 rounded-lg p-3 focus:outline-none focus:border-[#5A5A5A] w-full sm:w-32"
+        class="border-2 border-gray-600 rounded-lg p-3 focus:outline-none focus:border-gray-800 w-full sm:w-32 text-right"
         on:keypress={(e) => e.key == 'Enter' && addItem()}
       />
       <input
@@ -429,7 +429,7 @@
         placeholder="Quantity"
         min="1"
         step="1"
-        class="border-2 border-gray-600 rounded-lg p-3 focus:outline-none focus:border-[#5A5A5A] w-full sm:w-32"
+        class="border-2 border-gray-600 rounded-lg p-3 focus:outline-none focus:border-gray-800 w-full sm:w-32 text-right"
         on:keypress={(e) => e.key == 'Enter' && addItem()}
       />
       <p class="border-2 border-gray-600 p-3 w-full sm:w-32 text-right bg-gray-100">
@@ -441,89 +441,89 @@
   <!-- Item Descriptions -->
   <div class="flex flex-col mt-4 p-2 rounded-lg border-2 border-gray-600">
     <h2 class="mb-2 font-bold">Item Descriptions</h2>
-    <div class="flex flex-row bg-gray-200 border-2 border-gray-600">
-      <p class="font-bold p-3 border-r-2 border-gray-600 grow">Item name</p>
-      <p class="font-bold p-3 border-r-2 border-gray-600 w-32 hidden sm:block">Unit Price</p>
-      <p class="font-bold p-3 border-r-2 border-gray-600 w-24 hidden sm:block">Qty</p>
-      <p class="font-bold p-3 w-32 text-right hidden sm:block">Total</p>
+    <div class="flex flex-row bg-gray-200 border-b-2 border-gray-600">
+      <p class="font-bold p-3 border-r-2 border-gray-600 w-1/2">Item Name</p>
+      <p class="font-bold p-3 border-r-2 border-gray-600 w-1/6 text-right">Price</p>
+      <p class="font-bold p-3 border-r-2 border-gray-600 w-1/6 text-right">Qty</p>
+      <p class="font-bold p-3 w-1/6 text-right">Total</p>
     </div>
     {#each appState.items as item, index}
-      <div class="flex flex-col sm:flex-row even:bg-blue-50 border-2 border-gray-600">
-        <div class="flex flex-row items-center">
+      <div class="flex flex-row even:bg-blue-50 border-b-2 border-gray-600">
+        <div class="flex items-center w-1/2">
           <button
             on:click={() => deleteItem(index)}
-            class="p-3 hover:bg-[#E2E2E2] transition-all duration-100 ease-in-out rounded print:hidden"
+            class="p-3 hover:bg-gray-200 transition-all duration-100 ease-in-out rounded print:hidden"
           >
             <Trash />
           </button>
           <textarea
-            class="p-3 border-r-2 border-gray-600 grow resize-none bg-blue-100"
+            class="p-3 grow resize-none bg-blue-100"
             bind:value={item.desc}
             rows="1"
-            on:input={(e) => { autoExpand(e.target); save(); }}
+            on:input={(e) => {
+              autoExpand(e.target);
+              save();
+            }}
           ></textarea>
         </div>
-        <div class="flex flex-row sm:flex-row w-full">
-          <input
-            class="p-3 border-r-2 border-gray-600 w-full sm:w-32 bg-blue-100"
-            type="number"
-            min="0"
-            step="0.01"
-            bind:value={item.price}
-            on:input={() => save()}
-          />
-          <input
-            class="p-3 border-r-2 border-gray-600 w-full sm:w-24 bg-blue-100"
-            type="number"
-            min="0"
-            step="1"
-            bind:value={item.quantity}
-            on:input={() => save()}
-          />
-          <p class="p-3 w-full sm:w-32 text-right bg-gray-100">
-            {getCurrencySymbol(appState.currency)}{(item.price * item.quantity).toFixed(2)}
-          </p>
-        </div>
+        <input
+          class="p-3 w-1/6 text-right bg-blue-100"
+          type="number"
+          min="0"
+          step="0.01"
+          bind:value={item.price}
+          on:input={() => save()}
+        />
+        <input
+          class="p-3 w-1/6 text-right bg-blue-100"
+          type="number"
+          min="0"
+          step="1"
+          bind:value={item.quantity}
+          on:input={() => save()}
+        />
+        <p class="p-3 w-1/6 text-right bg-gray-100">
+          {getCurrencySymbol(appState.currency)}{(item.price * item.quantity).toFixed(2)}
+        </p>
       </div>
     {/each}
 
+    <!-- Summary Rows -->
     <div class="flex flex-row items-center border-t-2 border-gray-600">
-      <p class="p-3 grow text-right font-bold">Discount %</p>
-      <button
-        class="toggle-switch ml-2 mr-1 {isDiscountEnabled ? 'active' : ''}"
-        on:click={() => (isDiscountEnabled = !isDiscountEnabled)}
-      ></button>
-      <input
-        class="p-3 w-32 text-right {isDiscountEnabled ? 'enabled' : 'disabled'} bg-blue-100"
-        type="number"
-        bind:value={appState.discountPercent}
-        disabled={!isDiscountEnabled}
-        step="0.01"
-        max="100"
-        min="0"
-        on:input={() => save()}
-      />
+      <p class="p-3 w-5/6 text-right font-bold">Discount</p>
+      <div class="flex items-center w-1/6">
+        <input
+          class="p-3 text-right bg-blue-100"
+          type="number"
+          bind:value={appState.discountPercent}
+          disabled={!isDiscountEnabled}
+          step="0.01"
+          max="100"
+          min="0"
+          on:input={() => save()}
+        />
+        <span class="ml-1">%</span>
+      </div>
     </div>
     <div class="flex flex-row items-center border-t-2 border-gray-600">
-      <p class="p-3 grow text-right font-bold">Tax %</p>
-      <button
-        class="toggle-switch ml-2 mr-1 {isTaxEnabled ? 'active' : ''}"
-        on:click={() => (isTaxEnabled = !isTaxEnabled)}
-      ></button>
-      <input
-        class="p-3 w-32 text-right {isTaxEnabled ? 'enabled' : 'disabled'} bg-blue-100"
-        type="number"
-        bind:value={appState.taxPercent}
-        disabled={!isTaxEnabled}
-        step="0.01"
-        max="100"
-        min="0"
-        on:input={() => save()}
-      />
+      <p class="p-3 w-5/6 text-right font-bold">Tax</p>
+      <div class="flex items-center w-1/6">
+        <input
+          class="p-3 text-right bg-blue-100"
+          type="number"
+          bind:value={appState.taxPercent}
+          disabled={!isTaxEnabled}
+          step="0.01"
+          max="100"
+          min="0"
+          on:input={() => save()}
+        />
+        <span class="ml-1">%</span>
+      </div>
     </div>
     <div class="flex flex-row border-t-2 border-gray-600">
-      <p class="p-3 grow text-right font-bold">Total Due</p>
-      <p class="p-3 w-32 text-right bg-green-100 font-bold">
+      <p class="p-3 w-5/6 text-right font-bold">Total Due</p>
+      <p class="p-3 w-1/6 text-right bg-green-100 font-bold">
         {getCurrencySymbol(appState.currency)}{totalDue}
       </p>
     </div>
@@ -535,49 +535,23 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div class="flex flex-col">
         <label class="text-sm font-semibold">Account No</label>
-        <input
-          type="text"
-          maxlength="20"
+        <textarea
           bind:value={appState.payment.accountNumber}
-          class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
-        />
+          class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-gray-800"
+          on:input={(e) => autoExpand(e.target)}
+          rows="1"
+        ></textarea>
       </div>
       <div class="flex flex-col">
         <label class="text-sm font-semibold">Account Name</label>
-        <input
-          type="text"
-          maxlength="28"
+        <textarea
           bind:value={appState.payment.accountName}
-          class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
-        />
+          class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-gray-800"
+          on:input={(e) => autoExpand(e.target)}
+          rows="1"
+        ></textarea>
       </div>
-      <div class="flex flex-col">
-        <label class="text-sm font-semibold">Bank Name</label>
-        <input
-          type="text"
-          maxlength="28"
-          bind:value={appState.payment.bank}
-          class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
-        />
-      </div>
-      <div class="flex flex-col">
-        <label class="text-sm font-semibold">IFSC</label>
-        <input
-          type="text"
-          maxlength="11"
-          bind:value={appState.payment.ifsc}
-          class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
-        />
-      </div>
-      <div class="flex flex-col">
-        <label class="text-sm font-semibold">SWIFT Code</label>
-        <input
-          type="text"
-          maxlength="11"
-          bind:value={appState.payment.swiftCode}
-          class="border-2 border-gray-600 p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
-        />
-      </div>
+      <!-- Additional Payment Fields -->
     </div>
   </div>
 
@@ -585,7 +559,7 @@
   <div class="mt-6 flex justify-center print:hidden">
     <button
       on:click={() => window.print()}
-      class="px-4 py-3 rounded-lg bg-[#E2E2E2] text-[#333] font-semibold flex items-center gap-2 hover:bg-[#CFCFCF] transition-transform duration-150"
+      class="px-4 py-3 rounded-lg bg-gray-200 text-gray-800 font-semibold flex items-center gap-2 hover:bg-gray-300 transition-transform duration-150"
     >
       <Download class="w-5 h-5" />
       <span>Download Invoice</span>
