@@ -1,5 +1,5 @@
 <script>
-  import { Plus, Trash, ImagePlus, RotateCw, Download } from 'lucide-svelte';
+  import { Trash, ImagePlus, RotateCw, Download } from 'lucide-svelte';
   import { onMount } from 'svelte';
 
   let appState = {
@@ -13,7 +13,7 @@
       fromContact: { mail: '', phone: '' },
       to: '',
       toTaxId: '',
-      toContact: { mail: '', phone: '' }
+      toContact: { mail: '', phone: '' },
     },
     items: [{ desc: '', price: '', quantity: '' }],
     taxPercent: '',
@@ -24,9 +24,9 @@
       accountName: '',
       bank: '',
       ifsc: '',
-      swiftCode: ''
+      swiftCode: '',
     },
-    currency: 'USD'
+    currency: 'USD',
   };
 
   let currencyOptions = [
@@ -44,7 +44,7 @@
     { code: 'ZAR', symbol: 'R', name: 'South African Rand', flag: '🇿🇦' },
     { code: 'MXN', symbol: '$', name: 'Mexican Peso', flag: '🇲🇽' },
     { code: 'NZD', symbol: 'NZ$', name: 'New Zealand Dollar', flag: '🇳🇿' },
-    { code: 'SGD', symbol: 'S$', name: 'Singapore Dollar', flag: '🇸🇬' }
+    { code: 'SGD', symbol: 'S$', name: 'Singapore Dollar', flag: '🇸🇬' },
   ];
 
   function getCurrencySymbol(code) {
@@ -80,11 +80,7 @@
     if (itemDesc != '' && itemPrice > 0 && itemQty > 0) {
       appState.items = [
         ...appState.items,
-        {
-          desc: itemDesc,
-          price: parseFloat(itemPrice).toFixed(2),
-          quantity: parseFloat(itemQty).toFixed(2)
-        }
+        { desc: itemDesc, price: parseFloat(itemPrice).toFixed(2), quantity: parseFloat(itemQty).toFixed(2) },
       ];
 
       itemDesc = '';
@@ -113,12 +109,12 @@
         fromContact: { mail: '', phone: '' },
         to: '',
         toTaxId: '',
-        toContact: { mail: '', phone: '' }
+        toContact: { mail: '', phone: '' },
       },
       items: [
-        { desc: 'Batmobile Repair', price: '15000', quantity: '1' },
+        { desc: 'Portal Gun', price: '200000', quantity: '1' },
         { desc: 'Grappling Hooks', price: '500', quantity: '20' },
-        { desc: 'Portal Gun', price: '200000', quantity: '1' }
+        { desc: 'Batmobile Repair', price: '15000', quantity: '1' },
       ],
       taxPercent: '',
       discountPercent: '',
@@ -128,15 +124,13 @@
         accountName: '',
         bank: '',
         ifsc: '',
-        swiftCode: ''
+        swiftCode: '',
       },
-      currency: 'USD'
+      currency: 'USD',
     };
 
     save();
   }
-
-  // Startup ------------------------------------------------------------
 
   onMount(() => {
     const savedData = localStorage.getItem('invoiceData');
@@ -151,37 +145,26 @@
   let itemPrice = 1;
   let itemQty = 1;
 
-  $: subTotal = appState.items
-    .reduce((total, item) => {
-      return total + item.price * item.quantity;
-    }, 0)
-    .toFixed(2);
+  $: subTotal = appState.items.reduce((total, item) => {
+    return total + item.price * item.quantity;
+  }, 0).toFixed(2);
 
-  $: discountAmount = ((subTotal * (+appState.discountPercent || 0)) / 100).toFixed(2);
+  $: discountAmount = (subTotal * (+appState.discountPercent || 0) / 100).toFixed(2);
   $: taxableAmount = (subTotal - discountAmount).toFixed(2);
-  $: taxAmount = ((taxableAmount * (+appState.taxPercent || 0)) / 100).toFixed(2);
-  $: totalDue = (parseFloat(taxableAmount) + parseFloat(taxAmount)).toFixed(2);
-
-  // Toggles
-  let isDiscountEnabled = true;
-  let isTaxEnabled = true;
+  $: taxAmount = (taxableAmount * (+appState.taxPercent || 0) / 100).toFixed(2);
+  $: totalDue = Math.min((parseFloat(taxableAmount) + parseFloat(taxAmount)).toFixed(2), 10000000000);
 </script>
 
 <svelte:head>
   <title>Billie - No Strings Attached Invoice Generator</title>
-  <meta
-    name="description"
-    content="Create and download invoices instantly, with zero signups or tracking."
-  />
+  <meta name="description" content="Create and download invoices instantly, with zero signups or tracking." />
 </svelte:head>
 
 <svelte:body on:click={() => save()} />
 
-<div
-  class="max-w-screen-md mx-auto px-6 py-8 flex flex-col space-y-6 font-montserrat bg-[#FAFAFA] border border-[#E2E2E2] rounded-xl shadow-sm print:shadow-none print:bg-white print:border-none"
->
+<div class="max-w-screen-md mx-auto px-6 py-8 flex flex-col space-y-6 font-montserrat bg-[#FAFAFA] border border-[#E2E2E2] rounded-xl shadow-sm print:shadow-none print:bg-white print:border-none">
   <!-- Company & Invoice Details --------------------------------------->
-  <div class="flex flex-row justify-between items-start print:flex">
+  <div class="flex flex-row justify-between items-start space-x-4 print:flex">
     <div class="flex flex-col gap-4">
       <div class="">
         {#if appState.company.logo}
@@ -195,22 +178,15 @@
               >
                 <Trash />
               </button>
-              <button class="p-2 hover:bg-[#E2E2E2] rounded" on:click={() => document.getElementById('imageInput').click()}>
+              <button
+                class="p-2 hover:bg-[#E2E2E2] rounded"
+                on:click={() => document.getElementById('imageInput').click()}
+              >
                 <ImagePlus />
-                <input
-                  id="imageInput"
-                  type="file"
-                  accept=".png,.jpg,.jpeg,.webp"
-                  on:change={handleImageChange}
-                  class="hidden"
-                />
+                <input id="imageInput" type="file" accept=".png,.jpg,.jpeg,.webp" on:change={handleImageChange} class="hidden" />
               </button>
             </div>
-            <img
-              src={appState.company.logo}
-              alt="Company Logo"
-              class="max-h-18 max-w-40 object-cover m-0"
-            />
+            <img src={appState.company.logo} alt="Company Logo" class="max-h-18 max-w-40 object-cover m-0" />
           </div>
         {:else}
           <button
@@ -219,13 +195,7 @@
           >
             <ImagePlus />
             <p class="text-sm text-[#333]">Click to select an image for logo</p>
-            <input
-              id="imageInput"
-              type="file"
-              accept=".png,.jpg,.jpeg,.webp"
-              on:change={handleImageChange}
-              class="hidden"
-            />
+            <input id="imageInput" type="file" accept=".png,.jpg,.jpeg,.webp" on:change={handleImageChange} class="hidden" />
           </button>
         {/if}
       </div>
@@ -236,14 +206,14 @@
       />
     </div>
 
-    <div class="relative flex flex-col items-end gap-2 print:items-start print:w-full">
+    <div class="relative flex flex-col items-end gap-2 print:items-start print:w-full space-x-1">
       <h2 class="font-bold text-2xl text-[#1E6F5C] text-right print:text-left">
         INVOICE :
         <input
           type="text"
           size="4"
           placeholder="#0001"
-          maxlength="5"
+          maxlength="4"
           bind:value={appState.invoice.number}
           class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
         />
@@ -254,12 +224,15 @@
       >
         <RotateCw strokeWidth={1.5} />
       </button>
-      <div class="flex flex-col gap-1">
+      <div class="grid grid-cols-1 gap-1">
         <p>
           Created :
           <input
             bind:value={appState.invoice.created}
-            type="date"
+            type="text"
+            size="10"
+            placeholder="Date Created"
+            maxlength="13"
             class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
           />
         </p>
@@ -267,7 +240,10 @@
           Due :
           <input
             bind:value={appState.invoice.due}
-            type="date"
+            type="text"
+            size="10"
+            placeholder="Due Date"
+            maxlength="13"
             class="border border-[#E2E2E2] p-2 rounded-lg focus:outline-none focus:border-[#5A5A5A]"
           />
         </p>
@@ -286,7 +262,7 @@
 
   <!-- From & To  ------------------------------------------------------>
 
-  <div class="flex flex-row justify-between gap-4">
+  <div class="flex flex-row justify-between space-x-4">
     <div class="flex flex-col gap-2">
       <h4 class="mb-2 font-bold">From</h4>
       <textarea
@@ -379,7 +355,7 @@
       on:click={() => addItem()}
       class="p-2 rounded-full bg-[#E2E2E2] hover:bg-[#CFCFCF] transition-all duration-100 ease-in-out print:hidden"
     >
-      <Plus stroke="#557571" />
+      <img src="https://www.noticons.com/icon//000000/FFFEFE00.svg" alt="Add" class="w-4 h-4" />
     </button>
 
     <input
@@ -408,29 +384,23 @@
       class="border border-[#E2E2E2] rounded-lg p-3 focus:outline-none focus:border-[#5A5A5A] w-32"
       on:keypress={(e) => e.key == 'Enter' && addItem()}
     />
-    <p class="border border-[#E2E2E2] p-3 w-32 text-right">
-      {getCurrencySymbol(appState.currency)}{(itemPrice * itemQty).toFixed(2)}
-    </p>
+    <p class="border border-[#E2E2E2] p-3 w-32 text-right">{getCurrencySymbol(appState.currency)}{(itemPrice * itemQty).toFixed(2)}</p>
   </form>
 
   <!-- Table ----------------------------------------------------------->
 
   <div class="flex flex-col mt-4">
     <div class="flex flex-row bg-[#FAFAFA] border border-[#E2E2E2]">
-      <p class="font-bold p-3 border-r border-[#E2E2E2] grow">Item name</p>
+      <p class="font-bold p-3 border-r border-[#E2E2E2] grow">Item Name</p>
       <p class="font-bold p-3 border-r border-[#E2E2E2] w-32">Unit Price</p>
       <p class="font-bold p-3 border-r border-[#E2E2E2] w-24">Qty</p>
       <p class="font-bold p-3 w-32 text-right">Total</p>
     </div>
     {#each appState.items as item, index}
-      <div class="flex flex-row even:bg-[#F8F8F8] border border-[#E2E2E2]">
-        <button
-          on:click={() => deleteItem(index)}
-          class="p-3 hover:bg-[#E2E2E2] transition-all duration-100 ease-in-out rounded print:hidden"
-        >
-          <img src="https://www.noticons.com/icon/O540/000000/FFFEFE00.svg" alt="Delete" class="h-5 w-5"/>
+      <div class="flex flex-row even:bg-[#F8F8F8] border border-[#E2E2E2] bg-[#DEE5D4]">
+        <button on:click={() => deleteItem(index)} class="p-3 hover:bg-[#E2E2E2] transition-all duration-100 ease-in-out rounded print:hidden">
+          <img src="https://www.noticons.com/icon/O540/000000/FFFEFE00.svg" alt="Delete" class="w-4 h-4" />
         </button>
-
         <p contenteditable="true" class="p-3 border-r border-[#E2E2E2] grow">{item.desc}</p>
         <input class="p-3 border-r border-[#E2E2E2] w-32" type="text" bind:value={item.price} />
         <input class="p-3 border-r border-[#E2E2E2] w-24" type="text" bind:value={item.quantity} />
@@ -440,7 +410,7 @@
 
     <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2] items-center">
       <p class="p-3 grow text-right font-bold">Discount %</p>
-      <button class="toggle-switch ml-2 mr-1 {isDiscountEnabled ? 'active' : ''}" on:click={() => (isDiscountEnabled = !isDiscountEnabled)}></button>
+      <button class="toggle-switch ml-2 mr-1 active" on:click={() => (isDiscountEnabled = !isDiscountEnabled)}></button>
       <input
         class="p-3 w-32 text-right"
         type="text"
@@ -453,7 +423,7 @@
     </div>
     <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2] items-center">
       <p class="p-3 grow text-right font-bold">Tax %</p>
-      <button class="toggle-switch ml-2 mr-1 {isTaxEnabled ? 'active' : ''}" on:click={() => (isTaxEnabled = !isTaxEnabled)}></button>
+      <button class="toggle-switch ml-2 mr-1 active" on:click={() => (isTaxEnabled = !isTaxEnabled)}></button>
       <input class="p-3 w-32 text-right" type="text" bind:value={appState.taxPercent} disabled={!isTaxEnabled} step="0.01" max="100" min="0" />
     </div>
     <div class="flex flex-row even:bg-[#F8F8F8] border-t border-[#E2E2E2]">
@@ -467,7 +437,7 @@
     <h4 class="mb-2 font-bold">Payment Info</h4>
     <div class="grid grid-cols-2 gap-4">
       <div class="flex flex-col">
-        <label class="text-sm font-semibold">Account No</label>
+        <label class="text-sm font-semibold">Account No.</label>
         <input
           type="text"
           maxlength="20"
@@ -556,6 +526,6 @@
 
   .toggle-switch.active:before {
     transform: translateX(18px);
-    background-color: #333333;
+    background-color: #feffd9;
   }
 </style>
