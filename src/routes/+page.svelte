@@ -15,8 +15,8 @@
       toContact: { mail: '', phone: '' }
     },
     items: [{ desc: '', price: '', quantity: '' }],
-    taxPercent: '',
-    discountPercent: '',
+    taxPercent: '0',
+    discountPercent: '0',
     note: '',
     payment: {
       accountNumber: '',
@@ -117,8 +117,8 @@
         { desc: 'Social Media Strategy', price: '2000', quantity: '3' },
         { desc: 'Content Creation', price: '10000', quantity: '1' }
       ],
-      taxPercent: '',
-      discountPercent: '',
+      taxPercent: '0',
+      discountPercent: '0',
       note: '',
       payment: {
         accountNumber: '',
@@ -153,7 +153,7 @@
     .toFixed(2);
 
   $: if (!isDiscountEnabled) {
-    appState.discountPercent = '';
+    appState.discountPercent = '0';
   }
 
   $: discountAmount = isDiscountEnabled
@@ -163,7 +163,7 @@
   $: taxableAmount = (subTotal - discountAmount).toFixed(2);
 
   $: if (!isTaxEnabled) {
-    appState.taxPercent = '';
+    appState.taxPercent = '0';
   }
 
   $: taxAmount = isTaxEnabled
@@ -194,9 +194,25 @@
 <div
   class="max-w-screen-md mx-auto px-4 sm:px-6 py-8 flex flex-col space-y-6 invoice-container print:shadow-none print:bg-white print:border-none"
 >
+  <!-- INVOICE Title and Number at Top Center --------------------------->
+  <div class="text-center mb-6">
+    <h2 class="font-bold text-2xl">INVOICE</h2>
+    <p>
+      <span class="secondary-text">Invoice # :</span>
+      <input
+        type="text"
+        size="4"
+        placeholder="#0001"
+        maxlength="5"
+        bind:value={appState.invoice.number}
+        class="p-2 focus:outline-none w-20 text-center"
+      />
+    </p>
+  </div>
+
   <!-- Company & Invoice Details --------------------------------------->
-  <div class="flex flex-col items-center print:flex print:items-center">
-    <div class="flex flex-col gap-4 w-full sm:w-auto items-center">
+  <div class="flex flex-col sm:flex-row justify-between items-start print:flex">
+    <div class="flex flex-col gap-4 w-full sm:w-auto">
       <div class="">
         {#if appState.company.logo}
           <div class="flex flex-row items-center space-x-4">
@@ -249,26 +265,13 @@
       <input
         type="text"
         bind:value={appState.company.name}
-        class="font-bold text-xl p-2 focus:outline-none w-full text-center"
+        class="font-bold text-xl p-2 focus:outline-none w-full"
         placeholder="Company Name"
       />
     </div>
-    <div class="relative flex flex-col items-center gap-2 mt-4 w-full sm:w-auto">
-      <h2 class="font-bold text-2xl text-black text-center">
-        INVOICE
-      </h2>
-      <div class="flex flex-col gap-1 items-center">
-        <p class="flex items-center">
-          <span class="mr-2 secondary-text">Invoice # :</span>
-          <input
-            type="text"
-            size="4"
-            placeholder="#0001"
-            maxlength="5"
-            bind:value={appState.invoice.number}
-            class="p-2 focus:outline-none w-20 text-center"
-          />
-        </p>
+
+    <div class="relative flex flex-col items-start sm:items-end gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
+      <div class="flex flex-col gap-1">
         <p class="flex items-center">
           <span class="mr-2 secondary-text">Created :</span>
           <input
@@ -316,15 +319,6 @@
       ></textarea>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <p class="flex items-center">
-          <span class="w-24 secondary-text">Tax Details:</span>
-          <input
-            type="text"
-            bind:value={appState.invoice.fromTaxDetails}
-            class="p-2 focus:outline-none w-full"
-            placeholder="Enter Tax ID and Name"
-          />
-        </p>
-        <p class="flex items-center">
           <span class="w-24 secondary-text">Email:</span>
           <input
             type="email"
@@ -342,6 +336,15 @@
             placeholder="Enter Phone"
           />
         </p>
+        <p class="flex items-center">
+          <span class="w-24 secondary-text">Tax Details:</span>
+          <input
+            type="text"
+            bind:value={appState.invoice.fromTaxDetails}
+            class="p-2 focus:outline-none w-full"
+            placeholder="Enter Tax ID and Name"
+          />
+        </p>
       </div>
     </div>
     <div class="flex flex-col gap-2 w-full">
@@ -356,15 +359,6 @@
         class="p-2 focus:outline-none w-full break-words"
       ></textarea>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <p class="flex items-center">
-          <span class="w-24 secondary-text">Tax Details:</span>
-          <input
-            type="text"
-            bind:value={appState.invoice.toTaxDetails}
-            class="p-2 focus:outline-none w-full"
-            placeholder="Enter Tax ID and Name"
-          />
-        </p>
         <p class="flex items-center">
           <span class="w-24 secondary-text">Email:</span>
           <input
@@ -383,54 +377,18 @@
             placeholder="Enter Phone"
           />
         </p>
+        <p class="flex items-center">
+          <span class="w-24 secondary-text">Tax Details:</span>
+          <input
+            type="text"
+            bind:value={appState.invoice.toTaxDetails}
+            class="p-2 focus:outline-none w-full"
+            placeholder="Enter Tax ID and Name"
+          />
+        </p>
       </div>
     </div>
   </div>
-
-  <!-- New Item Form --------------------------------------------------->
-  <form class="flex flex-col sm:flex-row justify-between gap-2 print:hidden">
-    <div class="flex items-center">
-      <button
-        disabled={itemDesc == ''}
-        on:click={() => addItem()}
-        class="p-2 rounded-full bg-transparent hover:bg-black text-black hover:text-white transition-all duration-100 ease-in-out"
-      >
-        ＋
-      </button>
-    </div>
-
-    <div class="flex flex-col sm:flex-row gap-2 w-full">
-      <input
-        id="descBox"
-        type="text"
-        bind:value={itemDesc}
-        placeholder="Item name"
-        class="p-2 focus:outline-none grow w-full"
-        on:keypress={(e) => e.key == 'Enter' && addItem()}
-      />
-      <input
-        type="number"
-        bind:value={itemPrice}
-        placeholder="Unit Price"
-        min="0"
-        step="0.01"
-        class="p-2 focus:outline-none w-full sm:w-32"
-        on:keypress={(e) => e.key == 'Enter' && addItem()}
-      />
-      <input
-        type="number"
-        bind:value={itemQty}
-        placeholder="Quantity"
-        min="1"
-        step="1"
-        class="p-2 focus:outline-none w-full sm:w-32"
-        on:keypress={(e) => e.key == 'Enter' && addItem()}
-      />
-      <p class="p-2 w-full sm:w-32 text-right">
-        {getCurrencySymbol(appState.currency)}{(itemPrice * itemQty).toFixed(2)}
-      </p>
-    </div>
-  </form>
 
   <!-- Table ----------------------------------------------------------->
   <div class="flex flex-col mt-4">
@@ -483,6 +441,51 @@
       <p class="p-3 w-32 text-right">{getCurrencySymbol(appState.currency)}{totalDue}</p>
     </div>
   </div>
+
+  <!-- New Item Form Moved Below Total Due -------------------------------->
+  <form class="flex flex-col sm:flex-row justify-between gap-2 mt-4 print:hidden">
+    <div class="flex items-center">
+      <button
+        disabled={itemDesc == ''}
+        on:click={() => addItem()}
+        class="p-2 rounded-full bg-transparent hover:bg-black text-black hover:text-white transition-all duration-100 ease-in-out"
+      >
+        ＋
+      </button>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-2 w-full">
+      <input
+        id="descBox"
+        type="text"
+        bind:value={itemDesc}
+        placeholder="Item name"
+        class="p-2 focus:outline-none grow w-full"
+        on:keypress={(e) => e.key == 'Enter' && addItem()}
+      />
+      <input
+        type="number"
+        bind:value={itemPrice}
+        placeholder="Unit Price"
+        min="0"
+        step="0.01"
+        class="p-2 focus:outline-none w-full sm:w-32"
+        on:keypress={(e) => e.key == 'Enter' && addItem()}
+      />
+      <input
+        type="number"
+        bind:value={itemQty}
+        placeholder="Quantity"
+        min="1"
+        step="1"
+        class="p-2 focus:outline-none w-full sm:w-32"
+        on:keypress={(e) => e.key == 'Enter' && addItem()}
+      />
+      <p class="p-2 w-full sm:w-32 text-right">
+        {getCurrencySymbol(appState.currency)}{(itemPrice * itemQty).toFixed(2)}
+      </p>
+    </div>
+  </form>
 
   <!-- Payment Info Section Redesigned --------------------------------->
   <div class="mt-4">
