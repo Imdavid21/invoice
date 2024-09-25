@@ -413,12 +413,10 @@
     </div>
   </div>
 
-  <!-- Removed the <hr> here to eliminate extra line after 'Invoice' -->
-  
   <!-- Item Descriptions (Header Removed) -->
   <div class="flex flex-col mt-4">
-    <!-- Removed <h4 class="mb-2 font-bold">Item Descriptions</h4> -->
-    <div class="flex flex-row border-b border-custom items-center">
+    <!-- Table Headers -->
+    <div class="flex flex-col sm:flex-row border-b border-custom items-center">
       <div class="p-3" style="width:40px;"></div>
       <!-- Placeholder for delete button -->
       <p class="font-bold p-3 grow">Item Name</p>
@@ -427,7 +425,7 @@
       <p class="font-bold p-3 w-32 text-right">Total</p>
     </div>
     {#each appState.items as item, index}
-      <div class="flex flex-row items-center border-b border-custom">
+      <div class="flex flex-col sm:flex-row items-center border-b border-custom">
         <!-- Delete button -->
         <button
           on:click={() => deleteItem(index)}
@@ -469,7 +467,8 @@
       </div>
     {/each}
 
-    <div class="flex flex-row border-t border-custom items-center" style="background-color: #F8F8F8;">
+    <!-- Discount, Tax, Total Due Rows -->
+    <div class="flex flex-col sm:flex-row border-t border-custom items-center" style="background-color: #F8F8F8;">
       <p class="p-3 grow text-right font-bold">Discount %</p>
       <button class="toggle-switch ml-2 mr-1 {isDiscountEnabled ? 'active' : ''}" on:click={() => (isDiscountEnabled = !isDiscountEnabled)}></button>
       <input
@@ -483,7 +482,7 @@
         placeholder="0"
       />
     </div>
-    <div class="flex flex-row border-t border-custom items-center" style="background-color: #F8F8F8;">
+    <div class="flex flex-col sm:flex-row border-t border-custom items-center" style="background-color: #F8F8F8;">
       <p class="p-3 grow text-right font-bold">Tax %</p>
       <button class="toggle-switch ml-2 mr-1 {isTaxEnabled ? 'active' : ''}" on:click={() => (isTaxEnabled = !isTaxEnabled)}></button>
       <input
@@ -497,7 +496,7 @@
         placeholder="0"
       />
     </div>
-    <div class="flex flex-row border-t border-custom" style="background-color: #F8F8F8;">
+    <div class="flex flex-row sm:flex-col border-t border-custom" style="background-color: #F8F8F8;">
       <p class="p-3 grow text-right font-bold">Total Due</p>
       <p class="p-3 w-32 text-right">
         {getCurrencySymbol(appState.currency)}{formatNumber(totalDue)}
@@ -624,7 +623,7 @@
   <div class="mt-6 flex justify-center print:hidden">
     <button
       on:click={() => window.print()}
-      class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold flex items-center gap-2 hover:bg-blue-700 transition-colors duration-150"
+      class="w-full sm:w-auto px-6 py-3 rounded-lg bg-black text-white font-semibold flex items-center justify-center gap-2 hover:bg-gray-700 transition-colors duration-150"
     >
       ⬇
       <span>Download Invoice</span>
@@ -692,9 +691,9 @@
   }
 
   .toggle-switch {
-    width: 36px;
-    height: 18px;
-    background-color: #aaa;
+    width: 40px; /* Increased width */
+    height: 20px; /* Increased height */
+    background-color: #ddd; /* Lighter background for better contrast */
     border-radius: 20px;
     position: relative;
     cursor: pointer;
@@ -704,8 +703,8 @@
   .toggle-switch:before {
     content: '';
     position: absolute;
-    top: 1px;
-    left: 1px;
+    top: 2px; /* Adjusted for increased toggle height */
+    left: 2px;
     width: 16px;
     height: 16px;
     background-color: #fff;
@@ -714,11 +713,11 @@
   }
 
   .toggle-switch.active {
-    background-color: #000;
+    background-color: #4ade80; /* Vibrant green for active state */
   }
 
   .toggle-switch.active:before {
-    transform: translateX(18px);
+    transform: translateX(20px); /* Adjusted for increased toggle width */
   }
 
   .toggle-switch:hover {
@@ -736,15 +735,15 @@
   }
 
   /* Specific styling for Download Button */
-  .invoice-container button.bg-blue-600 {
-    background-color: #1e40af; /* Tailwind's blue-700 */
-    color: #fff;
+  .invoice-container button.bg-black {
+    background-color: #000; /* Black background */
+    color: #fff; /* White text */
     border-radius: 0.5rem;
     transition: background-color 0.3s;
   }
 
-  .invoice-container button.bg-blue-600:hover {
-    background-color: #1d4ed8; /* Tailwind's blue-800 */
+  .invoice-container button.bg-black:hover {
+    background-color: #333; /* Darker shade on hover */
   }
 
   /* Adjust "Add Logo" and "＋" buttons */
@@ -771,17 +770,54 @@
     color: #fff;
   }
 
-  /* Toggle Switch Adjustments */
-  .toggle-switch {
-    background-color: #aaa;
-  }
+  /* Responsive Adjustments */
+  @media (max-width: 640px) { /* Tailwind's sm breakpoint */
+    .invoice-container {
+      padding: 1.5rem;
+    }
 
-  .toggle-switch.active {
-    background-color: #4ade80; /* Tailwind's green-400 for better visibility */
-  }
+    .invoice-container h2.text-3xl {
+      font-size: 1.75rem; /* Slightly smaller on mobile */
+    }
 
-  .toggle-switch.active:before {
-    background-color: #fff;
+    .invoice-container h4.text-2xl {
+      font-size: 1.5rem;
+    }
+
+    .invoice-container .grid-cols-1 sm:grid-cols-2 {
+      grid-template-columns: 1fr; /* Single column on mobile */
+    }
+
+    /* Make the Download Button full width on mobile */
+    .invoice-container button.bg-black {
+      width: 100%;
+    }
+
+    /* Adjust input widths within item descriptions */
+    .invoice-container .w-32,
+    .invoice-container .w-24 {
+      width: 100%;
+    }
+
+    /* Stack the Total Due on mobile */
+    .invoice-container .flex-row.sm:flex-col {
+      flex-direction: column;
+    }
+
+    /* Ensure toggle switches are large enough */
+    .toggle-switch {
+      width: 44px;
+      height: 24px;
+    }
+
+    .toggle-switch:before {
+      width: 20px;
+      height: 20px;
+    }
+
+    .toggle-switch.active:before {
+      transform: translateX(24px);
+    }
   }
 
   /* Print Styles */
