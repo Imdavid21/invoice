@@ -15,7 +15,7 @@
       to: '',
       toTaxIdName: '',
       toTaxId: '',
-      toContact: { mail: '', phone: '' }
+      toContact: { mail: '', phone: '' },
     },
     items: [],
     taxPercent: '',
@@ -26,9 +26,9 @@
       accountName: '',
       bank: '',
       ifsc: '',
-      swiftCode: ''
+      swiftCode: '',
     },
-    currency: 'USD'
+    currency: 'USD',
   };
 
   let currencyOptions = [
@@ -46,7 +46,7 @@
     { code: 'ZAR', symbol: 'R', name: 'South African Rand', flag: '🇿🇦' },
     { code: 'MXN', symbol: '$', name: 'Mexican Peso', flag: '🇲🇽' },
     { code: 'NZD', symbol: 'NZ$', name: 'New Zealand Dollar', flag: '🇳🇿' },
-    { code: 'SGD', symbol: 'S$', name: 'Singapore Dollar', flag: '🇸🇬' }
+    { code: 'SGD', symbol: 'S$', name: 'Singapore Dollar', flag: '🇸🇬' },
   ];
 
   function getCurrencySymbol(code) {
@@ -56,11 +56,7 @@
 
   function handleImageChange(event) {
     const file = event.target.files[0];
-
-    if (
-      file &&
-      (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/webp')
-    ) {
+    if (file && (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/webp')) {
       const reader = new FileReader();
       reader.onload = () => {
         appState.company.logo = reader.result;
@@ -83,8 +79,8 @@
         {
           desc: itemDesc,
           price: parseFloat(itemPrice).toFixed(2),
-          quantity: parseFloat(itemQty).toFixed(2)
-        }
+          quantity: parseFloat(itemQty).toFixed(2),
+        },
       ];
 
       itemDesc = '';
@@ -115,12 +111,12 @@
         to: '',
         toTaxIdName: 'Enter Tax Name',
         toTaxId: '',
-        toContact: { mail: '', phone: '' }
+        toContact: { mail: '', phone: '' },
       },
       items: [
         { desc: 'SEO Consultation', price: '5000', quantity: '1' },
         { desc: 'Social Media Strategy', price: '2000', quantity: '3' },
-        { desc: 'Content Creation', price: '10000', quantity: '1' }
+        { desc: 'Content Creation', price: '10000', quantity: '1' },
       ],
       taxPercent: '',
       discountPercent: '',
@@ -130,9 +126,9 @@
         accountName: '',
         bank: '',
         ifsc: '',
-        swiftCode: ''
+        swiftCode: '',
       },
-      currency: 'USD'
+      currency: 'USD',
     };
 
     save();
@@ -169,492 +165,108 @@
 
 <svelte:body on:click={() => save()} />
 
-<div
-  class="max-w-screen-md mx-auto px-4 sm:px-6 py-8 flex flex-col space-y-6 font-montserrat bg-white border-2 border-gray-400 rounded-xl shadow-sm print:shadow-none print:border-black"
->
-  <!-- Company & Invoice Details --------------------------------------->
-  <div class="flex flex-col sm:flex-row justify-between items-start print:flex">
-    <div class="flex flex-col gap-4 w-full sm:w-auto">
-      <div class="">
-        {#if appState.company.logo}
-          <div class="flex flex-row items-center space-x-4">
-            <div class="flex flex-col border-2 border-gray-400 rounded-xl">
-              <button
-                class="p-2 hover:bg-gray-200 rounded"
-                on:click={() => {
-                  appState.company.logo = null;
-                }}
-              >
-                <Trash />
-              </button>
-              <button class="p-2 hover:bg-gray-200 rounded" on:click={() => document.getElementById('imageInput').click()}>
-                <ImagePlus />
-                <input
-                  id="imageInput"
-                  type="file"
-                  accept=".png,.jpg,.jpeg,.webp"
-                  on:change={handleImageChange}
-                  class="hidden"
-                />
-              </button>
-            </div>
-            <img
-              src={appState.company.logo}
-              alt="Company Logo"
-              class="max-h-18 max-w-40 object-cover m-0"
-            />
-          </div>
-        {:else}
-          <button
-            class="p-2 flex flex-row gap-2 rounded-lg border-2 border-gray-400 cursor-pointer hover:bg-gray-100"
-            on:click={() => document.getElementById('imageInput').click()}
-          >
-            <ImagePlus />
-            <p class="text-sm text-[#333]">Click to select an image for logo</p>
+<div class="invoice-container bg-white shadow-md rounded-lg p-6">
+  <table class="w-full border-collapse">
+    <thead>
+      <tr class="bg-[#1F2A44] text-white">
+        <th class="py-2 px-4 text-left">Item</th>
+        <th class="py-2 px-4">Quantity</th>
+        <th class="py-2 px-4">Rate</th>
+        <th class="py-2 px-4 text-right">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      {#each appState.items as item, index}
+        <tr class="border-b">
+          <td class="py-2 px-4">
             <input
-              id="imageInput"
-              type="file"
-              accept=".png,.jpg,.jpeg,.webp"
-              on:change={handleImageChange}
-              class="hidden"
+              type="text"
+              class="w-full border-none bg-transparent focus:outline-none"
+              bind:value={item.desc}
             />
-          </button>
-        {/if}
-      </div>
-      <input
-        class="font-bold text-xl border-2 border-gray-400 p-3 rounded-lg focus:outline-none focus:border-gray-600 w-full"
-        type="text"
-        bind:value={appState.company.name}
-      />
-    </div>
-
-    <div class="relative flex flex-col items-start sm:items-end gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
-      <h2 class="font-bold text-2xl text-[#1E6F5C] text-left sm:text-right print:text-left">
-        Invoice :
-        <input
-          type="text"
-          size="4"
-          placeholder="#0001"
-          maxlength="5"
-          bind:value={appState.invoice.number}
-          class="border-2 border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600"
-        />
-      </h2>
-      <div class="flex flex-col gap-1">
-        <p class="flex items-center">
-          <span class="mr-2">Created :</span>
-          <input
-            bind:value={appState.invoice.created}
-            type="date"
-            class="border-2 border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600"
-          />
-        </p>
-        <p class="flex items-center">
-          <span class="mr-2">Due :</span>
-          <input
-            bind:value={appState.invoice.due}
-            type="date"
-            class="border-2 border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600"
-          />
-        </p>
-      </div>
-      <select bind:value={appState.currency} class="border-2 border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full">
-        {#each currencyOptions as option}
-          <option value={option.code}>
-            {option.flag} {option.code} - {option.name}
-          </option>
-        {/each}
-      </select>
-    </div>
-  </div>
-
-  <hr class="border-gray-400" />
-
-  <!-- From & To  ------------------------------------------------------>
-  <div class="flex flex-col sm:flex-row justify-between gap-4">
-    <div class="flex flex-col gap-2 w-full border-2 border-gray-400 p-4 rounded-lg">
-      <h2 class="mb-2 font-bold">Sender Info</h2>
-      <textarea
-        style="resize: none; padding: 8px 12px;"
-        placeholder="Enter sender's name and address"
-        cols="30"
-        rows="3"
-        maxlength="150"
-        bind:value={appState.invoice.from}
-        class="border-2 border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full overflow-wrap break-words"
-      ></textarea>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <p class="flex items-center">
-          <span class="w-24">Tax Name:</span>
-          <input
-            type="text"
-            bind:value={appState.invoice.fromTaxIdName}
-            class="border-2 border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full overflow-wrap break-words"
-            placeholder="Enter Tax Name"
-          />
-        </p>
-        <p class="flex items-center">
-          <span class="w-24">Tax ID:</span>
-          <input
-            type="text"
-            bind:value={appState.invoice.fromTaxId}
-            class="border-2 border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full overflow-wrap break-words"
-            placeholder="Enter Tax ID"
-          />
-        </p>
-        <p class="flex items-center">
-          <span class="w-24">Email:</span>
-          <input
-            type="email"
-            bind:value={appState.invoice.fromContact.mail}
-            class="border-2 border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full overflow-wrap break-words"
-            placeholder="Enter Email"
-          />
-        </p>
-        <p class="flex items-center">
-          <span class="w-24">Phone:</span>
-          <input
-            type="text"
-            bind:value={appState.invoice.fromContact.phone}
-            class="border-2 border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full overflow-wrap break-words"
-            placeholder="Enter Phone"
-          />
-        </p>
-      </div>
-    </div>
-    <div class="flex flex-col gap-2 w-full border-2 border-gray-400 p-4 rounded-lg">
-      <h2 class="mb-2 font-bold">Recipient Info</h2>
-      <textarea
-        style="resize: none; padding: 8px 12px;"
-        placeholder="Enter recipient's name and address"
-        cols="30"
-        rows="3"
-        maxlength="150"
-        bind:value={appState.invoice.to}
-        class="border-2 border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full overflow-wrap break-words"
-      ></textarea>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <p class="flex items-center">
-          <span class="w-24">Tax Name:</span>
-          <input
-            type="text"
-            bind:value={appState.invoice.toTaxIdName}
-            class="border-2 border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full overflow-wrap break-words"
-            placeholder="Enter Tax Name"
-          />
-        </p>
-        <p class="flex items-center">
-          <span class="w-24">Tax ID:</span>
-          <input
-            type="text"
-            bind:value={appState.invoice.toTaxId}
-            class="border-2 border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full overflow-wrap break-words"
-            placeholder="Enter Tax ID"
-          />
-        </p>
-        <p class="flex items-center">
-          <span class="w-24">Email:</span>
-          <input
-            type="email"
-            bind:value={appState.invoice.toContact.mail}
-            class="border-2 border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full overflow-wrap break-words"
-            placeholder="Enter Email"
-          />
-        </p>
-        <p class="flex items-center">
-          <span class="w-24">Phone:</span>
-          <input
-            type="text"
-            bind:value={appState.invoice.toContact.phone}
-            class="border-2 border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 w-full overflow-wrap break-words"
-            placeholder="Enter Phone"
-          />
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <!-- New Item Form --------------------------------------------------->
-  <form class="flex flex-col sm:flex-row justify-between gap-2">
-    <div class="flex items-center">
-      <button
-        disabled={itemDesc == ''}
-        on:click={() => addItem()}
-        class="p-2 rounded-full bg-gray-300 hover:bg-gray-400 transition-all duration-100 ease-in-out print:hidden"
-      >
-        <Plus stroke="#557571" />
-      </button>
-    </div>
-
-    <div class="flex flex-col sm:flex-row gap-2 w-full">
-      <input
-        id="descBox"
-        type="text"
-        bind:value={itemDesc}
-        placeholder="Item name"
-        class="border-2 border-gray-400 rounded-lg p-3 focus:outline-none focus:border-gray-600 grow w-full overflow-wrap break-words"
-        on:keypress={(e) => e.key == 'Enter' && addItem()}
-      />
-      <input
-        type="number"
-        bind:value={itemPrice}
-        placeholder="Unit Price"
-        min="0"
-        step="0.01"
-        class="border-2 border-gray-400 rounded-lg p-3 focus:outline-none focus:border-gray-600 w-full sm:w-32"
-        on:keypress={(e) => e.key == 'Enter' && addItem()}
-      />
-      <input
-        type="number"
-        bind:value={itemQty}
-        placeholder="Quantity"
-        min="1"
-        step="1"
-        class="border-2 border-gray-400 rounded-lg p-3 focus:outline-none focus:border-gray-600 w-full sm:w-32"
-        on:keypress={(e) => e.key == 'Enter' && addItem()}
-      />
-      <p class="border-2 border-gray-400 p-3 w-full sm:w-32 text-right">
-        {getCurrencySymbol(appState.currency)}{(itemPrice * itemQty).toFixed(2)}
-      </p>
-    </div>
-  </form>
-
-  <!-- Table ----------------------------------------------------------->
-  <div class="flex flex-col mt-4 bg-gray-100 p-2 rounded-lg border-2 border-gray-400 item-descriptions">
-    <h2 class="mb-2 font-bold">Item Descriptions</h2>
-    <div class="flex flex-row bg-gray-200 border-b-2 border-gray-400">
-      <p class="font-bold p-3 border-r-2 border-gray-400 grow">Item name</p>
-      <p class="font-bold p-3 border-r-2 border-gray-400 w-32 hidden sm:block">Unit Price</p>
-      <p class="font-bold p-3 border-r-2 border-gray-400 w-24 hidden sm:block">Qty</p>
-      <p class="font-bold p-3 w-32 text-right hidden sm:block">Total</p>
-    </div>
-    {#each appState.items as item, index}
-      <div class="flex flex-col sm:flex-row even:bg-white border-b-2 border-gray-400">
-        <div class="flex flex-row items-center">
-          <button
-            on:click={() => deleteItem(index)}
-            class="p-3 hover:bg-gray-200 transition-all duration-100 ease-in-out rounded print:hidden"
-          >
-            <Trash />
-          </button>
-          <input
-            class="p-3 border-r-2 border-gray-400 grow overflow-wrap break-words"
-            type="text"
-            bind:value={item.desc}
-            on:input={() => save()}
-          />
-        </div>
-        <div class="flex flex-row sm:flex-row w-full">
-          <input
-            class="p-3 border-r-2 border-gray-400 w-full sm:w-32"
-            type="number"
-            min="0"
-            step="0.01"
-            bind:value={item.price}
-            on:input={() => save()}
-          />
-          <input
-            class="p-3 border-r-2 border-gray-400 w-full sm:w-24"
-            type="number"
-            min="0"
-            step="1"
-            bind:value={item.quantity}
-            on:input={() => save()}
-          />
-          <p class="p-3 w-full sm:w-32 text-right">
+          </td>
+          <td class="py-2 px-4 text-center">
+            <input
+              type="number"
+              class="w-full border-none bg-transparent text-center focus:outline-none"
+              bind:value={item.quantity}
+              min="1"
+            />
+          </td>
+          <td class="py-2 px-4 text-center">
+            <input
+              type="number"
+              class="w-full border-none bg-transparent text-center focus:outline-none"
+              bind:value={item.price}
+              min="0"
+              step="0.01"
+            />
+          </td>
+          <td class="py-2 px-4 text-right">
             {getCurrencySymbol(appState.currency)}{(item.price * item.quantity).toFixed(2)}
-          </p>
-        </div>
-      </div>
-    {/each}
+          </td>
+        </tr>
+      {/each}
+    </tbody>
+  </table>
 
-    <div class="flex flex-row bg-gray-200 border-t-2 border-gray-400 items-center">
-      <p class="p-3 grow text-right font-bold">Discount %</p>
-      <button
-        class="toggle-switch ml-2 mr-1 {isDiscountEnabled ? 'active' : ''}"
-        on:click={() => (isDiscountEnabled = !isDiscountEnabled)}
-      ></button>
-      <input
-        class="p-3 w-32 text-right {isDiscountEnabled ? 'enabled' : 'disabled'} border-2 border-gray-400 rounded-lg focus:outline-none focus:border-gray-600"
-        type="number"
-        bind:value={appState.discountPercent}
-        disabled={!isDiscountEnabled}
-        step="0.01"
-        max="100"
-        min="0"
-        on:input={() => save()}
-      />
-    </div>
-    <div class="flex flex-row bg-gray-200 border-t-2 border-gray-400 items-center">
-      <p class="p-3 grow text-right font-bold">Tax %</p>
-      <button
-        class="toggle-switch ml-2 mr-1 {isTaxEnabled ? 'active' : ''}"
-        on:click={() => (isTaxEnabled = !isTaxEnabled)}
-      ></button>
-      <input
-        class="p-3 w-32 text-right {isTaxEnabled ? 'enabled' : 'disabled'} border-2 border-gray-400 rounded-lg focus:outline-none focus:border-gray-600"
-        type="number"
-        bind:value={appState.taxPercent}
-        disabled={!isTaxEnabled}
-        step="0.01"
-        max="100"
-        min="0"
-        on:input={() => save()}
-      />
-    </div>
-    <div class="flex flex-row bg-gray-200 border-t-2 border-gray-400">
-      <p class="p-3 grow text-right font-bold">Total Due</p>
-      <p class="p-3 w-32 text-right">
-        {getCurrencySymbol(appState.currency)}{totalDue}
-      </p>
-    </div>
-  </div>
-
-  <!-- Payment Info Section Redesigned --------------------------------->
-  <div class="mt-4 border-2 border-gray-400 p-4 rounded-lg">
-    <h2 class="mb-2 font-bold">Payment Info</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div class="flex flex-col">
-        <label class="text-sm font-semibold">Account No</label>
-        <input
-          type="text"
-          maxlength="20"
-          bind:value={appState.payment.accountNumber}
-          class="border-2 border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 overflow-wrap break-words"
-        />
-      </div>
-      <div class="flex flex-col">
-        <label class="text-sm font-semibold">Account Name</label>
-        <input
-          type="text"
-          maxlength="28"
-          bind:value={appState.payment.accountName}
-          class="border-2 border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 overflow-wrap break-words"
-        />
-      </div>
-      <div class="flex flex-col">
-        <label class="text-sm font-semibold">Bank Name</label>
-        <input
-          type="text"
-          maxlength="28"
-          bind:value={appState.payment.bank}
-          class="border-2 border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 overflow-wrap break-words"
-        />
-      </div>
-      <div class="flex flex-col">
-        <label class="text-sm font-semibold">IFSC</label>
-        <input
-          type="text"
-          maxlength="11"
-          bind:value={appState.payment.ifsc}
-          class="border-2 border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 overflow-wrap break-words"
-        />
-      </div>
-      <div class="flex flex-col">
-        <label class="text-sm font-semibold">SWIFT Code</label>
-        <input
-          type="text"
-          maxlength="11"
-          bind:value={appState.payment.swiftCode}
-          class="border-2 border-gray-400 p-2 rounded-lg focus:outline-none focus:border-gray-600 overflow-wrap break-words"
-        />
-      </div>
-    </div>
-  </div>
-
-  <!-- Download Button -------------------------------------------------->
-  <div class="mt-6 flex justify-center print:hidden">
-    <button
-      on:click={() => window.print()}
-      class="px-4 py-3 rounded-lg bg-gray-300 text-[#333] font-semibold flex items-center gap-2 hover:bg-gray-400 transition-transform duration-150"
-    >
-      <Download class="w-5 h-5" />
-      <span>Download Invoice</span>
-    </button>
-  </div>
+  <button
+    on:click={() => addItem()}
+    class="mt-4 text-green-500 flex items-center"
+  >
+    <Plus class="mr-2" /> + Line Item
+  </button>
 </div>
 
 <style>
-  .toggle-switch {
-    width: 36px;
-    height: 18px;
-    background-color: #e2e2e2;
-    border-radius: 20px;
-    position: relative;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  .invoice-container {
+    border: 1px solid #d1d5db;
   }
 
-  .toggle-switch:before {
-    content: '';
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    width: 16px;
-    height: 16px;
-    background-color: #8eaccd;
-    border-radius: 50%;
-    transition: all 0.3s;
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
   }
 
-  .toggle-switch.active {
-    background-color: #8eaccd;
+  th, td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #e5e7eb;
   }
 
-  .toggle-switch.active:before {
-    transform: translateX(18px);
-    background-color: #333333;
+  th {
+    font-weight: bold;
+    text-align: left;
   }
 
-  .enabled {
-    background-color: #ffffff;
+  tr:last-child td {
+    border-bottom: none;
   }
 
-  .disabled {
-    background-color: #f0f0f0;
-  }
-
-  /* Ensure text wraps and boxes expand */
-  textarea,
   input {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-word;
+    padding: 0.5rem;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    transition: border-color 0.3s;
   }
 
-  /* Print styles */
-  @media print {
-    .toggle-switch {
-      display: none;
-    }
-    button {
-      display: none;
-    }
-    input,
-    textarea {
-      border: 1px solid black;
-    }
-    .print\\:hidden {
-      display: none;
-    }
-    .border-2 {
-      border-width: 1px;
-    }
-    .border-gray-400 {
-      border-color: black;
-    }
-    .bg-gray-100,
-    .bg-gray-200,
-    .bg-gray-300 {
-      background-color: white;
-    }
-    .item-descriptions {
-      background-color: white;
-    }
+  input:focus {
+    border-color: #6366f1;
+    outline: none;
   }
 
-  /* Highlight Item Descriptions */
-  .item-descriptions {
-    background-color: #f9f9f9;
+  button {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    color: #059669;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  button:hover {
+    color: #047857;
   }
 </style>
