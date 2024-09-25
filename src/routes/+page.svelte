@@ -796,5 +796,10 @@
     input, textarea, select {
       border: none;
     }
+
+    .table-row {
+      display: flex !important;
+      flex-wrap: nowrap !important;
+    }
   }
 </style>
