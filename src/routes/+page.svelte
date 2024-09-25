@@ -205,7 +205,7 @@
 >
   <!-- INVOICE Title and Serial No. at Top Center -->
   <div class="text-center mb-6">
-    <h2 class="font-bold text-2xl">
+    <h2 class="font-bold text-3xl">
       <input
         type="text"
         bind:value={appState.invoice.title}
@@ -215,21 +215,19 @@
     </h2>
     <div class="mt-2">
       <div class="flex flex-col sm:flex-row justify-center items-center gap-2">
-        <input
-          type="text"
-          bind:value={appState.invoice.serialLabel}
-          class="p-2 focus:outline-none text-center"
-          placeholder="Serial No."
-        />
+        <label class="text-lg font-semibold">
+          {appState.invoice.serialLabel}:
+        </label>
         <input
           type="text"
           bind:value={appState.invoice.serialNumber}
-          class="p-2 focus:outline-none w-32 text-center"
+          class="p-2 focus:outline-none w-32 text-center border-b-2 border-transparent focus:border-black"
           placeholder="#001"
         />
       </div>
     </div>
-    <hr class="border-custom my-4" />
+    <!-- Removed the extra <hr> line here -->
+    <div class="mt-4"></div> <!-- Added some space instead -->
   </div>
 
   <!-- Company & Invoice Details -->
@@ -415,11 +413,11 @@
     </div>
   </div>
 
-  <hr class="border-custom my-4" />
-
-  <!-- Item Descriptions -->
+  <!-- Removed the <hr> here to eliminate extra line after 'Invoice' -->
+  
+  <!-- Item Descriptions (Header Removed) -->
   <div class="flex flex-col mt-4">
-    <h4 class="mb-2 font-bold">Item Descriptions</h4>
+    <!-- Removed <h4 class="mb-2 font-bold">Item Descriptions</h4> -->
     <div class="flex flex-row border-b border-custom items-center">
       <div class="p-3" style="width:40px;"></div>
       <!-- Placeholder for delete button -->
@@ -554,12 +552,12 @@
   </form>
 
   <!-- Add a line and spacing before Payment Info -->
-  <hr class="border-custom my-4" />
+  <hr class="border-custom my-6" />
 
   <!-- Payment Info -->
-  <div class="mt-4">
-    <h4 class="mb-2 font-bold">Payment Info</h4>
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <div class="mt-6">
+    <h4 class="mb-4 font-bold text-2xl">Payment Info</h4>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
       <div class="flex flex-col">
         <label class="text-sm font-semibold">Account No</label>
         <input
@@ -626,7 +624,7 @@
   <div class="mt-6 flex justify-center print:hidden">
     <button
       on:click={() => window.print()}
-      class="px-4 py-3 rounded-lg bg-black text-white font-semibold flex items-center gap-2 hover:bg-gray-700 transition-colors duration-150"
+      class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold flex items-center gap-2 hover:bg-blue-700 transition-colors duration-150"
     >
       ⬇
       <span>Download Invoice</span>
@@ -645,11 +643,12 @@
   }
 
   .invoice-container {
-    background-color: rgba(255, 255, 255, 0.85);
+    background-color: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     border-radius: 1rem;
+    padding: 2rem;
   }
 
   input,
@@ -723,7 +722,7 @@
   }
 
   .toggle-switch:hover {
-    background-color: inherit;
+    background-color: #777; /* Increased visibility on hover */
   }
 
   .toggle-switch:hover:before {
@@ -737,12 +736,18 @@
   }
 
   /* Specific styling for Download Button */
-  .invoice-container button.bg-black:hover {
-    background-color: #333; /* Lighter black on hover */
+  .invoice-container button.bg-blue-600 {
+    background-color: #1e40af; /* Tailwind's blue-700 */
     color: #fff;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s;
   }
 
-  /* Styling for "＋" Buttons */
+  .invoice-container button.bg-blue-600:hover {
+    background-color: #1d4ed8; /* Tailwind's blue-800 */
+  }
+
+  /* Adjust "Add Logo" and "＋" buttons */
   .invoice-container button.p-2.rounded-full.bg-black.text-white {
     background-color: transparent;
     color: #000;
@@ -754,8 +759,51 @@
     color: #fff;
   }
 
-  /* Remove any global button hover disabling */
-  /* Previously removed .invoice-container button:not(.toggle-switch) { ... } */
+  /* Ensure "Add Logo" button has consistent styles */
+  .invoice-container button.p-2.flex.flex-row.gap-2.rounded-lg.cursor-pointer {
+    background-color: transparent;
+    color: #000;
+    border: 1px solid #000;
+  }
 
-  /* Ensure "Add Logo" and "＋" buttons have consistent hover styles */
+  .invoice-container button.p-2.flex.flex-row.gap-2.rounded-lg.cursor-pointer:hover {
+    background-color: #000;
+    color: #fff;
+  }
+
+  /* Toggle Switch Adjustments */
+  .toggle-switch {
+    background-color: #aaa;
+  }
+
+  .toggle-switch.active {
+    background-color: #4ade80; /* Tailwind's green-400 for better visibility */
+  }
+
+  .toggle-switch.active:before {
+    background-color: #fff;
+  }
+
+  /* Print Styles */
+  @media print {
+    @page {
+      margin: 0;
+    }
+    body {
+      margin: 0;
+    }
+    /* Hide unwanted elements */
+    .print:hidden {
+      display: none !important;
+    }
+    /* Hide buttons and interactive elements */
+    button,
+    input[type="file"] {
+      display: none !important;
+    }
+    /* Hide logo controls */
+    .invoice-container img {
+      display: block !important;
+    }
+  }
 </style>
