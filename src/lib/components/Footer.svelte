@@ -9,7 +9,7 @@
 		<a
 			target="_blank"
 			class="{anchorStyle} decoration-sky-500"
-			href="https://www.linkedin.com/in/uddalak-das-crypto-nft-defi/">FreeInvoiceTool</a
+			href="https://www.freeinvoicetool.com/">FreeInvoiceTool</a
 		>
 		· Built by
 		<a
