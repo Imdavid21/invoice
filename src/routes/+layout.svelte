@@ -8,8 +8,8 @@
 </script>
 
 <Header
-	title="No Strings Attached Invoice Generator !"
-	subtitle="Create and download invoices instantly, with zero signups or tracking."
+	title="Free Invoice Tool"
+	subtitle="No signups. No commitments. Just quick, clean invoices."
 />
 <slot />
 <Footer repo="billie" />
