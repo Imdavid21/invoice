@@ -9,14 +9,14 @@
 		© {date.getFullYear()}
 		<a
 			target="_blank"
-			class="{anchorStyle}  decoration-sky-500"
-			href={'https://github.com/commitsovercoffee/' + repo}>{repo}</a
+			class="{anchorStyle} decoration-sky-500"
+			href={'https://www.linkedin.com/in/uddalak-das-crypto-nft-defi/'}>{repo}</a
 		>
 		· Built by
 		<a
 			target="_blank"
 			class="{anchorStyle} decoration-indigo-500"
-			href="https://commitsovercoffee.com">commitsovercoffee</a
+			href="https://www.linkedin.com/in/uddalak-das-crypto-nft-defi/">Uddalak Das</a
 		>
 	</p>
 </footer>
