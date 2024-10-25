@@ -1,7 +1,6 @@
 <script>
 	import { LucidePlus, Trash2, ImageUp, RotateCcw, Printer } from 'lucide-svelte';
 	import { onMount } from 'svelte';
-import { inject } from '@vercel/analytics'
 
 	let appState = {
 		company: { name: '', logo: '' },
@@ -167,7 +166,7 @@ import { inject } from '@vercel/analytics'
 					</button>
 				{/if}
 			</div>
-			<input class="font-bold text-2xl border" type="text" bind:value={appState.company.name} />
+			<input class="font-bold text-2xl" type="text" bind:value={appState.company.name} />
 		</div>
 
 		<div class="relative flex flex-col items-end gap-1">
@@ -178,7 +177,6 @@ import { inject } from '@vercel/analytics'
 					size="2"
 					placeholder="2099"
 					maxlength="4"
-					class="border"
 					bind:value={appState.invoice.number}
 				/>
 			</h2>
@@ -208,7 +206,6 @@ import { inject } from '@vercel/analytics'
 					size="10"
 					placeholder="Aug 24, 2024"
 					maxlength="13"
-					class="border"
 				/>
 			</p>
 			<p>
@@ -219,7 +216,6 @@ import { inject } from '@vercel/analytics'
 					size="10"
 					placeholder="Sept 24, 2024"
 					maxlength="13"
-					class="border"
 				/>
 			</p>
 		</div>
@@ -238,7 +234,6 @@ import { inject } from '@vercel/analytics'
 				cols="30"
 				rows="5"
 				maxlength="150"
-				class="border"
 				bind:value={appState.invoice.from}
 			></textarea>
 		</div>
@@ -250,7 +245,6 @@ import { inject } from '@vercel/analytics'
 				cols="30"
 				rows="5"
 				maxlength="150"
-				class="border"
 				bind:value={appState.invoice.to}
 			></textarea>
 		</div>
@@ -399,7 +393,6 @@ import { inject } from '@vercel/analytics'
 			cols="30"
 			rows="5"
 			maxlength="150"
-			class="border"
 		></textarea>
 	</div>
 	<p>Thank you for your business</p>
@@ -416,7 +409,6 @@ import { inject } from '@vercel/analytics'
 						type="text"
 						maxlength="12"
 						placeholder="987654321098"
-						class="border"
 						bind:value={appState.payment.accountNumber}
 					/>
 				</li>
@@ -428,7 +420,6 @@ import { inject } from '@vercel/analytics'
 						minlength="0"
 						maxlength="28"
 						placeholder="Stark Enterprises"
-						class="border"
 						bind:value={appState.payment.accountName}
 					/>
 				</li>
@@ -440,7 +431,6 @@ import { inject } from '@vercel/analytics'
 						minlength="0"
 						maxlength="28"
 						placeholder="Metropolitan Bank"
-						class="border"
 						bind:value={appState.payment.bank}
 					/>
 				</li>
@@ -457,7 +447,6 @@ import { inject } from '@vercel/analytics'
 						type="email"
 						maxlength="28"
 						placeholder="tony.stark@starkindustries.com"
-						class="border"
 						bind:value={appState.contact.mail}
 					/>
 				</li>
@@ -469,7 +458,6 @@ import { inject } from '@vercel/analytics'
 						minlength="0"
 						maxlength="14"
 						placeholder="+91 9876543210"
-						class="border"
 						bind:value={appState.contact.phone}
 					/>
 				</li>
