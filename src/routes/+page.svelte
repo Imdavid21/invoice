@@ -114,7 +114,7 @@
 <svelte:body on:click={() => save()} />
 
 <div
-	class="print:rotate-0 print:m-0 -rotate-1 max-w-screen-md mx-auto -mt-32 px-6 py-8 flex flex-col space-y-6 font-inter bg-white print:shadow-none shadow-lg"
+	class="print:rotate-0 print:m-0 max-w-screen-md mx-auto -mt-32 px-6 py-8 flex flex-col space-y-6 font-inter bg-white print:shadow-none shadow-lg"
 >
 	<!-- Company & Invoice Details --------------------------------------->
 
