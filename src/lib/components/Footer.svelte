@@ -1,6 +1,5 @@
 <script>
 	const date = new Date();
-	export let repo = 'repo-name';
 	const anchorStyle = 'decoration-2 underline underline-offset-4 font-semibold ';
 </script>
 
@@ -10,7 +9,7 @@
 		<a
 			target="_blank"
 			class="{anchorStyle} decoration-sky-500"
-			href={'https://www.linkedin.com/in/uddalak-das-crypto-nft-defi/'}>{repo}</a
+			href="https://www.linkedin.com/in/uddalak-das-crypto-nft-defi/">FreeInvoiceTool</a
 		>
 		· Built by
 		<a
