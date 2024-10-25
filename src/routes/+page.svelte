@@ -104,10 +104,10 @@
 </script>
 
 <svelte:head>
-	<title>Avengers Invoicing</title>
+	<title>Free Invoice Tool</title>
 	<meta
 		name="description"
-		content="Create and download invoices inspired by Marvel and DC universes, with zero signups or tracking."
+		content="No signups. No commitments. Just quick, clean invoices."
 	/>
 </svelte:head>
 
