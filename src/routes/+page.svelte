@@ -56,27 +56,27 @@
 
 	function reset() {
 		appState = {
-			company: { name: 'Piper Piper', logo: '' },
+			company: { name: 'Stark Enterprises', logo: '' },
 			invoice: {
-				number: '1277',
-				created: 'May 24, 2014',
-				due: 'June 24, 2014',
-				from: 'Piper Piper Inc, Apartment 3B, 555 Silicoin Street, Palo Alto, California, 94301',
-				to: 'Intersite, Suite 69, Adult Entertainment, Los Angeles, California 90028'
+				number: '2099',
+				created: 'Aug 24, 2024',
+				due: 'Sept 24, 2024',
+				from: 'Stark Tower, 200 Park Ave, New York, NY, 10166',
+				to: 'Wayne Enterprises, 1007 Mountain Dr, Gotham City, NJ 07005'
 			},
 			items: [
-				{ desc: 'Data Compression Service', price: '1200', quantity: '50' },
-				{ desc: 'Cloud Storage (200GB)', price: '30000', quantity: '1' },
-				{ desc: 'Video Encoding & Streaming Optimization', price: '10000', quantity: '7' }
+				{ desc: 'SEO Optimization Service', price: '1500', quantity: '3' },
+				{ desc: 'Website Redesign Package', price: '5000', quantity: '1' },
+				{ desc: 'Content Marketing Campaign', price: '1200', quantity: '4' }
 			],
-			tax: '18',
-			note: "Due to a mishap with Russ's bottle being on delete, some files were accidentally removed.",
+			tax: '10',
+			note: "For any inquiries, please reach out to our customer support team.",
 			payment: {
-				accountNumber: '9876 5432 1098',
-				accountName: 'Piper Piper Inc',
-				bank: 'Silicon Valley Bank'
+				accountNumber: '7621 0420 9631',
+				accountName: 'Stark Enterprises',
+				bank: 'Metropolitan Bank'
 			},
-			contact: { mail: 'jared.dunn@piedpiper.com', phone: '+1 650-555-1234' }
+			contact: { mail: 'tony.stark@starkindustries.com', phone: '+1 212-555-0168' }
 		};
 
 		save();
@@ -104,10 +104,10 @@
 </script>
 
 <svelte:head>
-	<title>Billie - No Strings Attached Invoice Generator</title>
+	<title>Avengers Invoicing</title>
 	<meta
 		name="description"
-		content="Create and download invoices instantly, with zero signups or tracking."
+		content="Create and download invoices inspired by Marvel and DC universes, with zero signups or tracking."
 	/>
 </svelte:head>
 
@@ -155,7 +155,7 @@
 						on:click={() => document.getElementById('imageInput').click()}
 					>
 						<ImageUp />
-						<p>Click to select an image for logo</p>
+						<p>Click to add Stark or Wayne logo</p>
 						<input
 							id="imageInput"
 							type="file"
@@ -175,7 +175,7 @@
 				<input
 					type="text"
 					size="2"
-					placeholder="2341"
+					placeholder="2099"
 					maxlength="4"
 					bind:value={appState.invoice.number}
 				/>
@@ -204,7 +204,7 @@
 					bind:value={appState.invoice.created}
 					type="text"
 					size="10"
-					placeholder="May 24,2014"
+					placeholder="Aug 24, 2024"
 					maxlength="13"
 				/>
 			</p>
@@ -214,7 +214,7 @@
 					bind:value={appState.invoice.due}
 					type="text"
 					size="10"
-					placeholder="May 24,2014"
+					placeholder="Sept 24, 2024"
 					maxlength="13"
 				/>
 			</p>
@@ -230,7 +230,7 @@
 			<h4 class="mb-4 font-bold">From</h4>
 			<textarea
 				style="resize: none;"
-				placeholder="Piper Piper, Apartment 3B, 555 Silicon Street, Palo Alto, California 94301"
+				placeholder="Stark Tower, 200 Park Ave, New York, NY, 10166"
 				cols="30"
 				rows="5"
 				maxlength="150"
@@ -241,7 +241,7 @@
 			<h4 class="mb-4 font-bold">To</h4>
 			<textarea
 				style="resize: none;"
-				placeholder="Piper Piper, Apartment 3B, 555 Silicon Street, Palo Alto, California 94301"
+				placeholder="Wayne Enterprises, 1007 Mountain Dr, Gotham City, NJ 07005"
 				cols="30"
 				rows="5"
 				maxlength="150"
@@ -389,7 +389,7 @@
 		<textarea
 			bind:value={appState.note}
 			style="resize: none;"
-			placeholder="Piper Piper, Apartment 3B, 555 Silicon Street, Palo Alto, California 94301"
+			placeholder="Thank you for choosing our services. Please reach out if you have questions."
 			cols="30"
 			rows="5"
 			maxlength="150"
@@ -419,7 +419,7 @@
 						type="text"
 						minlength="0"
 						maxlength="28"
-						placeholder="Piper Piper Inc"
+						placeholder="Stark Enterprises"
 						bind:value={appState.payment.accountName}
 					/>
 				</li>
@@ -430,7 +430,7 @@
 						type="text"
 						minlength="0"
 						maxlength="28"
-						placeholder="Silicion Valley Bank"
+						placeholder="Metropolitan Bank"
 						bind:value={appState.payment.bank}
 					/>
 				</li>
@@ -446,7 +446,7 @@
 					<input
 						type="email"
 						maxlength="28"
-						placeholder="jared.dunn@piedpiper.com"
+						placeholder="tony.stark@starkindustries.com"
 						bind:value={appState.contact.mail}
 					/>
 				</li>
